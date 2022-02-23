@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+ org.open.job.starter.server.config.ServerAutoConfiguration
