@@ -22,7 +22,7 @@ import java.util.Map;
  */
 @Slf4j
 public class NacosRegistryService extends AbstractRegistryService implements InitializingBean, DisposableBean, BeanFactoryAware {
-    private static final String CLIENT_NAME = "crawler-client";
+    private static final String CLIENT_NAME = "job-client";
     private BeanFactory beanFactory;
     private NamingService namingService;
 

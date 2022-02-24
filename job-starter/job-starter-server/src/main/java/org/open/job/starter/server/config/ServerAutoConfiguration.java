@@ -58,13 +58,13 @@ public class ServerAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnExpression("'memory'.equals('${com.pro.crawler.server.store:memory}')")
+    @ConditionalOnExpression("'memory'.equals('${org.open.job.server.store:memory}')")
     public InstanceStore memoryStore(){
         return new MemoryInstanceStore();
     }
 
     @Bean
-    @ConditionalOnExpression("'redisson'.equals('${com.pro.crawler.server.store:redisson}')")
+    @ConditionalOnExpression("'redisson'.equals('${org.open.job.server.store:redisson}')")
     public InstanceStore redissonStore(RedissonClient client){
         return new RedissonInstanceStore(client);
     }

@@ -1,11 +1,12 @@
 package org.open.job.starter.security.utils;
 
-import com.pro.crawler.starter.security.exception.AuthenticationException;
+import org.open.job.starter.security.exception.AuthenticationException;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static com.pro.crawler.common.constants.CommonConstant.AUTHENTICATION_HEADER;
-import static com.pro.crawler.common.constants.CommonConstant.AUTHENTICATION_TYPE;
+import static org.open.job.common.constants.CommonConstant.AUTHENTICATION_HEADER;
+import static org.open.job.common.constants.CommonConstant.AUTHENTICATION_TYPE;
+
 
 /**
  * @author : lijunping

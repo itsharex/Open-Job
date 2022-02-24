@@ -1,13 +1,14 @@
-package org.open.job.starter.security.store;
+package org.open.job.starter.security.store.support;
 
 import cn.hutool.core.util.RandomUtil;
-import com.pro.crawler.common.vo.ResultEnum;
-import com.pro.crawler.starter.security.authentication.Authentication;
-import com.pro.crawler.starter.security.exception.AuthenticationException;
-import com.pro.crawler.starter.security.properties.UserSecurityProperties;
-import com.pro.crawler.starter.security.service.UserDetails;
-import com.pro.crawler.starter.security.token.Token;
 import lombok.extern.slf4j.Slf4j;
+import org.open.job.common.vo.ResultEnum;
+import org.open.job.starter.security.authentication.Authentication;
+import org.open.job.starter.security.exception.AuthenticationException;
+import org.open.job.starter.security.properties.UserSecurityProperties;
+import org.open.job.starter.security.service.UserDetails;
+import org.open.job.starter.security.store.TokenStore;
+import org.open.job.starter.security.token.Token;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Objects;
@@ -44,7 +45,7 @@ public class RedisTokenStore implements TokenStore {
     }
 
     @Override
-    public Authentication readAuthentication(String accessToken) throws AuthenticationException{
+    public Authentication readAuthentication(String accessToken) throws AuthenticationException {
         Object o = redisTemplate.opsForValue().get(buildAccessTokenKey(accessToken));
         if (Objects.isNull(o)){
             throw new AuthenticationException(ResultEnum.UNAUTHORIZED);

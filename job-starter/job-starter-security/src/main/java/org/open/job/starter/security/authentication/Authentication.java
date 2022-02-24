@@ -1,9 +1,9 @@
 package org.open.job.starter.security.authentication;
 
-import com.pro.crawler.starter.security.service.UserDetails;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.open.job.starter.security.service.UserDetails;
 
 import java.io.Serializable;
 

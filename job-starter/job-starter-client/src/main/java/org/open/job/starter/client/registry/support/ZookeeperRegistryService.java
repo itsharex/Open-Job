@@ -21,7 +21,7 @@ import java.util.Map;
  */
 @Slf4j
 public class ZookeeperRegistryService extends AbstractRegistryService implements InitializingBean, DisposableBean, BeanFactoryAware {
-    private static final String ROOT_PATH = "/CrawlerClient";
+    private static final String ROOT_PATH = "/JobClient";
     private BeanFactory beanFactory;
     private ZkClient zkClient;
 

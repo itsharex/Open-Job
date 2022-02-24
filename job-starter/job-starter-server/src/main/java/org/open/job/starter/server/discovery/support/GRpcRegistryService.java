@@ -87,7 +87,7 @@ public class GRpcRegistryService extends AbstractServiceDiscovery implements Ini
             long intervalSeconds = (currentTime - client.getLastReportTime()) / 1000;
             if (intervalSeconds > configuration.getExpiredExcludeThresholdSeconds()) {
                 CLIENTS.remove(clientId);
-                log.info("Crawler Client：{}，status updated to offline.", clientId);
+                log.info("Job Client：{}，status updated to offline.", clientId);
             }
         });
         // 如果清除了不健康的客户端，则更新缓存
@@ -109,6 +109,6 @@ public class GRpcRegistryService extends AbstractServiceDiscovery implements Ini
     @Override
     public void afterPropertiesSet() throws Exception {
         this.startEliminateExpiredClient();
-        log.info("Crawler ClientExpiredExecutor successfully started.");
+        log.info("Job ClientExpiredExecutor successfully started.");
     }
 }

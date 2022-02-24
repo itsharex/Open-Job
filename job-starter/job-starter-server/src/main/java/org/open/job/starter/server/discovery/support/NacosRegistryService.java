@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class NacosRegistryService extends AbstractServiceDiscovery implements InitializingBean, DisposableBean, EventListener {
-    private static final String CLIENT_NAME = "crawler-client";
+    private static final String CLIENT_NAME = "job-client";
     private final NamingService namingService;
 
     public NacosRegistryService(NamingService namingService, RemotingInvoker remotingInvoker, InstanceStore instanceStore) {

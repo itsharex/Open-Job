@@ -93,6 +93,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- use mapstruct-jdk8 for Java 8 or higher -->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.redisson</groupId>
             <artifactId>redisson</artifactId>

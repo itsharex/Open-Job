@@ -19,8 +19,8 @@ import java.util.concurrent.Executors;
  */
 @Slf4j
 @Component
-public class CrawlerClient implements InitializingBean, DisposableBean {
-    private static final ExecutorService RPC_CRAWLER_EXECUTOR = Executors.newFixedThreadPool(1);
+public class JobClient implements InitializingBean, DisposableBean {
+    private static final ExecutorService RPC_JOB_EXECUTOR = Executors.newFixedThreadPool(1);
     /**
      * The grpc server instance
      */
@@ -30,7 +30,7 @@ public class CrawlerClient implements InitializingBean, DisposableBean {
 
     private final BindableService bindableService;
 
-    public CrawlerClient(ClientConfiguration configuration, GRpcMessageHandler bindableService){
+    public JobClient(ClientConfiguration configuration, GRpcMessageHandler bindableService){
         this.configuration = configuration;
         this.bindableService = bindableService;
     }
@@ -51,10 +51,10 @@ public class CrawlerClient implements InitializingBean, DisposableBean {
     public void startup() {
         try {
             this.rpcServer.start();
-            log.info("Crawler Client bind port : {}, startup successfully.", configuration.getClientPort());
+            log.info("Job Client bind port : {}, startup successfully.", configuration.getClientPort());
             this.rpcServer.awaitTermination();
         } catch (Exception e) {
-            log.error("Crawler Client startup failed.", e);
+            log.error("Job Client startup failed.", e);
         }
     }
 
@@ -63,30 +63,30 @@ public class CrawlerClient implements InitializingBean, DisposableBean {
      */
     public void shutdown() {
         try {
-            log.info("Crawler Client shutting down.");
+            log.info("Job Client shutting down.");
             this.rpcServer.shutdown();
             long waitTime = 100;
             long timeConsuming = 0;
             while (!this.rpcServer.isShutdown()) {
-                log.info("Crawler Client stopping....，total time consuming：{}", timeConsuming);
+                log.info("Job Client stopping....，total time consuming：{}", timeConsuming);
                 timeConsuming += waitTime;
                 Thread.sleep(waitTime);
             }
-            log.info("Crawler Client stop successfully.");
+            log.info("Job Client stop successfully.");
         } catch (Exception e) {
-            log.error("Crawler Client shutdown failed.", e);
+            log.error("Job Client shutdown failed.", e);
         }
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
         this.buildServer();
-        RPC_CRAWLER_EXECUTOR.execute(this::startup);
+        RPC_JOB_EXECUTOR.execute(this::startup);
     }
 
     @Override
     public void destroy() throws Exception {
         this.shutdown();
-        RPC_CRAWLER_EXECUTOR.shutdown();
+        RPC_JOB_EXECUTOR.shutdown();
     }
 }

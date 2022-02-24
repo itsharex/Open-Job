@@ -1,7 +1,7 @@
 package org.open.job.starter.security.component;
 
-import com.pro.crawler.starter.security.exception.AuthenticationException;
 import lombok.extern.slf4j.Slf4j;
+import org.open.job.starter.security.exception.AuthenticationException;
 
 /**
  * @author : lijunping

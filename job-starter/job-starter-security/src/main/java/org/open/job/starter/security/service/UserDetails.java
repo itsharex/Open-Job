@@ -1,6 +1,5 @@
 package org.open.job.starter.security.service;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -14,28 +13,24 @@ import java.io.Serializable;
 public class UserDetails implements Serializable {
     private static final long serialVersionUID = 7779447586729787146L;
 
-    @ApiModelProperty("用户 id")
+    /**
+     * 用户 id
+     */
     private Long id;
 
     /**
-     * 获取用户名称
-     * @return
+     * 用户名称
      */
-    @ApiModelProperty("用户名称")
     private String username;
 
     /**
-     * 获取密码
-     * @return
+     * 密码
      */
-    @ApiModelProperty("密码")
     private String password;
 
     /**
-     * 获取用户手机号
-     * @return
+     * 用户手机号
      */
-    @ApiModelProperty("用户手机号")
     private String mobile;
 
 }

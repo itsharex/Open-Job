@@ -22,7 +22,7 @@ public final class MessageServiceGrpc {
 
   private MessageServiceGrpc() {}
 
-  public static final String SERVICE_NAME = "com.pro.crawler.core.grpc.MessageService";
+  public static final String SERVICE_NAME = "org.open.job.core.grpc.MessageService";
 
   // Static method descriptors that strictly reflect the proto.
   @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
@@ -44,7 +44,7 @@ public final class MessageServiceGrpc {
               io.grpc.MethodDescriptor.<MessageRequest, MessageResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "com.pro.crawler.core.grpc.MessageService", "messageProcessing"))
+                  "org.open.job.core.grpc.MessageService", "messageProcessing"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   MessageRequest.getDefaultInstance()))

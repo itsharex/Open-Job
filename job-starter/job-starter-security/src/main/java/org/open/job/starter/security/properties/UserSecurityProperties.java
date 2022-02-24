@@ -10,7 +10,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * Description: 安全相关配置
  */
 @Data
-@ConfigurationProperties(prefix = "com.pro.security")
+@ConfigurationProperties(prefix = "org.open.job.security")
 public class UserSecurityProperties {
 
   private static final String[] DEFAULT_IGNORE_PATHS = new String[]{

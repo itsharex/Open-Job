@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * Related configuration items needed to build the client
  */
 @Data
-@ConfigurationProperties(prefix = "com.pro.crawler.client")
+@ConfigurationProperties(prefix = "org.open.job.client")
 public class ClientConfiguration {
     /**
      * client host

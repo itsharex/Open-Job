@@ -1,7 +1,7 @@
 package org.open.job.starter.security.exception;
 
-import com.pro.crawler.common.vo.ResultEnum;
 import lombok.Data;
+import org.open.job.common.vo.ResultEnum;
 
 /**
  * @author : lijunping

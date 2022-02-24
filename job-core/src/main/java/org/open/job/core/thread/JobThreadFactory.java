@@ -4,13 +4,13 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-public class CrawlerThreadFactory implements ThreadFactory {
+public class JobThreadFactory implements ThreadFactory {
     private static final AtomicInteger poolNumber = new AtomicInteger(1);
     private ThreadGroup group;
     private AtomicInteger threadNumber = new AtomicInteger(1);
     private String namePrefix;
 
-    public CrawlerThreadFactory(String prefix) {
+    public JobThreadFactory(String prefix) {
         SecurityManager s = System.getSecurityManager();
         group = (s != null) ? s.getThreadGroup() :
                 Thread.currentThread().getThreadGroup();

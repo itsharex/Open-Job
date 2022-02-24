@@ -1,16 +1,17 @@
-package org.open.job.starter.security.store;
+package org.open.job.starter.security.store.support;
 
-import com.pro.crawler.common.json.JSON;
-import com.pro.crawler.starter.security.authentication.Authentication;
-import com.pro.crawler.starter.security.exception.AuthenticationException;
-import com.pro.crawler.starter.security.properties.UserSecurityProperties;
-import com.pro.crawler.starter.security.service.UserDetails;
-import com.pro.crawler.starter.security.token.Token;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import org.open.job.common.json.JSON;
+import org.open.job.starter.security.authentication.Authentication;
+import org.open.job.starter.security.exception.AuthenticationException;
+import org.open.job.starter.security.properties.UserSecurityProperties;
+import org.open.job.starter.security.service.UserDetails;
+import org.open.job.starter.security.store.TokenStore;
+import org.open.job.starter.security.token.Token;
 
 import java.util.Date;
 
@@ -39,7 +40,7 @@ public class JwtTokenStore implements TokenStore {
     }
 
     @Override
-    public Authentication readAuthentication(String accessToken) throws AuthenticationException{
+    public Authentication readAuthentication(String accessToken) throws AuthenticationException {
         try {
             Claims claims = Jwts.parserBuilder().setSigningKey(securityProperties.getSecretKeyBytes()).build().parseClaimsJws(accessToken).getBody();
             final String subject = claims.getSubject();

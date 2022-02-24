@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class ZookeeperRegistryService extends AbstractServiceDiscovery implements InitializingBean, DisposableBean{
-    private static final String ZOOKEEPER_PATH = "/CrawlerClient";
+    private static final String ZOOKEEPER_PATH = "/JobClient";
     private final ZkClient zkClient;
 
     public ZookeeperRegistryService(ZkClient zkClient, RemotingInvoker remotingInvoker, InstanceStore instanceStore){

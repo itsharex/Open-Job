@@ -7,8 +7,8 @@ import com.alibaba.nacos.api.naming.NamingService;
 import org.I0Itec.zkclient.ZkClient;
 import org.open.job.common.constants.CommonConstant;
 import org.open.job.starter.client.ClientConfiguration;
-import org.open.job.starter.client.process.CrawlerTaskProcessor;
-import org.open.job.starter.client.process.DefaultCrawlerTaskProcessor;
+import org.open.job.starter.client.process.JobTaskProcessor;
+import org.open.job.starter.client.process.DefaultJobTaskProcessor;
 import org.open.job.starter.client.registry.support.NacosRegistryService;
 import org.open.job.starter.client.registry.support.ZookeeperRegistryService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -48,8 +48,8 @@ public class ClientAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public CrawlerTaskProcessor crawlerTaskProcessor(){
-        return new DefaultCrawlerTaskProcessor();
+    public JobTaskProcessor jobTaskProcessor(){
+        return new DefaultJobTaskProcessor();
     }
 
 }

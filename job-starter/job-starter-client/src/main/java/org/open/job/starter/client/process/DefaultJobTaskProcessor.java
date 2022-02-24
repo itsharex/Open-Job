@@ -7,7 +7,7 @@ import org.open.job.core.Message;
  * @author lijunping on 2022/1/19
  */
 @Slf4j
-public class DefaultCrawlerTaskProcessor implements CrawlerTaskProcessor {
+public class DefaultJobTaskProcessor implements JobTaskProcessor {
 
     @Override
     public void processing(Message spiderRequest) {

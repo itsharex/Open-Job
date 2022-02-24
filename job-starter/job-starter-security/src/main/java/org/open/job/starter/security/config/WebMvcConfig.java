@@ -1,8 +1,8 @@
 package org.open.job.starter.security.config;
 
 
-import com.pro.crawler.starter.security.interceptor.UserSecurityInterceptor;
-import com.pro.crawler.starter.security.properties.UserSecurityProperties;
+import org.open.job.starter.security.interceptor.UserSecurityInterceptor;
+import org.open.job.starter.security.properties.UserSecurityProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;

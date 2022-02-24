@@ -1,6 +1,7 @@
 package org.open.job.starter.security.component;
 
-import com.pro.crawler.starter.security.authentication.Authentication;
+
+import org.open.job.starter.security.authentication.Authentication;
 
 /**
  * @author : lijunping

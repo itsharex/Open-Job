@@ -15,7 +15,7 @@ import org.open.job.core.transport.MessageRequestBody;
 import org.open.job.core.transport.MessageResponseBody;
 import org.open.job.core.transport.MessageResponseStatus;
 import org.open.job.starter.client.ClientConfiguration;
-import org.open.job.starter.client.process.CrawlerTaskProcessor;
+import org.open.job.starter.client.process.JobTaskProcessor;
 import org.open.job.starter.client.registry.RegistryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,7 +30,7 @@ public class GRpcMessageHandler extends MessageServiceGrpc.MessageServiceImplBas
     private static final String SPLIT_SYMBOL = "::";
 
     @Autowired
-    private CrawlerTaskProcessor crawlerProcessor;
+    private JobTaskProcessor jobProcessor;
 
     @Autowired
     private ClientConfiguration configuration;
@@ -57,7 +57,7 @@ public class GRpcMessageHandler extends MessageServiceGrpc.MessageServiceImplBas
                     registryService.deRegister(clientInfo[0], Integer.parseInt(clientInfo[1]));
                     break;
                 case MESSAGE:
-                    crawlerProcessor.processing(message);
+                    jobProcessor.processing(message);
                     break;
                 default:
                     throw new RpcException("UnSupport message packet" + command);

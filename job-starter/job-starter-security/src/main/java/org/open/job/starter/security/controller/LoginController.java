@@ -1,24 +1,23 @@
 package org.open.job.starter.security.controller;
 
-import com.pro.crawler.common.exception.ControllerException;
-import com.pro.crawler.common.vo.Result;
-import com.pro.crawler.common.vo.ResultEnum;
-import com.pro.crawler.starter.captcha.enums.ValidateCodeType;
-import com.pro.crawler.starter.captcha.exception.ValidateCodeException;
-import com.pro.crawler.starter.captcha.processor.ValidateCodeProcessorHolder;
-import com.pro.crawler.starter.captcha.request.CaptchaVerifyRequest;
-import com.pro.crawler.starter.security.authentication.Authentication;
-import com.pro.crawler.starter.security.component.AuthenticationFailureHandler;
-import com.pro.crawler.starter.security.component.AuthenticationSuccessHandler;
-import com.pro.crawler.starter.security.exception.AuthenticationException;
-import com.pro.crawler.starter.security.request.MobileLoginRequest;
-import com.pro.crawler.starter.security.request.PasswordLoginRequest;
-import com.pro.crawler.starter.security.service.UserDetailService;
-import com.pro.crawler.starter.security.service.UserDetails;
-import com.pro.crawler.starter.security.store.TokenStore;
-import com.pro.crawler.starter.security.token.Token;
-import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.open.job.common.exception.ControllerException;
+import org.open.job.common.vo.Result;
+import org.open.job.common.vo.ResultEnum;
+import org.open.job.starter.captcha.enums.ValidateCodeType;
+import org.open.job.starter.captcha.exception.ValidateCodeException;
+import org.open.job.starter.captcha.processor.ValidateCodeProcessorHolder;
+import org.open.job.starter.captcha.request.CaptchaVerifyRequest;
+import org.open.job.starter.security.authentication.Authentication;
+import org.open.job.starter.security.component.AuthenticationFailureHandler;
+import org.open.job.starter.security.component.AuthenticationSuccessHandler;
+import org.open.job.starter.security.exception.AuthenticationException;
+import org.open.job.starter.security.request.MobileLoginRequest;
+import org.open.job.starter.security.request.PasswordLoginRequest;
+import org.open.job.starter.security.service.UserDetailService;
+import org.open.job.starter.security.service.UserDetails;
+import org.open.job.starter.security.store.TokenStore;
+import org.open.job.starter.security.token.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
@@ -56,14 +55,22 @@ public class LoginController {
     @Autowired
     private TokenStore tokenStore;
 
-    @ApiOperation("退出登录")
+    /**
+     * 退出登录
+     * @param accessToken
+     * @return
+     */
     @GetMapping("/outLogin")
     public Result<Boolean> logout(@RequestParam("accessToken") String accessToken){
         Boolean success = tokenStore.removeToken(accessToken);
         return Result.succeed(success);
     }
 
-    @ApiOperation("用户名密码登录")
+    /**
+     * 用户名密码登录
+     * @param request
+     * @return
+     */
     @PostMapping("/account")
     public Result<Token> loginByUsername(@RequestBody @Valid PasswordLoginRequest request){
         String username = request.getUsername();
@@ -101,7 +108,11 @@ public class LoginController {
         }
     }
 
-    @ApiOperation("手机号短信验证码登录")
+    /**
+     * 手机号短信验证码登录
+     * @param request
+     * @return
+     */
     @PostMapping("/mobile")
     public Result<Token> loginByMobile(@RequestBody @Valid MobileLoginRequest request){
         String mobile = request.getMobile();

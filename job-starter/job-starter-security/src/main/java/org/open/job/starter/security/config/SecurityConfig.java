@@ -1,15 +1,15 @@
 package org.open.job.starter.security.config;
 
-import com.pro.crawler.starter.security.component.AuthenticationFailureHandler;
-import com.pro.crawler.starter.security.component.AuthenticationSuccessHandler;
-import com.pro.crawler.starter.security.component.DefaultAuthenticationFailureHandler;
-import com.pro.crawler.starter.security.component.DefaultAuthenticationSuccessHandler;
-import com.pro.crawler.starter.security.properties.UserSecurityProperties;
-import com.pro.crawler.starter.security.store.JdbcTokenStore;
-import com.pro.crawler.starter.security.store.JwtTokenStore;
-import com.pro.crawler.starter.security.store.RedisTokenStore;
-import com.pro.crawler.starter.security.store.TokenStore;
 import lombok.AllArgsConstructor;
+import org.open.job.starter.security.component.AuthenticationFailureHandler;
+import org.open.job.starter.security.component.AuthenticationSuccessHandler;
+import org.open.job.starter.security.component.DefaultAuthenticationFailureHandler;
+import org.open.job.starter.security.component.DefaultAuthenticationSuccessHandler;
+import org.open.job.starter.security.properties.UserSecurityProperties;
+import org.open.job.starter.security.store.support.JdbcTokenStore;
+import org.open.job.starter.security.store.support.JwtTokenStore;
+import org.open.job.starter.security.store.support.RedisTokenStore;
+import org.open.job.starter.security.store.TokenStore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -45,19 +45,19 @@ public class SecurityConfig {
     }
 
     @Bean
-    @ConditionalOnExpression("'jwt'.equals('${com.pro.security.store:jwt}')")
+    @ConditionalOnExpression("'jwt'.equals('${org.open.job.security.store:jwt}')")
     public TokenStore jwtTokenStore(){
         return new JwtTokenStore(userSecurityProperties);
     }
 
     @Bean
-    @ConditionalOnExpression("'redis'.equals('${com.pro.security.store:redis}')")
+    @ConditionalOnExpression("'redis'.equals('${org.open.job.security.store:redis}')")
     public TokenStore redisTokenStore(){
         return new RedisTokenStore(redisTemplate, userSecurityProperties);
     }
 
     @Bean
-    @ConditionalOnExpression("'jdbc'.equals('${com.pro.security.store:jdbc}')")
+    @ConditionalOnExpression("'jdbc'.equals('${org.open.job.security.store:jdbc}')")
     public TokenStore jdbcTokenStore(){
         return new JdbcTokenStore();
     }

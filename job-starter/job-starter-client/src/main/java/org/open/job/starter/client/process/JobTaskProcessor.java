@@ -5,7 +5,7 @@ import org.open.job.core.Message;
 /**
  * @author lijunping on 2022/1/19
  */
-public interface CrawlerTaskProcessor {
+public interface JobTaskProcessor {
 
     void processing(Message message);
 }

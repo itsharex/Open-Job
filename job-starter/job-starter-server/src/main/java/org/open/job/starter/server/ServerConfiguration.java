@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * server configuration
  */
 @Data
-@ConfigurationProperties(prefix = "com.pro.crawler.server")
+@ConfigurationProperties(prefix = "org.open.job.server")
 public class ServerConfiguration {
     /**
      * The server port

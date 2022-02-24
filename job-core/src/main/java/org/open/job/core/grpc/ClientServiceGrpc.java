@@ -22,7 +22,7 @@ public final class ClientServiceGrpc {
 
   private ClientServiceGrpc() {}
 
-  public static final String SERVICE_NAME = "com.pro.crawler.core.grpc.ClientService";
+  public static final String SERVICE_NAME = "org.open.job.core.grpc.ClientService";
 
   // Static method descriptors that strictly reflect the proto.
   @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
@@ -44,7 +44,7 @@ public final class ClientServiceGrpc {
               io.grpc.MethodDescriptor.<ClientRegisterRequest, ClientResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "com.pro.crawler.core.grpc.ClientService", "register"))
+                  "org.open.job.core.grpc.ClientService", "register"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   ClientRegisterRequest.getDefaultInstance()))
@@ -76,7 +76,7 @@ public final class ClientServiceGrpc {
               io.grpc.MethodDescriptor.<ClientHeartBeatRequest, ClientResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "com.pro.crawler.core.grpc.ClientService", "heartbeat"))
+                  "org.open.job.core.grpc.ClientService", "heartbeat"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   ClientHeartBeatRequest.getDefaultInstance()))

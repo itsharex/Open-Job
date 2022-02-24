@@ -12,7 +12,7 @@ import org.open.job.core.grpc.proto.ClientHeartBeatRequest;
 import org.open.job.core.grpc.proto.ClientRegisterRequest;
 import org.open.job.core.grpc.proto.ClientResponse;
 import org.open.job.core.information.ServerInformation;
-import org.open.job.core.thread.CrawlerThreadFactory;
+import org.open.job.core.thread.JobThreadFactory;
 import org.open.job.core.transport.ClientRegisterResponseBody;
 import org.open.job.core.transport.MessageResponseStatus;
 import org.open.job.starter.client.ClientConfiguration;
@@ -35,7 +35,7 @@ public class GRpcRegistryService extends AbstractRegistryService {
 
     public GRpcRegistryService(ClientConfiguration configuration) {
         super(configuration);
-        this.heartBeatExecutorService = Executors.newScheduledThreadPool(5, new CrawlerThreadFactory(THREAD_NAME_PREFIX));
+        this.heartBeatExecutorService = Executors.newScheduledThreadPool(5, new JobThreadFactory(THREAD_NAME_PREFIX));
     }
 
     /**
@@ -96,7 +96,7 @@ public class GRpcRegistryService extends AbstractRegistryService {
      */
     private void heartBeat(ServerInformation serverInformation) {
         if (heartBeatExecutorService.isShutdown()){
-            heartBeatExecutorService = Executors.newScheduledThreadPool(5, new CrawlerThreadFactory(THREAD_NAME_PREFIX));
+            heartBeatExecutorService = Executors.newScheduledThreadPool(5, new JobThreadFactory(THREAD_NAME_PREFIX));
         }
         heartBeatExecutorService.scheduleAtFixedRate(() -> {
             try {
