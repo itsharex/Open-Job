@@ -20,5 +20,5 @@ public @interface EnableJobServer {
      *
      * @return {@link RegistryServiceType} instance
      */
-    RegistryServiceType registryType() default RegistryServiceType.GRPC;
+    RegistryServiceType registryType() default RegistryServiceType.NACOS;
 }

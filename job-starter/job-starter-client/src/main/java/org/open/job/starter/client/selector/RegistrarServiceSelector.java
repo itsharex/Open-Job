@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.open.job.core.enums.RegistryServiceType;
 import org.open.job.core.exception.RpcException;
 import org.open.job.starter.client.annotation.EnableJobClient;
-import org.open.job.starter.client.registry.support.GRpcRegistryService;
 import org.open.job.starter.client.registry.support.NacosRegistryService;
 import org.open.job.starter.client.registry.support.ZookeeperRegistryService;
 import org.springframework.context.annotation.ImportSelector;
@@ -30,8 +29,6 @@ public class RegistrarServiceSelector implements ImportSelector {
         RegistryServiceType serverServiceType = (RegistryServiceType) annotationAttributes.get(REGISTRAR_TYPE_ATTRIBUTE_NAME);
         log.info("Use the [{}] method to register the Client service", serverServiceType);
         switch (serverServiceType) {
-            case GRPC:
-                return new String[]{GRpcRegistryService.class.getName()};
             case NACOS:
                 return new String[]{NacosRegistryService.class.getName()};
             case ZOOKEEPER:

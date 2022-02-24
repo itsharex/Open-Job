@@ -17,5 +17,5 @@ import java.lang.annotation.Target;
 @Import({RegistrarServiceSelector.class})
 public @interface EnableJobClient {
 
-    RegistryServiceType registryType() default RegistryServiceType.GRPC;
+    RegistryServiceType registryType() default RegistryServiceType.NACOS;
 }

@@ -3,7 +3,6 @@ package org.open.job.starter.server;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import lombok.extern.slf4j.Slf4j;
-import org.open.job.starter.server.handler.GRpcMessageHandler;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
@@ -24,16 +23,13 @@ public class JobServer implements InitializingBean, DisposableBean {
     private static final ExecutorService RPC_JOB_EXECUTOR = Executors.newFixedThreadPool(1);
 
     private final ServerConfiguration configuration;
-
-    private final GRpcMessageHandler bindableService;
     /**
      * The grpc server instance
      */
     private Server rpcServer;
 
-    public JobServer(ServerConfiguration configuration, GRpcMessageHandler bindableService){
+    public JobServer(ServerConfiguration configuration){
         this.configuration = configuration;
-        this.bindableService = bindableService;
     }
 
     /**
@@ -41,9 +37,6 @@ public class JobServer implements InitializingBean, DisposableBean {
      */
     private void buildServer() {
         ServerBuilder<?> serverBuilder = ServerBuilder.forPort(this.configuration.getServerPort());
-        if (Objects.nonNull(this.bindableService)){
-            serverBuilder.addService(this.bindableService);
-        }
         this.rpcServer = serverBuilder.build();
     }
 
