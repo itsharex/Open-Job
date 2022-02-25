@@ -1,11 +1,11 @@
 package org.open.job.starter.server.remoting.support;
 
-
 import io.grpc.ManagedChannel;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import lombok.extern.slf4j.Slf4j;
 import org.open.job.common.json.JSON;
+import org.open.job.common.random.SnowflakeUtils;
 import org.open.job.core.Message;
 import org.open.job.core.exception.RpcException;
 import org.open.job.core.grpc.MessageServiceGrpc;
@@ -18,11 +18,15 @@ import org.open.job.core.transport.MessageResponseStatus;
 import org.open.job.starter.server.ClientChannelManager;
 import org.open.job.starter.server.remoting.RemotingInvoker;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 /**
  * @author lijunping on 2022/2/16
  */
 @Slf4j
 public class GrpcRemotingInvoker implements RemotingInvoker {
+
+    private static final SnowflakeUtils SNOWFLAKE_UTILS = new SnowflakeUtils(ThreadLocalRandom.current().nextInt(1, 30), ThreadLocalRandom.current().nextInt(1, 30));
 
     @Override
     public void invoke(Message message, ClientInformation clientInformation) throws RpcException {
@@ -30,7 +34,8 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
         ManagedChannel channel = ClientChannelManager.establishChannel(clientInformation);
         try {
             MessageServiceGrpc.MessageServiceBlockingStub messageClientStub = MessageServiceGrpc.newBlockingStub(channel);
-            MessageRequestBody requestBody = new MessageRequestBody().setClientId(clientId).setMessage(message);
+            final long random = SNOWFLAKE_UTILS.nextId();
+            MessageRequestBody requestBody = new MessageRequestBody().setClientId(clientId).setMessage(message).setRequestId(String.valueOf(random));
             String requestJsonBody = JSON.toJSON(requestBody);
             MessageResponse response = messageClientStub.messageProcessing(MessageRequest.newBuilder().setBody(requestJsonBody).build());
             MessageResponseBody responseBody = JSON.parse(response.getBody(), MessageResponseBody.class);
