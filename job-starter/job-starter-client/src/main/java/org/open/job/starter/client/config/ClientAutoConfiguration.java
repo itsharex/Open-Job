@@ -25,14 +25,20 @@ import java.util.Properties;
 @EnableConfigurationProperties(ClientConfiguration.class)
 public class ClientAutoConfiguration {
 
+    private final ClientConfiguration configuration;
+
+    public ClientAutoConfiguration(ClientConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
     @Bean
     @ConditionalOnBean(NacosRegistryService.class)
     @ConditionalOnMissingBean
     public NamingService namingService() throws NacosException {
         Properties properties = new Properties();
-        properties.put(PropertyKeyConst.USERNAME, "nacos");
-        properties.put(PropertyKeyConst.PASSWORD, "nacos");
-        properties.put(PropertyKeyConst.SERVER_ADDR, String.format(CommonConstant.ADDRESS_PATTERN, "127.0.0.1", 8848));
+        properties.put(PropertyKeyConst.USERNAME, configuration.getUsername());
+        properties.put(PropertyKeyConst.PASSWORD, configuration.getPassword());
+        properties.put(PropertyKeyConst.SERVER_ADDR, String.format(CommonConstant.ADDRESS_PATTERN, configuration.getAddress(), configuration.getPort()));
         return NacosFactory.createNamingService(properties);
     }
 
@@ -41,7 +47,7 @@ public class ClientAutoConfiguration {
     @ConditionalOnMissingBean
     public ZkClient zkClient(){
         System.setProperty("zookeeper.sasl.client", "false");
-        return new ZkClient(String.format(CommonConstant.ADDRESS_PATTERN, "localhost", 2181), 5000);
+        return new ZkClient(String.format(CommonConstant.ADDRESS_PATTERN, configuration.getAddress(), configuration.getPort()), configuration.getConnectionTimeout());
     }
 
 }

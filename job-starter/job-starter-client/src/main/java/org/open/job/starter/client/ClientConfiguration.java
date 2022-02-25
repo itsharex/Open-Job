@@ -27,21 +27,25 @@ public class ClientConfiguration {
      */
     private int serverPort = 5200;
     /**
-     * Registration retries
+     * The username of nacos
      */
-    private int retryRegisterTimes = 3;
+    private String username = "nacos";
     /**
-     * Time interval when retrying to register to Server, unit: millisecond
-     *
-     * @see java.util.concurrent.TimeUnit#MILLISECONDS
+     * The password of nacos
      */
-    private long retryRegisterIntervalMilliSeconds = 1000;
+    private String password = "nacos";
     /**
-     * Time interval for sending heartbeat, unit: second
-     *
-     * @see java.util.concurrent.TimeUnit#SECONDS
+     * The address of nacos | zookeeper
      */
-    private int heartBeatIntervalSeconds = 10;
+    private String address = "127.0.0.1";
+    /**
+     * The port of nacos（8848） | zookeeper（2181）
+     */
+    private int port = 8848;
+    /**
+     * The connectionTimeout of zookeeper
+     */
+    private int connectionTimeout = 5000;
     /**
      * Get local host
      *
