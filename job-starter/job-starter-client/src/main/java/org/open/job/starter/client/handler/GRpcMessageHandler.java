@@ -15,7 +15,8 @@ import org.open.job.core.transport.MessageRequestBody;
 import org.open.job.core.transport.MessageResponseBody;
 import org.open.job.core.transport.MessageResponseStatus;
 import org.open.job.starter.client.ClientConfiguration;
-import org.open.job.starter.client.process.JobTaskProcessor;
+import org.open.job.starter.client.process.JobHandler;
+import org.open.job.starter.client.process.JobHandlerManager;
 import org.open.job.starter.client.registry.RegistryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,7 +31,7 @@ public class GRpcMessageHandler extends MessageServiceGrpc.MessageServiceImplBas
     private static final String SPLIT_SYMBOL = "::";
 
     @Autowired
-    private JobTaskProcessor jobProcessor;
+    private JobHandlerManager jobHandlerManager;
 
     @Autowired
     private ClientConfiguration configuration;
@@ -44,25 +45,27 @@ public class GRpcMessageHandler extends MessageServiceGrpc.MessageServiceImplBas
         try {
             String requestJsonBody = request.getBody();
             MessageRequestBody requestBody = JSON.parse(requestJsonBody, MessageRequestBody.class);
-            assert requestBody != null;
             Message message = requestBody.getMessage();
-            final PacketType command = message.getCommand();
+            PacketType command = message.getCommand();
+            boolean result;
             switch (command){
                 case REGISTER:
-                    registryService.register(configuration.getServerAddress(), configuration.getServerPort());
+                    result = registryService.register(configuration.getServerAddress(), configuration.getServerPort());
                     break;
                 case DEREGISTER:
                     String clientId = requestBody.getClientId();
                     String[] clientInfo = StringUtils.split(clientId, SPLIT_SYMBOL);
-                    registryService.deRegister(clientInfo[0], Integer.parseInt(clientInfo[1]));
+                    result = registryService.deRegister(clientInfo[0], Integer.parseInt(clientInfo[1]));
                     break;
                 case MESSAGE:
-                    jobProcessor.processing(message);
+                    String handlerName = requestBody.getHandlerName();
+                    JobHandler jobHandler = jobHandlerManager.getJobHandler(handlerName);
+                    result = jobHandler.handler(message);
                     break;
                 default:
                     throw new RpcException("UnSupport message packet" + command);
             }
-            responseBody.setStatus(MessageResponseStatus.SUCCESS);
+            responseBody.setStatus(result ? MessageResponseStatus.SUCCESS : MessageResponseStatus.ERROR);
         } catch (Exception e) {
             responseBody.setStatus(MessageResponseStatus.ERROR);
             log.error(e.getMessage(), e);

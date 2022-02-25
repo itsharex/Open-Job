@@ -11,12 +11,12 @@ public interface RegistryService {
      * @param serverAddress The server address
      * @param serverPort    The server port
      */
-    void register(String serverAddress, int serverPort);
+    boolean register(String serverAddress, int serverPort);
 
     /**
      * deRegister client
      * @param clientAddress - The client address
      * @param clientPort - The client port
      */
-    void deRegister(String clientAddress, int clientPort);
+    boolean deRegister(String clientAddress, int clientPort);
 }

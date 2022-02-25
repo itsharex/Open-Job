@@ -5,6 +5,7 @@ import org.I0Itec.zkclient.IZkChildListener;
 import org.I0Itec.zkclient.ZkClient;
 import org.apache.commons.lang3.StringUtils;
 import org.open.job.common.constants.CommonConstant;
+import org.open.job.core.Constants;
 import org.open.job.core.information.ClientInformation;
 import org.open.job.starter.server.discovery.AbstractServiceDiscovery;
 import org.open.job.starter.server.remoting.RemotingInvoker;
@@ -20,7 +21,6 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class ZookeeperRegistryService extends AbstractServiceDiscovery implements InitializingBean, DisposableBean{
-    private static final String ZOOKEEPER_PATH = "/JobClient";
     private final ZkClient zkClient;
 
     public ZookeeperRegistryService(ZkClient zkClient, RemotingInvoker remotingInvoker, InstanceStore instanceStore){
@@ -32,7 +32,7 @@ public class ZookeeperRegistryService extends AbstractServiceDiscovery implement
      * 使用zk事件监听，如果服务发生宕机情况，重新读取新的节点
      */
     private void subscribe(){
-        zkClient.subscribeChildChanges(ZOOKEEPER_PATH, new IZkChildListener() {
+        zkClient.subscribeChildChanges(Constants.CLIENT_ROOT_PATH, new IZkChildListener() {
             @Override
             public void handleChildChange(String parentPath, List<String> currentChilds) throws Exception {
                 log.info("zookeeper 父节点 {} 下的子节点列表 {}", parentPath, currentChilds);
@@ -48,7 +48,7 @@ public class ZookeeperRegistryService extends AbstractServiceDiscovery implement
 
     @Override
     protected List<ClientInformation> doLookup() {
-        List<String> children = zkClient.getChildren(ZOOKEEPER_PATH);
+        List<String> children = zkClient.getChildren(Constants.CLIENT_ROOT_PATH);
         log.info("查询到的子节点有 {}", children);
         return children.stream().map(e->{
             final String[] split = StringUtils.split(e, CommonConstant.Symbol.MH);

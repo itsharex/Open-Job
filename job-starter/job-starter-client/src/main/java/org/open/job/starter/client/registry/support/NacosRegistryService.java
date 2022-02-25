@@ -4,6 +4,7 @@ import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import lombok.extern.slf4j.Slf4j;
+import org.open.job.core.Constants;
 import org.open.job.starter.client.ClientConfiguration;
 import org.open.job.starter.client.registry.AbstractRegistryService;
 import org.springframework.beans.BeansException;
@@ -22,7 +23,6 @@ import java.util.Map;
  */
 @Slf4j
 public class NacosRegistryService extends AbstractRegistryService implements InitializingBean, DisposableBean, BeanFactoryAware {
-    private static final String CLIENT_NAME = "job-client";
     private BeanFactory beanFactory;
     private NamingService namingService;
 
@@ -39,28 +39,30 @@ public class NacosRegistryService extends AbstractRegistryService implements Ini
      * @param serverPort    The server port
      */
     @Override
-    public void doRegister(String serverAddress, int serverPort) {
+    public boolean doRegister(String serverAddress, int serverPort) {
         try {
             Instance instance = new Instance();
             instance.setIp(this.configuration.getClientAddress());
             instance.setPort(this.configuration.getClientPort());
-            // metadata map
             Map<String, String> metadata = new HashMap<>();
             instance.setMetadata(metadata);
-            // register to nacos server
-            this.namingService.registerInstance(CLIENT_NAME, instance);
+            this.namingService.registerInstance(Constants.CLIENT_SERVICE_NAME, instance);
             log.info("Current client registered to nacos server successfully.");
+            return true;
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error("register instance failed {}", e.getMessage());
+            return false;
         }
     }
 
     @Override
-    public void deRegister(String clientAddress, int clientPort) {
+    public boolean deRegister(String clientAddress, int clientPort) {
         try {
-            this.namingService.deregisterInstance(CLIENT_NAME, clientAddress, clientPort);
+            this.namingService.deregisterInstance(Constants.CLIENT_SERVICE_NAME, clientAddress, clientPort);
+            return true;
         } catch (NacosException e) {
             log.error("deRegister instance failed {}", e.getMessage());
+            return false;
         }
     }
 

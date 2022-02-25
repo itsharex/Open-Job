@@ -7,6 +7,7 @@ import com.alibaba.nacos.api.naming.listener.EventListener;
 import com.alibaba.nacos.api.naming.listener.NamingEvent;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import lombok.extern.slf4j.Slf4j;
+import org.open.job.core.Constants;
 import org.open.job.core.information.ClientInformation;
 import org.open.job.starter.server.discovery.AbstractServiceDiscovery;
 import org.open.job.starter.server.remoting.RemotingInvoker;
@@ -25,7 +26,6 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class NacosRegistryService extends AbstractServiceDiscovery implements InitializingBean, DisposableBean, EventListener {
-    private static final String CLIENT_NAME = "job-client";
     private final NamingService namingService;
 
     public NacosRegistryService(NamingService namingService, RemotingInvoker remotingInvoker, InstanceStore instanceStore) {
@@ -48,7 +48,7 @@ public class NacosRegistryService extends AbstractServiceDiscovery implements In
     @Override
     protected List<ClientInformation> doLookup() {
         try {
-            List<Instance> allInstances = namingService.getAllInstances(CLIENT_NAME);
+            List<Instance> allInstances = namingService.getAllInstances(Constants.CLIENT_SERVICE_NAME);
             return convertClientInformation(allInstances);
         } catch (NacosException e) {
             log.error("lookup instance failed {}", e.getMessage());
@@ -63,7 +63,7 @@ public class NacosRegistryService extends AbstractServiceDiscovery implements In
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.namingService.subscribe(CLIENT_NAME, this);
+        this.namingService.subscribe(Constants.CLIENT_SERVICE_NAME, this);
     }
 
     private List<ClientInformation> convertClientInformation(List<Instance> instances){

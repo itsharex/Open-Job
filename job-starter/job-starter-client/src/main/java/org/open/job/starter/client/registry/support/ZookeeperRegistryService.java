@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
 import org.apache.zookeeper.ZooDefs;
 import org.open.job.common.constants.CommonConstant;
+import org.open.job.core.Constants;
 import org.open.job.starter.client.ClientConfiguration;
 import org.open.job.starter.client.registry.AbstractRegistryService;
 import org.springframework.beans.BeansException;
@@ -21,7 +22,6 @@ import java.util.Map;
  */
 @Slf4j
 public class ZookeeperRegistryService extends AbstractRegistryService implements InitializingBean, DisposableBean, BeanFactoryAware {
-    private static final String ROOT_PATH = "/JobClient";
     private BeanFactory beanFactory;
     private ZkClient zkClient;
 
@@ -30,27 +30,28 @@ public class ZookeeperRegistryService extends AbstractRegistryService implements
     }
 
     @Override
-    public void doRegister(String serverAddress, int serverPort) {
-        // metadata map
+    public boolean doRegister(String serverAddress, int serverPort) {
         Map<String, String> metadata = new HashMap<>();
         metadata.put("clientIp", this.configuration.getClientAddress());
         metadata.put("clientPort", String.valueOf(this.configuration.getClientPort()));
-        if (!zkClient.exists(ROOT_PATH)) {
-            zkClient.createPersistent(ROOT_PATH, null, ZooDefs.Ids.OPEN_ACL_UNSAFE);
+        if (!zkClient.exists(Constants.CLIENT_ROOT_PATH)) {
+            zkClient.createPersistent(Constants.CLIENT_ROOT_PATH, null, ZooDefs.Ids.OPEN_ACL_UNSAFE);
         }
         String clientInfo = String.format(CommonConstant.ADDRESS_PATTERN, configuration.getClientAddress(), configuration.getClientPort());
-        String clientPath = ROOT_PATH + CommonConstant.Symbol.SLASH + clientInfo;
+        String clientPath = Constants.CLIENT_ROOT_PATH + CommonConstant.Symbol.SLASH + clientInfo;
         if (!zkClient.exists(clientPath)) {
             zkClient.createEphemeral(clientPath, metadata, ZooDefs.Ids.OPEN_ACL_UNSAFE);
         }
         log.info("Current client registered to zookeeper server successfully.");
+        return true;
     }
 
     @Override
-    public void deRegister(String clientAddress, int clientPort) {
+    public boolean deRegister(String clientAddress, int clientPort) {
         String clientInfo = String.format(CommonConstant.ADDRESS_PATTERN, configuration.getClientAddress(), configuration.getClientPort());
-        String clientPath = ROOT_PATH + CommonConstant.Symbol.SLASH + clientInfo;
+        String clientPath = Constants.CLIENT_ROOT_PATH + CommonConstant.Symbol.SLASH + clientInfo;
         this.zkClient.delete(clientPath);
+        return true;
     }
 
     @Override

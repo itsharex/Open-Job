@@ -7,8 +7,6 @@ import com.alibaba.nacos.api.naming.NamingService;
 import org.I0Itec.zkclient.ZkClient;
 import org.open.job.common.constants.CommonConstant;
 import org.open.job.starter.client.ClientConfiguration;
-import org.open.job.starter.client.process.JobTaskProcessor;
-import org.open.job.starter.client.process.DefaultJobTaskProcessor;
 import org.open.job.starter.client.registry.support.NacosRegistryService;
 import org.open.job.starter.client.registry.support.ZookeeperRegistryService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -44,12 +42,6 @@ public class ClientAutoConfiguration {
     public ZkClient zkClient(){
         System.setProperty("zookeeper.sasl.client", "false");
         return new ZkClient(String.format(CommonConstant.ADDRESS_PATTERN, "localhost", 2181), 5000);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public JobTaskProcessor jobTaskProcessor(){
-        return new DefaultJobTaskProcessor();
     }
 
 }
