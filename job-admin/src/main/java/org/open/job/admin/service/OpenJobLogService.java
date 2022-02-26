@@ -8,7 +8,7 @@ import org.open.job.admin.dto.update.OpenJobLogUpdateDTO;
 import org.open.job.common.vo.PageResult;
 
 /**
- * 爬虫任务运行日志
+ * 任务运行日志
  *
  * @author lijunping
  * @email lijunping365@gmail.com

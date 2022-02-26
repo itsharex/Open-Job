@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * 爬虫服务端
+ * 服务端
  * 默认使用 gRpc 通信，如果有兴趣可更改为其他通信方式，例如 netty
  * @author lijunping on 2022/1/24
  */

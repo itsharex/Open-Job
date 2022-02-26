@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 /**
- * 爬虫任务表
+ * 任务表
  *
  * @author lijunping
  * @email lijunping365@gmail.com

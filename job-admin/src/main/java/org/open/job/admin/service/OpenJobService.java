@@ -9,7 +9,7 @@ import org.open.job.common.vo.PageResult;
 import java.util.List;
 
 /**
- * 爬虫任务表
+ * 任务表
  *
  * @author lijunping
  * @email lijunping365@gmail.com

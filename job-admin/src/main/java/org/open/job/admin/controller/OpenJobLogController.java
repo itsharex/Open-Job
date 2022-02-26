@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 /**
- * 爬虫任务运行日志
+ * 任务运行日志
  *
  * @author lijunping
  * @email lijunping365@gmail.com

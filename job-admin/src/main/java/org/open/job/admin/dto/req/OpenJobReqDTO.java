@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 爬虫任务表
+ * 任务表
  *
  * @author lijunping
  * @email lijunping365@gmail.com
