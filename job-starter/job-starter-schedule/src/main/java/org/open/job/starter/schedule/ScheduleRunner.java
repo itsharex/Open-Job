@@ -31,7 +31,7 @@ public class ScheduleRunner implements SmartInitializingSingleton, DisposableBea
 
     @Override
     public void afterSingletonsInstantiated() {
-        log.info("init spider schedulerTask success.");
+        log.info("init schedulerTask success.");
         init();
     }
 
