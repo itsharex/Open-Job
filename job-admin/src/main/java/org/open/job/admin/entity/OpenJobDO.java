@@ -25,6 +25,10 @@ public class OpenJobDO implements Serializable {
     @TableId
     private Long id;
     /**
+     * 任务的名字
+     */
+    private String jobName;
+    /**
      * 绑定的 handler 的名字
      */
     private String handlerName;

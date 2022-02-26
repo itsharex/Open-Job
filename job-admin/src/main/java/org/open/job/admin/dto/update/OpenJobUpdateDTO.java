@@ -18,6 +18,8 @@ public class OpenJobUpdateDTO implements Serializable {
 
     private Long id;
 
+    private String jobName;
+
     private String handlerName;
 
     private String cronExpression;

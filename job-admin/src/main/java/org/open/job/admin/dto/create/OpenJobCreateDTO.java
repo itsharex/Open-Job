@@ -21,6 +21,9 @@ public class OpenJobCreateDTO implements Serializable {
 
     private Long id;
 
+    @NotNull(message = "jobName 不能为空")
+    private String jobName;
+
     @NotNull(message = "handlerName 不能为空")
     private String handlerName;
 

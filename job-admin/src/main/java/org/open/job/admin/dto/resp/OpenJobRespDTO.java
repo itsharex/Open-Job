@@ -16,8 +16,9 @@ import java.time.LocalDateTime;
 public class OpenJobRespDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-
     private Long id;
+
+    private String jobName;
 
     private String handlerName;
 
