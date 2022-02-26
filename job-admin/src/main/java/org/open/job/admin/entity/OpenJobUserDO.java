@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
  * @date 2021-06-22 15:20:30
  */
 @Data
-@TableName("job_user")
-public class UserDO implements Serializable {
+@TableName("open_job_user")
+public class OpenJobUserDO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**

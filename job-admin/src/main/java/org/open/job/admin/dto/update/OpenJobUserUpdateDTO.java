@@ -1,4 +1,4 @@
-package org.open.job.admin.dto.create;
+package org.open.job.admin.dto.update;
 
 import lombok.Data;
 
@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  * @date 2021-06-22 15:20:30
  */
 @Data
-public class UserCreateDTO implements Serializable {
+public class OpenJobUserUpdateDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;

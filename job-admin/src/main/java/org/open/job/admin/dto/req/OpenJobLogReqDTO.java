@@ -1,7 +1,7 @@
-package org.open.job.admin.dto.update;
-
+package org.open.job.admin.dto.req;
 
 import lombok.Data;
+import org.open.job.common.vo.DateTimePageQuery;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -14,12 +14,12 @@ import java.time.LocalDateTime;
  * @date 2021-09-06 10:10:03
  */
 @Data
-public class TaskLogUpdateDTO implements Serializable {
+public class OpenJobLogReqDTO extends DateTimePageQuery implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;
 
-    private Long taskId;
+    private Long jobId;
 
     private Integer status;
 

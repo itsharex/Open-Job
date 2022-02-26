@@ -1,4 +1,4 @@
-package org.open.job.admin.dto.resp;
+package org.open.job.admin.dto.create;
 
 import lombok.Data;
 
@@ -13,12 +13,12 @@ import java.time.LocalDateTime;
  * @date 2021-09-06 10:10:03
  */
 @Data
-public class TaskLogRespDTO implements Serializable {
+public class OpenJobLogCreateDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;
 
-    private Long taskId;
+    private Long jobId;
 
     private Integer status;
 

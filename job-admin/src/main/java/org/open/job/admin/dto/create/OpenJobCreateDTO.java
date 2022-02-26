@@ -16,13 +16,13 @@ import java.time.LocalDateTime;
  * @date 2021-09-06 10:10:03
  */
 @Data
-public class TaskCreateDTO implements Serializable {
+public class OpenJobCreateDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;
 
-    @NotNull(message = "spiderId 不能为空")
-    private Long spiderId;
+    @NotNull(message = "handlerName 不能为空")
+    private String handlerName;
 
     @NotBlank(message = "cron 表达式不能为空")
     private String cronExpression;

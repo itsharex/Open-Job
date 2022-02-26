@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
  * @date 2021-09-06 10:10:03
  */
 @Data
-@TableName("task_log")
-public class TaskLogDO implements Serializable {
+@TableName("open_job_log")
+public class OpenJobLogDO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -25,15 +25,15 @@ public class TaskLogDO implements Serializable {
 	@TableId
 	private Long id;
 	/**
-	 * 爬虫 id
+	 * 任务 id
 	 */
-	private Long taskId;
+	private Long jobId;
 	/**
-	 * 爬虫执行状态（1 成功，0 失败）
+	 * 任务执行状态（1 成功，0 失败）
 	 */
 	private Integer status;
 	/**
-	 * 爬虫失败原因
+	 * 任务失败原因
 	 */
 	private String cause;
 	/**

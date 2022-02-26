@@ -2,7 +2,8 @@ package org.open.job.admin.schedule;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.open.job.admin.service.TaskService;
+import org.open.job.admin.dto.resp.OpenJobRespDTO;
+import org.open.job.admin.service.OpenJobService;
 import org.open.job.common.serialize.SerializationUtils;
 import org.open.job.core.Message;
 import org.open.job.core.exception.RpcException;
@@ -27,15 +28,19 @@ public class ScheduleJobExecutor implements ScheduleTaskExecutor {
     private ClusterInvokerFactory clusterInvokerFactory;
 
     @Autowired
-    private TaskService taskService;
+    private OpenJobService openJobService;
 
     @Override
     public void execute(List<Long> taskList){
+        List<OpenJobRespDTO> jobList = openJobService.selectList(taskList);
+        if (CollectionUtils.isEmpty(jobList)){
+            return;
+        }
         // 1 组装任务
-        List<Message> messages = taskList.stream().map(e->{
+        List<Message> messages = jobList.stream().map(e->{
             byte[] serializeData = SerializationUtils.serialize(e);
             Message message = new Message();
-            message.setMsgId(e);
+            message.setMsgId(e.getId());
             message.setBody(serializeData);
             return message;
         }).collect(Collectors.toList());

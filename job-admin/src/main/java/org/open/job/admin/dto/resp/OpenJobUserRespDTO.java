@@ -1,4 +1,5 @@
-package org.open.job.admin.dto.update;
+package org.open.job.admin.dto.resp;
+
 
 import lombok.Data;
 
@@ -6,30 +7,28 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 爬虫任务表
+ * 用户表
  *
  * @author lijunping
  * @email lijunping365@gmail.com
- * @date 2021-09-06 10:10:03
+ * @date 2021-06-22 15:20:30
  */
 @Data
-public class TaskUpdateDTO implements Serializable {
+public class OpenJobUserRespDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;
 
-    private Long spiderId;
+    private String username;
 
-    private String cronExpression;
+    private String password;
+
+    private String phone;
 
     private Integer status;
 
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;
-
-    private Long createUser;
-
-    private Long updateUser;
 
 }

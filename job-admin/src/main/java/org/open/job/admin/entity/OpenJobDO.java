@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
  * @date 2021-09-06 10:10:03
  */
 @Data
-@TableName("task")
-public class TaskDO implements Serializable {
+@TableName("open_job")
+public class OpenJobDO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
@@ -25,9 +25,9 @@ public class TaskDO implements Serializable {
     @TableId
     private Long id;
     /**
-     * 爬虫 id
+     * 绑定的 handler 的名字
      */
-    private Long spiderId;
+    private String handlerName;
     /**
      * cron 表达式
      */
