@@ -30,16 +30,10 @@ public class ClientInformation {
     @Setter
     private long onlineTime;
     /**
-     * last report time
-     */
-    @Setter
-    private long lastReportTime;
-    /**
      * this client status
      */
     @Setter
     private ClientStatus status;
-
     /**
      * node init weight
      */
