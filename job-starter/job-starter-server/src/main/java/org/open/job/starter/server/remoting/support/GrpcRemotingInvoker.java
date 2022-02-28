@@ -26,7 +26,10 @@ import java.util.concurrent.ThreadLocalRandom;
 @Slf4j
 public class GrpcRemotingInvoker implements RemotingInvoker {
 
-    private static final SnowflakeUtils SNOWFLAKE_UTILS = new SnowflakeUtils(ThreadLocalRandom.current().nextInt(1, 30), ThreadLocalRandom.current().nextInt(1, 30));
+    private static final SnowflakeUtils SNOWFLAKE_UTILS =
+            new SnowflakeUtils(
+                    ThreadLocalRandom.current().nextInt(1, 30),
+                    ThreadLocalRandom.current().nextInt(1, 30));
 
     @Override
     public void invoke(Message message, ClientInformation clientInformation) throws RpcException {
@@ -41,7 +44,7 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
             MessageResponseBody responseBody = JSON.parse(response.getBody(), MessageResponseBody.class);
             if (!MessageResponseStatus.SUCCESS.equals(responseBody.getStatus())) {
                 log.error("To the client: {}, the message is sent abnormally, and the message is recovered.", clientId);
-                throw new RpcException("rpc failed");
+                throw new RpcException(String.format("To the client: %s, the message is sent abnormally, and the message is recovered.", clientId));
             }
         } catch (StatusRuntimeException e) {
             Status.Code code = e.getStatus().getCode();
@@ -51,10 +54,13 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
                 ClientChannelManager.removeChannel(clientId);
                 log.error("The client is unavailable, and the cached channel is deleted.");
             }
-            throw new RpcException("rpc failed");
+            throw new RpcException(String.format("To the client: %s, exception when sending a message, Status Code: %s", clientId, code));
         } catch (Exception e) {
+            if (e instanceof RpcException){
+                return;
+            }
             log.error(e.getMessage(), e);
-            throw new RpcException("rpc failed");
+            throw new RpcException(e.getMessage());
         }
     }
 }
