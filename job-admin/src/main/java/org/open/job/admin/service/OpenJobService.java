@@ -32,4 +32,6 @@ public interface OpenJobService {
     boolean stop(Long id);
 
     boolean deleteById(Long id);
+
+    boolean run(Long id);
 }

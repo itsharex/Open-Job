@@ -5,6 +5,7 @@ import org.open.job.admin.dto.create.OpenJobLogCreateDTO;
 import org.open.job.admin.dto.req.OpenJobLogReqDTO;
 import org.open.job.admin.dto.resp.OpenJobLogRespDTO;
 import org.open.job.admin.dto.update.OpenJobLogUpdateDTO;
+import org.open.job.admin.schedule.JobLogEvent;
 import org.open.job.common.vo.PageResult;
 
 /**
@@ -20,11 +21,10 @@ public interface OpenJobLogService {
 
     OpenJobLogRespDTO getById(Long id);
 
-    boolean save(OpenJobLogCreateDTO OpenJobLogCreateDTO);
-
-    boolean updateById(OpenJobLogUpdateDTO OpenJobLogUpdateDTO);
+    void save(OpenJobLogCreateDTO OpenJobLogCreateDTO);
 
     boolean deleteById(Long id);
 
+    JobLogEvent createLog(Long jobId, String cause);
 }
 

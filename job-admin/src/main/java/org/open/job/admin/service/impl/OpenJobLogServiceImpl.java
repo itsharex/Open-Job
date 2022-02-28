@@ -3,21 +3,25 @@ package org.open.job.admin.service.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.lang3.StringUtils;
 import org.open.job.admin.convert.OpenJobLogConvert;
 import org.open.job.admin.dto.create.OpenJobLogCreateDTO;
 import org.open.job.admin.dto.req.OpenJobLogReqDTO;
 import org.open.job.admin.dto.resp.OpenJobLogRespDTO;
-import org.open.job.admin.dto.update.OpenJobLogUpdateDTO;
 import org.open.job.admin.entity.OpenJobLogDO;
 import org.open.job.admin.mapper.OpenJobLogMapper;
+import org.open.job.admin.schedule.JobLogEvent;
 import org.open.job.admin.service.OpenJobLogService;
+import org.open.job.common.enums.CommonStatusEnum;
 import org.open.job.common.vo.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 
 @Service
-public class OpenJobLogServiceImpl extends ServiceImpl<org.open.job.admin.mapper.OpenJobLogMapper, OpenJobLogDO> implements OpenJobLogService {
+public class OpenJobLogServiceImpl extends ServiceImpl<OpenJobLogMapper, OpenJobLogDO> implements OpenJobLogService {
 
     @Autowired
     private OpenJobLogMapper openJobLogMapper;
@@ -36,21 +40,24 @@ public class OpenJobLogServiceImpl extends ServiceImpl<org.open.job.admin.mapper
     }
 
     @Override
-    public boolean save(OpenJobLogCreateDTO OpenJobLogCreateDTO) {
+    public void save(OpenJobLogCreateDTO OpenJobLogCreateDTO) {
         openJobLogMapper.insert(OpenJobLogConvert.INSTANCE.convert(OpenJobLogCreateDTO));
-        return true;
-    }
-
-    @Override
-    public boolean updateById(OpenJobLogUpdateDTO OpenJobLogUpdateDTO) {
-        openJobLogMapper.updateById(OpenJobLogConvert.INSTANCE.convert(OpenJobLogUpdateDTO));
-        return true;
     }
 
     @Override
     public boolean deleteById(Long id) {
         openJobLogMapper.deleteById(id);
         return true;
+    }
+
+    @Override
+    public JobLogEvent createLog(Long jobId, String cause) {
+        OpenJobLogCreateDTO openJobLogCreateDTO = new OpenJobLogCreateDTO();
+        openJobLogCreateDTO.setJobId(jobId);
+        openJobLogCreateDTO.setStatus(StringUtils.isBlank(cause) ? CommonStatusEnum.YES.getValue() : CommonStatusEnum.NO.getValue());
+        openJobLogCreateDTO.setCause(cause);
+        openJobLogCreateDTO.setCreateTime(LocalDateTime.now());
+        return new JobLogEvent(this, openJobLogCreateDTO);
     }
 
 }

@@ -1,15 +1,15 @@
 package org.open.job.admin.schedule;
 
-
 import lombok.extern.slf4j.Slf4j;
 import org.open.job.admin.dto.resp.OpenJobRespDTO;
+import org.open.job.admin.service.OpenJobLogService;
 import org.open.job.admin.service.OpenJobService;
 import org.open.job.common.serialize.SerializationUtils;
 import org.open.job.core.Message;
 import org.open.job.core.exception.RpcException;
 import org.open.job.starter.schedule.executor.ScheduleTaskExecutor;
 import org.open.job.starter.server.cluster.ClusterInvokerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -22,13 +22,19 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Component
-public class ScheduleJobExecutor implements ScheduleTaskExecutor {
+public class ScheduleJobExecutor implements ScheduleTaskExecutor{
 
-    @Autowired
-    private ClusterInvokerFactory clusterInvokerFactory;
+    private final ApplicationEventPublisher applicationEventPublisher;
+    private final ClusterInvokerFactory clusterInvokerFactory;
+    private final OpenJobLogService openJobLogService;
+    private final OpenJobService openJobService;
 
-    @Autowired
-    private OpenJobService openJobService;
+    public ScheduleJobExecutor(ApplicationEventPublisher applicationEventPublisher, ClusterInvokerFactory clusterInvokerFactory, OpenJobLogService openJobLogService, OpenJobService openJobService) {
+        this.applicationEventPublisher = applicationEventPublisher;
+        this.clusterInvokerFactory = clusterInvokerFactory;
+        this.openJobLogService = openJobLogService;
+        this.openJobService = openJobService;
+    }
 
     @Override
     public void execute(List<Long> taskList){
@@ -47,12 +53,20 @@ public class ScheduleJobExecutor implements ScheduleTaskExecutor {
 
         // 2 分发任务
         messages.forEach(message->{
+            String cause = null;
             try {
                 clusterInvokerFactory.invoke(message);
             }catch (RpcException e){
                 log.error("远程调用失败：{}", e.getMessage());
+                cause = e.getMessage();
             }
+            createLog(message.getMsgId(), cause);
         });
+    }
 
+
+    private void createLog(Long jobId, String cause){
+        final JobLogEvent logEvent = openJobLogService.createLog(jobId, cause);
+        applicationEventPublisher.publishEvent(logEvent);
     }
 }
