@@ -27,7 +27,7 @@ public enum ClusterInvokeModelEnum {
 
     public static ClusterInvokeModelEnum of(String name){
         return Arrays.stream(values())
-                .filter(e-> StringUtils.equalsIgnoreCase(name, e.name()))
+                .filter(e-> StringUtils.equalsIgnoreCase(name, e.name))
                 .findFirst()
                 .orElseThrow(()-> new RpcException("No ClusterInvokeModelEnum find" + name));
     }
