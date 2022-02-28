@@ -19,7 +19,6 @@ public interface JobHandler {
      * Execute jobHandler
      *
      * @param message          The {@link Message} instance
-     * @return Return "true" after successful execution
      */
-    boolean handler(Message message);
+    void handler(Message message);
 }

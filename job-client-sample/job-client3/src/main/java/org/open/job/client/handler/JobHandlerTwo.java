@@ -20,8 +20,7 @@ public class JobHandlerTwo implements JobHandler {
     }
 
     @Override
-    public boolean handler(Message message) {
+    public void handler(Message message) {
         log.info("JobHandlerTwo 处理任务");
-        return true;
     }
 }

@@ -60,7 +60,8 @@ public class GRpcMessageHandler extends MessageServiceGrpc.MessageServiceImplBas
                 case MESSAGE:
                     String handlerName = requestBody.getHandlerName();
                     JobHandler jobHandler = jobHandlerManager.getJobHandler(handlerName);
-                    result = jobHandler.handler(message);
+                    jobHandler.handler(message);
+                    result = true;
                     break;
                 default:
                     throw new RpcException("UnSupport message packet" + command);
