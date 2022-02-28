@@ -12,6 +12,7 @@ import org.open.job.starter.server.enums.ClusterInvokeModelEnum;
 import org.open.job.starter.server.loadbalance.LoadBalance;
 import org.open.job.starter.server.remoting.RemotingInvoker;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -35,6 +36,9 @@ public class FailoverClusterInvoker extends AbstractClusterInvoker {
             remotingInvoker.invoke(message, clientInformation);
         } catch (RpcException e){
             clients.remove(clientInformation);
+            if (CollectionUtils.isEmpty(clients)){
+                throw new RpcException(e.getMessage());
+            }
             invoke(message, clients);
         }
     }
@@ -45,7 +49,7 @@ public class FailoverClusterInvoker extends AbstractClusterInvoker {
             try {
                 remotingInvoker.invoke(message, clientInformation);
                 if (ex != null){
-                    log.warn("Rpc invoke failed {}", ex.getMessage());
+                    throw new RpcException(ex.getMessage());
                 }
                 return;
             }catch (RpcException e){
