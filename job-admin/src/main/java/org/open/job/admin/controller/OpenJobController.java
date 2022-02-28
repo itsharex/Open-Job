@@ -63,4 +63,9 @@ public class OpenJobController {
     public Result<Boolean> stop(@PathVariable("id") Long id) {
         return Result.succeed(openJobService.stop(id));
     }
+
+    @PutMapping("/run/{id}")
+    public Result<Boolean> run(@PathVariable("id") Long id) {
+        return Result.succeed(openJobService.run(id));
+    }
 }
