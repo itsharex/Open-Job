@@ -7,13 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.open.job.admin.convert.OpenJobConvert;
 import org.open.job.admin.dto.create.OpenJobCreateDTO;
-import org.open.job.admin.dto.create.OpenJobLogCreateDTO;
 import org.open.job.admin.dto.req.OpenJobReqDTO;
 import org.open.job.admin.dto.resp.OpenJobRespDTO;
 import org.open.job.admin.dto.update.OpenJobUpdateDTO;
 import org.open.job.admin.entity.OpenJobDO;
 import org.open.job.admin.mapper.OpenJobMapper;
-import org.open.job.admin.schedule.JobLogEvent;
+import org.open.job.admin.event.JobLogEvent;
 import org.open.job.admin.service.OpenJobLogService;
 import org.open.job.admin.service.OpenJobService;
 import org.open.job.common.enums.CommonStatusEnum;
@@ -29,7 +28,6 @@ import org.open.job.starter.server.cluster.ClusterInvokerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 

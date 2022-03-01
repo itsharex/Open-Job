@@ -1,4 +1,4 @@
-package org.open.job.admin.schedule;
+package org.open.job.admin.event;
 
 import org.open.job.admin.dto.create.OpenJobLogCreateDTO;
 import org.open.job.admin.service.OpenJobLogService;

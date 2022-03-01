@@ -10,7 +10,7 @@ import org.open.job.admin.dto.req.OpenJobLogReqDTO;
 import org.open.job.admin.dto.resp.OpenJobLogRespDTO;
 import org.open.job.admin.entity.OpenJobLogDO;
 import org.open.job.admin.mapper.OpenJobLogMapper;
-import org.open.job.admin.schedule.JobLogEvent;
+import org.open.job.admin.event.JobLogEvent;
 import org.open.job.admin.service.OpenJobLogService;
 import org.open.job.common.enums.CommonStatusEnum;
 import org.open.job.common.vo.PageResult;
