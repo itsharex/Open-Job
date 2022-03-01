@@ -55,6 +55,8 @@ public class GrpcRemotingInvoker implements RemotingInvoker {
                 log.error("The client is unavailable, and the cached channel is deleted.");
             }
             throw new RpcException(String.format("To the client: %s, exception when sending a message, Status Code: %s", clientId, code));
+        } catch (Exception e) {
+            throw new RpcException("rpc failed:" + e.getMessage());
         }
     }
 }
