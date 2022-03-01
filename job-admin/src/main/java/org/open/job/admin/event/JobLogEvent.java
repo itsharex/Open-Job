@@ -1,4 +1,4 @@
-package org.open.job.admin.schedule;
+package org.open.job.admin.event;
 
 import lombok.Getter;
 import org.open.job.admin.dto.create.OpenJobLogCreateDTO;
@@ -9,7 +9,7 @@ import org.springframework.context.ApplicationEvent;
  */
 @Getter
 public class JobLogEvent extends ApplicationEvent {
-    private OpenJobLogCreateDTO jobLogCreateDTO;
+    private final OpenJobLogCreateDTO jobLogCreateDTO;
 
 
     /**

@@ -2,6 +2,7 @@ package org.open.job.admin.schedule;
 
 import lombok.extern.slf4j.Slf4j;
 import org.open.job.admin.dto.resp.OpenJobRespDTO;
+import org.open.job.admin.event.JobLogEvent;
 import org.open.job.admin.service.OpenJobLogService;
 import org.open.job.admin.service.OpenJobService;
 import org.open.job.common.serialize.SerializationUtils;
@@ -57,7 +58,6 @@ public class ScheduleJobExecutor implements ScheduleTaskExecutor{
             try {
                 clusterInvokerFactory.invoke(message);
             }catch (RpcException e){
-                log.error("远程调用失败：{}", e.getMessage());
                 cause = e.getMessage();
             }
             createLog(message.getMsgId(), cause);
