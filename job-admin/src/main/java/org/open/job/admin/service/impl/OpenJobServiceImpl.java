@@ -1,5 +1,6 @@
 package org.open.job.admin.service.impl;
 
+import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -28,6 +29,8 @@ import org.open.job.starter.server.cluster.ClusterInvokerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -120,6 +123,25 @@ public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> im
         message.setMsgId(openJobDO.getId());
         message.setBody(serializeData);
         return dispatchJob(message);
+    }
+
+    @Override
+    public List<String> nextTriggerTime(String cronExpress) {
+        List<String> result = new ArrayList<>();
+        try {
+            Date lastTime = new Date();
+            for (int i = 0; i < 5; i++) {
+                lastTime = new CronExpression(cronExpress).getNextValidTimeAfter(lastTime);
+                if (lastTime != null) {
+                    result.add(DateUtil.formatDateTime(lastTime));
+                } else {
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            result.add(e.getMessage());
+        }
+        return result;
     }
 
     private ScheduleTask createScheduleTask(OpenJobDO OpenJobDO){

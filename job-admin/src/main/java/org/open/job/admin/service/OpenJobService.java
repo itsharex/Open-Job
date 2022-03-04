@@ -34,4 +34,6 @@ public interface OpenJobService {
     boolean deleteById(Long id);
 
     boolean run(Long id);
+
+    List<String> nextTriggerTime(String cronExpress);
 }
