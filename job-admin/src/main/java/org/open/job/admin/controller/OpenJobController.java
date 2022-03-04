@@ -12,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * 任务表
@@ -67,5 +68,10 @@ public class OpenJobController {
     @PutMapping("/run/{id}")
     public Result<Boolean> run(@PathVariable("id") Long id) {
         return Result.succeed(openJobService.run(id));
+    }
+
+    @GetMapping("/nextTriggerTime")
+    public Result<List<String>> nextTriggerTime(@RequestParam("cronExpress") String cronExpress){
+        return Result.succeed(openJobService.nextTriggerTime(cronExpress));
     }
 }
