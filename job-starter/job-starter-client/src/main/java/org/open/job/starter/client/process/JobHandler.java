@@ -18,7 +18,7 @@ public interface JobHandler {
     /**
      * Execute jobHandler
      *
-     * @param message          The {@link Message} instance
+     * @param params params
      */
-    void handler(Message message);
+    void handler(String params);
 }

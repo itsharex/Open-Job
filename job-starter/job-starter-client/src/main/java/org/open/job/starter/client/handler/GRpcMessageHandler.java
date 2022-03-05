@@ -5,7 +5,9 @@ import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.open.job.common.json.JSON;
+import org.open.job.common.serialize.SerializationUtils;
 import org.open.job.core.Message;
+import org.open.job.core.MessageBody;
 import org.open.job.core.PacketType;
 import org.open.job.core.exception.RpcException;
 import org.open.job.core.grpc.MessageServiceGrpc;
@@ -58,9 +60,10 @@ public class GRpcMessageHandler extends MessageServiceGrpc.MessageServiceImplBas
                     result = registryService.deRegister(clientInfo[0], Integer.parseInt(clientInfo[1]));
                     break;
                 case MESSAGE:
-                    String handlerName = requestBody.getHandlerName();
-                    JobHandler jobHandler = jobHandlerManager.getJobHandler(handlerName);
-                    jobHandler.handler(message);
+                    final byte[] body = message.getBody();
+                    final MessageBody messageBody = SerializationUtils.deserialize(body, MessageBody.class);
+                    JobHandler jobHandler = jobHandlerManager.getJobHandler(messageBody.getHandlerName());
+                    jobHandler.handler(messageBody.getParams());
                     result = true;
                     break;
                 default:

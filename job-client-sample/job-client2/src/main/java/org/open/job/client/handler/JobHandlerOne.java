@@ -2,7 +2,6 @@ package org.open.job.client.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.open.job.client.constants.JobHandlerNameConstants;
-import org.open.job.core.Message;
 import org.open.job.starter.client.process.JobHandler;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +18,7 @@ public class JobHandlerOne implements JobHandler {
     }
 
     @Override
-    public void handler(Message message) {
+    public void handler(String params) {
         log.info("JobHandlerOne 处理任务");
     }
 }
