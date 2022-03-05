@@ -1,12 +1,13 @@
 package org.open.job.admin.schedule;
 
 import lombok.extern.slf4j.Slf4j;
-import org.open.job.admin.dto.resp.OpenJobRespDTO;
+import org.open.job.admin.entity.OpenJobDO;
 import org.open.job.admin.event.JobLogEvent;
+import org.open.job.admin.mapper.OpenJobMapper;
 import org.open.job.admin.service.OpenJobLogService;
-import org.open.job.admin.service.OpenJobService;
 import org.open.job.common.serialize.SerializationUtils;
 import org.open.job.core.Message;
+import org.open.job.core.MessageBody;
 import org.open.job.core.exception.RpcException;
 import org.open.job.starter.schedule.executor.ScheduleTaskExecutor;
 import org.open.job.starter.server.cluster.ClusterInvokerFactory;
@@ -28,24 +29,27 @@ public class ScheduleJobExecutor implements ScheduleTaskExecutor{
     private final ApplicationEventPublisher applicationEventPublisher;
     private final ClusterInvokerFactory clusterInvokerFactory;
     private final OpenJobLogService openJobLogService;
-    private final OpenJobService openJobService;
+    private final OpenJobMapper openJobMapper;
 
-    public ScheduleJobExecutor(ApplicationEventPublisher applicationEventPublisher, ClusterInvokerFactory clusterInvokerFactory, OpenJobLogService openJobLogService, OpenJobService openJobService) {
+    public ScheduleJobExecutor(ApplicationEventPublisher applicationEventPublisher, ClusterInvokerFactory clusterInvokerFactory, OpenJobLogService openJobLogService, OpenJobMapper openJobMapper) {
         this.applicationEventPublisher = applicationEventPublisher;
         this.clusterInvokerFactory = clusterInvokerFactory;
         this.openJobLogService = openJobLogService;
-        this.openJobService = openJobService;
+        this.openJobMapper = openJobMapper;
     }
 
     @Override
     public void execute(List<Long> taskList){
-        List<OpenJobRespDTO> jobList = openJobService.selectList(taskList);
+        List<OpenJobDO> jobList = openJobMapper.queryList(taskList);
         if (CollectionUtils.isEmpty(jobList)){
             return;
         }
         // 1 组装任务
         List<Message> messages = jobList.stream().map(e->{
-            byte[] serializeData = SerializationUtils.serialize(e);
+            MessageBody messageBody = new MessageBody();
+            messageBody.setHandlerName(e.getHandlerName());
+            messageBody.setParams(e.getParams());
+            byte[] serializeData = SerializationUtils.serialize(messageBody);
             Message message = new Message();
             message.setMsgId(e.getId());
             message.setBody(serializeData);

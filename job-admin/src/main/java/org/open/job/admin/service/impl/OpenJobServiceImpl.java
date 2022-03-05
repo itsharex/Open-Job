@@ -4,7 +4,6 @@ import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.open.job.admin.convert.OpenJobConvert;
 import org.open.job.admin.dto.create.OpenJobCreateDTO;
@@ -13,20 +12,14 @@ import org.open.job.admin.dto.resp.OpenJobRespDTO;
 import org.open.job.admin.dto.update.OpenJobUpdateDTO;
 import org.open.job.admin.entity.OpenJobDO;
 import org.open.job.admin.mapper.OpenJobMapper;
-import org.open.job.admin.event.JobLogEvent;
-import org.open.job.admin.service.OpenJobLogService;
 import org.open.job.admin.service.OpenJobService;
 import org.open.job.common.enums.CommonStatusEnum;
 import org.open.job.common.exception.ServiceException;
-import org.open.job.common.serialize.SerializationUtils;
 import org.open.job.common.vo.PageResult;
-import org.open.job.core.Message;
-import org.open.job.core.exception.RpcException;
 import org.open.job.starter.schedule.core.ScheduleTaskManage;
 import org.open.job.starter.schedule.cron.CronExpression;
 import org.open.job.starter.schedule.domain.ScheduleTask;
-import org.open.job.starter.server.cluster.ClusterInvokerFactory;
-import org.springframework.context.ApplicationEventPublisher;
+import org.open.job.starter.schedule.executor.ScheduleTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -37,27 +30,22 @@ import java.util.List;
 /**
  * @author lijunping on 2022/2/17
  */
-@Slf4j
 @Service
 public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> implements OpenJobService {
 
-    private final ApplicationEventPublisher applicationEventPublisher;
-    private final ClusterInvokerFactory clusterInvokerFactory;
+    private final ScheduleTaskExecutor scheduleTaskExecutor;
     private final ScheduleTaskManage scheduleTaskManage;
-    private final OpenJobLogService openJobLogService;
     private final OpenJobMapper openJobMapper;
 
-    public OpenJobServiceImpl(ApplicationEventPublisher applicationEventPublisher, ClusterInvokerFactory clusterInvokerFactory, ScheduleTaskManage scheduleTaskManage, OpenJobLogService openJobLogService, OpenJobMapper openJobMapper) {
-        this.applicationEventPublisher = applicationEventPublisher;
-        this.clusterInvokerFactory = clusterInvokerFactory;
+    public OpenJobServiceImpl(ScheduleTaskExecutor scheduleTaskExecutor, ScheduleTaskManage scheduleTaskManage, OpenJobMapper openJobMapper) {
+        this.scheduleTaskExecutor = scheduleTaskExecutor;
         this.scheduleTaskManage = scheduleTaskManage;
-        this.openJobLogService = openJobLogService;
         this.openJobMapper = openJobMapper;
     }
 
     @Override
-    public PageResult<OpenJobRespDTO> selectPage(OpenJobReqDTO OpenJobReqDTO) {
-        Page<OpenJobDO> page = openJobMapper.queryPage(OpenJobReqDTO);
+    public PageResult<OpenJobRespDTO> selectPage(OpenJobReqDTO openJobReqDTO) {
+        Page<OpenJobDO> page = openJobMapper.queryPage(openJobReqDTO);
         IPage<OpenJobRespDTO> convert = page.convert(OpenJobConvert.INSTANCE::convert);
         return PageResult.build(convert);
     }
@@ -75,29 +63,40 @@ public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> im
     }
 
     @Override
-    public boolean save(OpenJobCreateDTO OpenJobCreateDTO) {
-        String cronExpression = OpenJobCreateDTO.getCronExpression();
+    public boolean save(OpenJobCreateDTO openJobCreateDTO) {
+        String cronExpression = openJobCreateDTO.getCronExpression();
         if (!CronExpression.isValidExpression(cronExpression)){
             throw new ServiceException("Invalid cronExpression");
         }
-        openJobMapper.insert(OpenJobConvert.INSTANCE.convert(OpenJobCreateDTO));
-        return true;
+        int insert = openJobMapper.insert(OpenJobConvert.INSTANCE.convert(openJobCreateDTO));
+        return insert != 0;
     }
 
     @Override
-    public boolean updateById(OpenJobUpdateDTO OpenJobUpdateDTO) {
-        openJobMapper.updateById(OpenJobConvert.INSTANCE.convert(OpenJobUpdateDTO));
-        return true;
+    public boolean updateById(OpenJobUpdateDTO openJobUpdateDTO) {
+        OpenJobDO openJobDO = openJobMapper.selectById(openJobUpdateDTO.getId());
+        OpenJobDO convert = OpenJobConvert.INSTANCE.convert(openJobUpdateDTO);
+        int update = openJobMapper.updateById(convert);
+        updateScheduleTask(openJobDO, convert);
+        return update != 0;
+    }
+
+    private void updateScheduleTask(OpenJobDO openJobDO, OpenJobDO convert){
+        boolean status = openJobDO.getStatus().equals(CommonStatusEnum.YES.getValue());
+        boolean equals = StringUtils.equals(openJobDO.getCronExpression(), convert.getCronExpression());
+        if (!equals && status){
+            ScheduleTask scheduleTask = createScheduleTask(convert);
+            scheduleTaskManage.addScheduleTask(scheduleTask);
+        }
     }
 
     @Override
     public boolean start(Long id) {
-        OpenJobDO OpenJobDO = openJobMapper.selectById(id);
-        OpenJobDO.setStatus(CommonStatusEnum.YES.getValue());
-        openJobMapper.updateById(OpenJobDO);
-        ScheduleTask scheduleTask = createScheduleTask(OpenJobDO);
-        scheduleTaskManage.addOrUpdateScheduleTask(scheduleTask);
-        return true;
+        OpenJobDO openJobDO = openJobMapper.selectById(id);
+        openJobDO.setStatus(CommonStatusEnum.YES.getValue());
+        openJobMapper.updateById(openJobDO);
+        ScheduleTask scheduleTask = createScheduleTask(openJobDO);
+        return scheduleTaskManage.addScheduleTask(scheduleTask);
     }
 
     @Override
@@ -105,8 +104,7 @@ public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> im
         OpenJobDO OpenJobDO = openJobMapper.selectById(id);
         OpenJobDO.setStatus(CommonStatusEnum.NO.getValue());
         openJobMapper.updateById(OpenJobDO);
-        scheduleTaskManage.removeScheduleTask(id);
-        return true;
+        return scheduleTaskManage.removeScheduleTask(id);
     }
 
     @Override
@@ -117,12 +115,8 @@ public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> im
 
     @Override
     public boolean run(Long id) {
-        OpenJobDO openJobDO = openJobMapper.selectById(id);
-        byte[] serializeData = SerializationUtils.serialize(openJobDO);
-        Message message = new Message();
-        message.setMsgId(openJobDO.getId());
-        message.setBody(serializeData);
-        return dispatchJob(message);
+        scheduleTaskExecutor.execute(List.of(id));
+        return true;
     }
 
     @Override
@@ -144,27 +138,10 @@ public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> im
         return result;
     }
 
-    private ScheduleTask createScheduleTask(OpenJobDO OpenJobDO){
+    private ScheduleTask createScheduleTask(OpenJobDO openJobDO){
         ScheduleTask scheduleTask = new ScheduleTask();
-        scheduleTask.setTaskId(OpenJobDO.getId());
-        scheduleTask.setCronExpression(OpenJobDO.getCronExpression());
+        scheduleTask.setTaskId(openJobDO.getId());
+        scheduleTask.setCronExpression(openJobDO.getCronExpression());
         return scheduleTask;
-    }
-
-    private boolean dispatchJob(Message message){
-        String cause = null;
-        try {
-            clusterInvokerFactory.invoke(message);
-        }catch (RpcException e){
-            log.error("远程调用失败：{}", e.getMessage());
-            cause = e.getMessage();
-        }
-        createLog(message.getMsgId(), cause);
-        return StringUtils.isBlank(cause);
-    }
-
-    private void createLog(Long jobId, String cause){
-        final JobLogEvent logEvent = openJobLogService.createLog(jobId, cause);
-        applicationEventPublisher.publishEvent(logEvent);
     }
 }
