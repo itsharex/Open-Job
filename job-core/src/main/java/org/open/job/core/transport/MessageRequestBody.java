@@ -19,10 +19,6 @@ public class MessageRequestBody {
      */
     private String clientId;
     /**
-     * The name of JobHandler
-     */
-    private String handlerName;
-    /**
      * The message subject of this consumption
      */
     private Message message;

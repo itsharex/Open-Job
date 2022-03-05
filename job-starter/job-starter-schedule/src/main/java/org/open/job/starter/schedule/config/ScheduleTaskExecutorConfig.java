@@ -1,6 +1,6 @@
 package org.open.job.starter.schedule.config;
 
-import org.open.job.starter.schedule.core.RedisScheduleTaskManage;
+import org.open.job.starter.schedule.core.support.RedisScheduleTaskManage;
 import org.open.job.starter.schedule.core.ScheduleTaskManage;
 import org.open.job.starter.schedule.executor.DefaultScheduleTaskExecutor;
 import org.open.job.starter.schedule.executor.ScheduleTaskExecutor;

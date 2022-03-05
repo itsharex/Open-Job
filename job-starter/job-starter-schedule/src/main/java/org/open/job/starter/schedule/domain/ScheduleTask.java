@@ -9,7 +9,7 @@ import java.io.Serializable;
  */
 @Data
 public class ScheduleTask implements Serializable {
-
+    private static final long serialVersionUID = -1936628567018899417L;
     /**
      * 任务 id
      */

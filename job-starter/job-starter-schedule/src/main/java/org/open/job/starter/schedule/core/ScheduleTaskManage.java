@@ -10,11 +10,11 @@ import java.util.List;
 public interface ScheduleTaskManage {
 
     /**
-     * 添加或更新任务
+     * 添加任务
      * @param scheduleTask
      * @return
      */
-    Boolean addOrUpdateScheduleTask(ScheduleTask scheduleTask);
+    Boolean addScheduleTask(ScheduleTask scheduleTask);
 
     /**
      * 移除任务

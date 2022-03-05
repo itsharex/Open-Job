@@ -1,7 +1,8 @@
-package org.open.job.starter.schedule.core;
+package org.open.job.starter.schedule.core.support;
 
 import lombok.extern.slf4j.Slf4j;
 import org.open.job.common.serialize.SerializationUtils;
+import org.open.job.starter.schedule.core.AbstractScheduleTaskManage;
 import org.open.job.starter.schedule.domain.ScheduleTask;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -34,7 +35,7 @@ public class RedisScheduleTaskManage extends AbstractScheduleTaskManage implemen
     }
 
     @Override
-    public Boolean addOrUpdateScheduleTask(ScheduleTask scheduleTask) {
+    public Boolean addScheduleTask(ScheduleTask scheduleTask) {
         long nextTriggerTime = generateNextValidTime(scheduleTask.getCronExpression());
         redisTemplate.execute((RedisCallback<Object>) connection -> {
             final byte[] hField = SerializationUtils.serialize(scheduleTask.getTaskId());
