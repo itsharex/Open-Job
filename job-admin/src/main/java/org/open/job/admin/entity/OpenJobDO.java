@@ -41,6 +41,10 @@ public class OpenJobDO implements Serializable {
      */
     private Integer status;
     /**
+     * 任务参数 json 字符串
+     */
+    private String params;
+    /**
      * 任务创建时间
      */
     private LocalDateTime createTime;

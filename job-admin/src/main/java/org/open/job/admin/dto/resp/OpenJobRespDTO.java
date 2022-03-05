@@ -26,6 +26,8 @@ public class OpenJobRespDTO implements Serializable {
 
     private Integer status;
 
+    private String params;
+
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;

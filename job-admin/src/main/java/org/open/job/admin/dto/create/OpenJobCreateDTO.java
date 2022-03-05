@@ -32,6 +32,8 @@ public class OpenJobCreateDTO implements Serializable {
 
     private Integer status;
 
+    private String params;
+
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;
