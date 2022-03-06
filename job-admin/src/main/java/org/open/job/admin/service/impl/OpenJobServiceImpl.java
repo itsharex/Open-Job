@@ -57,12 +57,6 @@ public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> im
     }
 
     @Override
-    public List<OpenJobRespDTO> selectList(List<Long> taskList) {
-        List<OpenJobDO> jobDOS = openJobMapper.queryList(taskList);
-        return OpenJobConvert.INSTANCE.convertList(jobDOS);
-    }
-
-    @Override
     public boolean save(OpenJobCreateDTO openJobCreateDTO) {
         String cronExpression = openJobCreateDTO.getCronExpression();
         if (!CronExpression.isValidExpression(cronExpression)){

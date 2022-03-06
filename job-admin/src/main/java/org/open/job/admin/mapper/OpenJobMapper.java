@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.open.job.admin.dto.req.OpenJobReqDTO;
 import org.open.job.admin.entity.OpenJobDO;
-import org.open.job.common.enums.CommonStatusEnum;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -27,16 +26,8 @@ public interface OpenJobMapper extends BaseMapper<OpenJobDO> {
                 .between(Objects.nonNull(OpenJobReqDTO.getBeginTime()), OpenJobDO::getCreateTime, OpenJobReqDTO.getBeginTime(), OpenJobReqDTO.getEndTime()));
     }
 
-    default List<OpenJobDO> queryActiveTaskList(){
-        return selectList(Wrappers.<OpenJobDO>lambdaQuery()
-                .eq(OpenJobDO::getStatus, CommonStatusEnum.YES.getValue())
-        );
-    }
-
     default List<OpenJobDO> queryList(List<Long> taskList){
         return selectList(Wrappers.<OpenJobDO>lambdaQuery()
-                .select(OpenJobDO::getId)
-                .select(OpenJobDO::getHandlerName)
                 .in(OpenJobDO::getId, taskList));
     }
 }

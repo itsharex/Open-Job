@@ -21,8 +21,6 @@ public interface OpenJobService {
 
     OpenJobRespDTO getById(Long id);
 
-    List<OpenJobRespDTO> selectList(List<Long> taskList);
-
     boolean save(OpenJobCreateDTO OpenJobCreateDTO);
 
     boolean updateById(OpenJobUpdateDTO OpenJobUpdateDTO);
