@@ -23,7 +23,5 @@ public interface OpenJobLogService {
     void save(OpenJobLogCreateDTO OpenJobLogCreateDTO);
 
     boolean deleteById(Long id);
-
-    JobLogEvent createLog(Long jobId, String cause);
 }
 

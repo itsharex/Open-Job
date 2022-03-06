@@ -1,10 +1,12 @@
 package org.open.job.admin.schedule;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.open.job.admin.dto.create.OpenJobLogCreateDTO;
 import org.open.job.admin.entity.OpenJobDO;
 import org.open.job.admin.event.JobLogEvent;
 import org.open.job.admin.mapper.OpenJobMapper;
-import org.open.job.admin.service.OpenJobLogService;
+import org.open.job.common.enums.CommonStatusEnum;
 import org.open.job.common.serialize.SerializationUtils;
 import org.open.job.core.Message;
 import org.open.job.core.MessageBody;
@@ -15,6 +17,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,13 +31,11 @@ public class ScheduleJobExecutor implements ScheduleTaskExecutor{
 
     private final ApplicationEventPublisher applicationEventPublisher;
     private final ClusterInvokerFactory clusterInvokerFactory;
-    private final OpenJobLogService openJobLogService;
     private final OpenJobMapper openJobMapper;
 
-    public ScheduleJobExecutor(ApplicationEventPublisher applicationEventPublisher, ClusterInvokerFactory clusterInvokerFactory, OpenJobLogService openJobLogService, OpenJobMapper openJobMapper) {
+    public ScheduleJobExecutor(ApplicationEventPublisher applicationEventPublisher, ClusterInvokerFactory clusterInvokerFactory, OpenJobMapper openJobMapper) {
         this.applicationEventPublisher = applicationEventPublisher;
         this.clusterInvokerFactory = clusterInvokerFactory;
-        this.openJobLogService = openJobLogService;
         this.openJobMapper = openJobMapper;
     }
 
@@ -70,7 +71,12 @@ public class ScheduleJobExecutor implements ScheduleTaskExecutor{
 
 
     private void createLog(Long jobId, String cause){
-        final JobLogEvent logEvent = openJobLogService.createLog(jobId, cause);
+        OpenJobLogCreateDTO openJobLogCreateDTO = new OpenJobLogCreateDTO();
+        openJobLogCreateDTO.setJobId(jobId);
+        openJobLogCreateDTO.setStatus(StringUtils.isBlank(cause) ? CommonStatusEnum.YES.getValue() : CommonStatusEnum.NO.getValue());
+        openJobLogCreateDTO.setCause(cause);
+        openJobLogCreateDTO.setCreateTime(LocalDateTime.now());
+        JobLogEvent logEvent = new JobLogEvent(this, openJobLogCreateDTO);
         applicationEventPublisher.publishEvent(logEvent);
     }
 }

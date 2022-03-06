@@ -49,15 +49,4 @@ public class OpenJobLogServiceImpl extends ServiceImpl<OpenJobLogMapper, OpenJob
         openJobLogMapper.deleteById(id);
         return true;
     }
-
-    @Override
-    public JobLogEvent createLog(Long jobId, String cause) {
-        OpenJobLogCreateDTO openJobLogCreateDTO = new OpenJobLogCreateDTO();
-        openJobLogCreateDTO.setJobId(jobId);
-        openJobLogCreateDTO.setStatus(StringUtils.isBlank(cause) ? CommonStatusEnum.YES.getValue() : CommonStatusEnum.NO.getValue());
-        openJobLogCreateDTO.setCause(cause);
-        openJobLogCreateDTO.setCreateTime(LocalDateTime.now());
-        return new JobLogEvent(this, openJobLogCreateDTO);
-    }
-
 }
