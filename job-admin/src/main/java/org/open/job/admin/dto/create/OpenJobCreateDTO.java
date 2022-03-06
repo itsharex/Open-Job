@@ -30,9 +30,9 @@ public class OpenJobCreateDTO implements Serializable {
     @NotBlank(message = "cron 表达式不能为空")
     private String cronExpression;
 
-    private Integer status;
-
     private String params;
+
+    private Integer status;
 
     private LocalDateTime createTime;
 

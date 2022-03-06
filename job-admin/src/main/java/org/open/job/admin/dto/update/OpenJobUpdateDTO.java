@@ -24,9 +24,9 @@ public class OpenJobUpdateDTO implements Serializable {
 
     private String cronExpression;
 
-    private Integer status;
-
     private String params;
+
+    private Integer status;
 
     private LocalDateTime createTime;
 

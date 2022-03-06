@@ -11,7 +11,7 @@
  Target Server Version : 80017
  File Encoding         : 65001
 
- Date: 27/02/2022 10:16:01
+ Date: 06/03/2022 09:40:41
 */
 
 SET NAMES utf8mb4;
@@ -26,7 +26,8 @@ CREATE TABLE `open_job`  (
   `job_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '任务名称',
   `handler_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '绑定的 handler 的名字',
   `cron_expression` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'cron 表达式',
-  `status` tinyint(4) NOT NULL COMMENT '任务执行状态（1 启动，0 停止）',
+  `params` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '参数',
+  `status` tinyint(4) NOT NULL DEFAULT 0 COMMENT '任务执行状态（1 启动，0 停止）',
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '任务创建时间',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '任务更新时间',
   `create_user` bigint(20) NULL DEFAULT NULL COMMENT '任务创建人',
@@ -37,7 +38,7 @@ CREATE TABLE `open_job`  (
 -- ----------------------------
 -- Records of open_job
 -- ----------------------------
-INSERT INTO `open_job` VALUES (1, '测试任务', 'job-one', '0/5 * * * * ? *', 0, '2021-09-29 16:51:32', '2021-09-29 16:51:35', 1, 1);
+INSERT INTO `open_job` VALUES (1, '测试任务', 'job-one', '0/5 * * * * ? *', NULL, 0, '2021-09-29 16:51:32', '2021-09-29 16:51:35', 1, 1);
 
 -- ----------------------------
 -- Table structure for open_job_log
@@ -45,12 +46,12 @@ INSERT INTO `open_job` VALUES (1, '测试任务', 'job-one', '0/5 * * * * ? *', 
 DROP TABLE IF EXISTS `open_job_log`;
 CREATE TABLE `open_job_log`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `job_id` bigint(20) NULL DEFAULT NULL COMMENT '任务 id',
+  `job_id` bigint(20) NOT NULL COMMENT '任务 id',
   `status` tinyint(4) NULL DEFAULT NULL COMMENT '任务状态',
   `cause` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '失败原因',
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for open_job_user

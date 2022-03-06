@@ -37,13 +37,13 @@ public class OpenJobDO implements Serializable {
      */
     private String cronExpression;
     /**
-     * 任务执行状态（1 启动，0 停止）
-     */
-    private Integer status;
-    /**
      * 任务参数 json 字符串
      */
     private String params;
+    /**
+     * 任务执行状态（1 启动，0 停止）
+     */
+    private Integer status;
     /**
      * 任务创建时间
      */
