@@ -1,6 +1,6 @@
 # Open-Job
 
-🔥开源分布式任务调度系统
+🔥开源分布式任务调度系统，[https://lijunping365.github.io/#/][项目官方文档地址]
 
 ## 🎨 Open-Job 介绍
 
@@ -77,3 +77,6 @@
 使用文档及功能说明会在后续补充上
 
 欢迎 star，欢迎讨论交流，欢迎分享此项目
+
+
+[]: https://lijunping365.github.io/#/
