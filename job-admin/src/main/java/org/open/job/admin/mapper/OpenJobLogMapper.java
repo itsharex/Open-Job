@@ -19,9 +19,12 @@ import java.util.Objects;
 @Repository
 public interface OpenJobLogMapper extends BaseMapper<OpenJobLogDO> {
 
-    default Page<OpenJobLogDO> queryPage(OpenJobLogReqDTO OpenJobLogReqDTO){
-        return selectPage(OpenJobLogReqDTO.page(), Wrappers.<OpenJobLogDO>lambdaQuery()
-            .eq(Objects.nonNull(OpenJobLogReqDTO.getJobId()), OpenJobLogDO::getJobId, OpenJobLogReqDTO.getJobId())
-            .between(Objects.nonNull(OpenJobLogReqDTO.getBeginTime()), OpenJobLogDO::getCreateTime, OpenJobLogReqDTO.getBeginTime(), OpenJobLogReqDTO.getEndTime()));
+    default Page<OpenJobLogDO> queryPage(OpenJobLogReqDTO openJobLogReqDTO){
+        return selectPage(openJobLogReqDTO.page(), Wrappers.<OpenJobLogDO>lambdaQuery()
+            .eq(Objects.nonNull(openJobLogReqDTO.getJobId()), OpenJobLogDO::getJobId, openJobLogReqDTO.getJobId())
+            .eq(Objects.nonNull(openJobLogReqDTO.getStatus()), OpenJobLogDO::getStatus, openJobLogReqDTO.getStatus())
+            .between(Objects.nonNull(openJobLogReqDTO.getBeginTime()), OpenJobLogDO::getCreateTime, openJobLogReqDTO.getBeginTime(), openJobLogReqDTO.getEndTime())
+            .orderByDesc(OpenJobLogDO::getCreateTime)
+        );
     }
 }
