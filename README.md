@@ -1,6 +1,6 @@
 # Open-Job
 
-开源分布式任务调度系统
+🔥开源分布式任务调度系统
 
 ## 🎨 Open-Job 介绍
 
@@ -58,7 +58,7 @@
 
 <br/>
 <div align="center">
-    <a href="https://github.com/fuzhengwei/CodeGuide">关注公众号，你可以学到的更多！</a>
+    <a href="https://github.com/lijunping365/Open-Job">关注公众号，你可以学到的更多！</a>
 </div>
 <br/>  
 
