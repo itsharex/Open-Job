@@ -36,10 +36,61 @@ sql 文件在 doc/open_job.sql
 
 ### 2 搭建任务执行模块
 
-
+创建任务执行模块可按照项目中客户端示例工程搭建
 
 1. 在任务执行项目中加入以下依赖
 
+```xml
+<dependency>
+    <groupId>org.open.job</groupId>
+    <artifactId>job-starter-client</artifactId>
+    <version>1.0-SNAPSHOT</version>
+</dependency>
+```
+
+2. 创建任务执行类并实现 JobHandler
+
+示例1
+
+```java
+@Slf4j
+@Component
+public class JobHandlerOne implements JobHandler {
+
+    @Override
+    public String bindingJobHandlerName() {
+        return JobHandlerNameConstants.JOB_ONE;
+    }
+    
+    @Override
+    public void handler(String params) {
+        log.info("JobHandlerOne 处理任务");
+    }
+}
+```
+
+示例2
+
+```java
+@Slf4j
+@Component
+public class JobHandlerTwo implements JobHandler {
+
+    @Override
+    public String bindingJobHandlerName() {
+        return JobHandlerNameConstants.JOB_TWO;
+    }
+
+    @Override
+    public void handler(String params) {
+        log.info("JobHandlerTwo 处理任务");
+    }
+}
+```
+
+注意：
+
+1. handler 方法的参数 params 为 json 字符串格式，可进行 json 序列化
 
 ## 🔨 目前还未完成的功能
 
