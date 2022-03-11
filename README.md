@@ -32,7 +32,15 @@ git clone https://github.com/lijunping365/Open-Job.git
 
 sql 文件在 doc/open_job.sql
 
-3. 在任务
+3. 下载前端项目
+
+git clone https://github.com/lijunping365/Open-Job-Admin.git
+
+需安装 node.js，
+
+4. 启动服务端，启动前端项目
+
+登录任务管理系统创建任务，之后便可以进行任务管理了
 
 ### 2 搭建任务执行模块
 
@@ -91,6 +99,10 @@ public class JobHandlerTwo implements JobHandler {
 注意：
 
 1. handler 方法的参数 params 为 json 字符串格式，可进行 json 序列化
+
+2. 启动后端服务端与后端客户端无先后顺序
+
+3. 详细说明请参阅官方文档：https://lijunping365.github.io/#/
 
 ## 🔨 目前还未完成的功能
 
