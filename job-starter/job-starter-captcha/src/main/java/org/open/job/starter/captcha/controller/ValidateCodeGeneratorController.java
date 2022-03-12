@@ -32,8 +32,8 @@ public class ValidateCodeGeneratorController {
    * @param captchaGenerateRequest
    * @throws Exception
    */
-  @PostMapping(CaptchaConstants.DEFAULT_VALIDATE_CODE_URL_PREFIX + "/{type}")
-  public void createCode(@PathVariable String type, @RequestBody @Valid CaptchaGenerateRequest captchaGenerateRequest) throws Exception {
+  @PostMapping(CaptchaConstants.DEFAULT_VALIDATE_CODE_URL_PREFIX)
+  public void createCode(@RequestBody @Valid CaptchaGenerateRequest captchaGenerateRequest) throws Exception {
     validateCodeProcessorHolder.findValidateCodeProcessor(ValidateCodeType.getValidateCodeType(captchaGenerateRequest.getType())).create(captchaGenerateRequest);
   }
 
