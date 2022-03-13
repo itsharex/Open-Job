@@ -20,10 +20,12 @@ import java.util.Objects;
 @Repository
 public interface OpenJobMapper extends BaseMapper<OpenJobDO> {
 
-    default Page<OpenJobDO> queryPage(OpenJobReqDTO OpenJobReqDTO){
-        return selectPage(OpenJobReqDTO.page(), Wrappers.<OpenJobDO>lambdaQuery()
-                .eq(Objects.nonNull(OpenJobReqDTO.getStatus()), OpenJobDO::getStatus, OpenJobReqDTO.getStatus())
-                .between(Objects.nonNull(OpenJobReqDTO.getBeginTime()), OpenJobDO::getCreateTime, OpenJobReqDTO.getBeginTime(), OpenJobReqDTO.getEndTime()));
+    default Page<OpenJobDO> queryPage(OpenJobReqDTO openJobReqDTO){
+        return selectPage(openJobReqDTO.page(), Wrappers.<OpenJobDO>lambdaQuery()
+                .like(Objects.nonNull(openJobReqDTO.getJobName()), OpenJobDO::getJobName, openJobReqDTO.getJobName())
+                .like(Objects.nonNull(openJobReqDTO.getHandlerName()), OpenJobDO::getHandlerName, openJobReqDTO.getHandlerName())
+                .eq(Objects.nonNull(openJobReqDTO.getStatus()), OpenJobDO::getStatus, openJobReqDTO.getStatus())
+                .between(Objects.nonNull(openJobReqDTO.getBeginTime()), OpenJobDO::getCreateTime, openJobReqDTO.getBeginTime(), openJobReqDTO.getEndTime()));
     }
 
     default List<OpenJobDO> queryList(List<Long> taskList){
