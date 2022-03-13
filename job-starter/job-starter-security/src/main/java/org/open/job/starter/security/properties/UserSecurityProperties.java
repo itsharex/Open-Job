@@ -37,9 +37,9 @@ public class UserSecurityProperties {
   private String store;
 
   /**
-   * accessToken 有效期，单位秒，默认 2 小时
+   * accessToken 有效期，单位天，默认 1 天
    */
-  private Integer accessTokenExpiresIn = 604800;
+  private Integer accessTokenExpiresIn = 1;
 
   /**
    * jwt 加密密钥 key

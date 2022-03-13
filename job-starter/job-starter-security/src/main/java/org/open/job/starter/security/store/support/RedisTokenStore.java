@@ -59,7 +59,10 @@ public class RedisTokenStore implements TokenStore {
     private Token createToken(UserDetails userDetails){
         Token token = new Token();
         String accessToken = RandomUtil.randomString(32);
-        redisTemplate.opsForValue().set(buildAccessTokenKey(accessToken), userDetails, securityProperties.getAccessTokenExpiresIn(), TimeUnit.SECONDS);
+        long now = System.currentTimeMillis();
+        long expiredTime = now + securityProperties.getAccessTokenExpiresIn() * 24 * 3600;
+        redisTemplate.opsForValue().set(buildAccessTokenKey(accessToken), userDetails, securityProperties.getAccessTokenExpiresIn(), TimeUnit.DAYS);
+        token.setExpiredTime(String.valueOf(expiredTime));
         token.setAccessToken(accessToken);
         return token;
     }

@@ -17,10 +17,6 @@ public class Token implements Serializable {
 
   private String accessToken;
 
-  public Token(){}
-
-  public Token(String accessToken) {
-    this.accessToken = accessToken;
-  }
+  private String expiredTime;
 
 }

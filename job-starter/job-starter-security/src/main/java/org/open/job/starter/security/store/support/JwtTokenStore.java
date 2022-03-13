@@ -56,14 +56,15 @@ public class JwtTokenStore implements TokenStore {
     private Token createJwtToken(UserDetails userDetails){
         Token token = new Token();
         long now = System.currentTimeMillis();
+        Date expiredDate = new Date(now + securityProperties.getAccessTokenExpiresIn() * 24 * 3600);
         String userDetailsStr = JSON.toJSON(userDetails);
         Claims claims = Jwts.claims().setSubject(userDetailsStr);
         String accessToken = Jwts.builder()
                 .setClaims(claims)
-                .setExpiration(new Date(now + securityProperties.getAccessTokenExpiresIn()))
+                .setExpiration(expiredDate)
                 .signWith(Keys.hmacShaKeyFor(securityProperties.getSecretKeyBytes()), SignatureAlgorithm.HS256)
                 .compact();
-
+        token.setExpiredTime(String.valueOf(expiredDate.getTime()));
         token.setAccessToken(accessToken);
         return token;
     }
