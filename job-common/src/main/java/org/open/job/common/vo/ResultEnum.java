@@ -15,7 +15,7 @@ public enum ResultEnum {
 
   BAD_REQUEST(400, "请求参数不正确"),
 
-  UNAUTHORIZED(401, "账号未登录"),
+  UNAUTHORIZED(401, "Token 已过期或账号未登录"),
 
   FORBIDDEN(403, "没有该操作权限"),
 
