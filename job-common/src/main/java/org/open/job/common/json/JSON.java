@@ -188,30 +188,4 @@ public abstract class JSON {
       throw new JsonException(e);
     }
   }
-
-  public static <T> T parseObjectByPath(String json, String key, Class<T> clazz) {
-    var nodeValue = getNodeValue(json, key);
-    return parse(nodeValue, clazz);
-  }
-
-  public static <T> List<T> parseListByPath(String json, String key, Class<T> clazz) {
-    var nodeValue = getNodeValue(json, key);
-    return parseList(nodeValue, clazz);
-  }
-
-  /**
-   * 根据json字符串中的key获取 json中指定的 json字符串节点的字符串值
-   *
-   * @param json    json字符串
-   * @param nodeKey json节点key
-   * @return {@link String}
-   */
-  public static String getNodeValue(String json, String nodeKey) {
-    try {
-      var jsonNode = INSTANCE.readTree(json);
-      return jsonNode.findValue(nodeKey).toString();
-    } catch (JsonProcessingException e) {
-      throw new JsonException(e);
-    }
-  }
 }
