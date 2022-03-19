@@ -1,5 +1,8 @@
 package org.open.job.admin.schedule;
 
+import com.lightcode.rpc.core.Message;
+import com.lightcode.rpc.core.exception.RpcException;
+import com.lightcode.rpc.server.cluster.ClusterInvokerFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.open.job.admin.dto.create.OpenJobLogCreateDTO;
@@ -8,11 +11,7 @@ import org.open.job.admin.event.JobLogEvent;
 import org.open.job.admin.mapper.OpenJobMapper;
 import org.open.job.common.enums.CommonStatusEnum;
 import org.open.job.common.serialize.SerializationUtils;
-import org.open.job.core.Message;
-import org.open.job.core.MessageBody;
-import org.open.job.core.exception.RpcException;
 import org.open.job.starter.schedule.executor.ScheduleTaskExecutor;
-import org.open.job.starter.server.cluster.ClusterInvokerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -52,7 +51,7 @@ public class ScheduleJobExecutor implements ScheduleTaskExecutor{
             messageBody.setParams(e.getParams());
             byte[] serializeData = SerializationUtils.serialize(messageBody);
             Message message = new Message();
-            message.setMsgId(e.getId());
+            message.setMsgId(String.valueOf(e.getId()));
             message.setBody(serializeData);
             return message;
         }).collect(Collectors.toList());
@@ -65,7 +64,7 @@ public class ScheduleJobExecutor implements ScheduleTaskExecutor{
             }catch (RpcException e){
                 cause = e.getMessage();
             }
-            createLog(message.getMsgId(), cause);
+            createLog(Long.parseLong(message.getMsgId()), cause);
         });
     }
 

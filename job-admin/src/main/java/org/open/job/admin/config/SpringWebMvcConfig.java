@@ -1,10 +1,16 @@
 package org.open.job.admin.config;
 
+import com.alibaba.nacos.api.NacosFactory;
+import com.alibaba.nacos.api.PropertyKeyConst;
+import com.alibaba.nacos.api.exception.NacosException;
+import com.alibaba.nacos.api.naming.NamingService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+
+import java.util.Properties;
 
 /**
  * @author lijunping on 2021/6/22
@@ -26,5 +32,14 @@ public class SpringWebMvcConfig {
         public GlobalExceptionHandler globalExceptionHandler() {
             return new GlobalExceptionHandler();
         }
+    }
+
+    @Bean
+    public NamingService namingService() throws NacosException {
+        Properties properties = new Properties();
+        properties.put(PropertyKeyConst.USERNAME, "nacos");
+        properties.put(PropertyKeyConst.PASSWORD, "nacos");
+        properties.put(PropertyKeyConst.SERVER_ADDR, "127.0.0.1:8848");
+        return NacosFactory.createNamingService(properties);
     }
 }

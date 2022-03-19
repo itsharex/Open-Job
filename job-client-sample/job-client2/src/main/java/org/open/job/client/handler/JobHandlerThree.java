@@ -2,7 +2,6 @@ package org.open.job.client.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.open.job.client.constants.JobHandlerNameConstants;
-import org.open.job.starter.client.process.JobHandler;
 import org.springframework.stereotype.Component;
 
 /**

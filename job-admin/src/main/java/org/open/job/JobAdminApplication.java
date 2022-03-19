@@ -1,14 +1,16 @@
 package org.open.job;
 
-import org.open.job.starter.server.annotation.EnableJobServer;
+import com.lightcode.rpc.server.annotation.EnableLightRpcServer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 /**
  * @author lijunping on 2022/2/24
  */
-@EnableJobServer
+@EnableLightRpcServer
 @SpringBootApplication
+@ComponentScan({"com.lightcode.**", "org.open.job.**"})
 public class JobAdminApplication {
 
     public static void main(String[] args) {

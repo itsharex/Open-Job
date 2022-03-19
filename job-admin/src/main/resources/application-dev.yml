@@ -42,11 +42,10 @@ spring:
         max-idle: 8
         min-idle: 0
 
-org:
-  open:
-    job:
+com:
+  lightcode:
+    rpc:
       server:
         store: memory
-
 
 
