@@ -2,7 +2,7 @@ package org.open.job.admin.schedule;
 
 import com.lightcode.rpc.core.Message;
 import com.lightcode.rpc.core.exception.RpcException;
-import com.lightcode.rpc.server.cluster.ClusterInvokerFactory;
+import com.lightcode.rpc.server.cluster.ClusterInvoker;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.open.job.admin.dto.create.OpenJobLogCreateDTO;
@@ -29,12 +29,12 @@ import java.util.stream.Collectors;
 public class ScheduleJobExecutor implements ScheduleTaskExecutor{
 
     private final ApplicationEventPublisher applicationEventPublisher;
-    private final ClusterInvokerFactory clusterInvokerFactory;
+    private final ClusterInvoker clusterInvoker;
     private final OpenJobMapper openJobMapper;
 
-    public ScheduleJobExecutor(ApplicationEventPublisher applicationEventPublisher, ClusterInvokerFactory clusterInvokerFactory, OpenJobMapper openJobMapper) {
+    public ScheduleJobExecutor(ApplicationEventPublisher applicationEventPublisher, ClusterInvoker clusterInvoker, OpenJobMapper openJobMapper) {
         this.applicationEventPublisher = applicationEventPublisher;
-        this.clusterInvokerFactory = clusterInvokerFactory;
+        this.clusterInvoker = clusterInvoker;
         this.openJobMapper = openJobMapper;
     }
 
@@ -60,7 +60,7 @@ public class ScheduleJobExecutor implements ScheduleTaskExecutor{
         messages.forEach(message->{
             String cause = null;
             try {
-                clusterInvokerFactory.invoke(message);
+                clusterInvoker.invoke(message);
             }catch (RpcException e){
                 cause = e.getMessage();
             }

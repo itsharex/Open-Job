@@ -5,7 +5,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/open_job?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=CTT&allowPublicKeyRetrieval=true
     username: root
-    password: 123456
+    password:
     # 数据源其他配置
     # 配置初始化大小/最小/最大
     initialSize: 5
@@ -41,11 +41,5 @@ spring:
         max-wait: -1ms
         max-idle: 8
         min-idle: 0
-
-com:
-  lightcode:
-    rpc:
-      server:
-        store: memory
 
 
