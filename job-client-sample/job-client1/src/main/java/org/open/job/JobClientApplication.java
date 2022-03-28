@@ -10,7 +10,6 @@ import org.springframework.context.annotation.ComponentScan;
  */
 @EnableLightRpcClient
 @SpringBootApplication
-@ComponentScan({"org.open.job.**", "com.lightcode.**"})
 public class JobClientApplication {
 
     public static void main(String[] args) {

@@ -4,6 +4,8 @@ import com.lightcode.rpc.client.process.MessageProcess;
 import com.lightcode.rpc.core.Message;
 import com.lightcode.rpc.core.exception.RpcException;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.C;
+import org.open.job.client.annotation.JobHandler;
 import org.open.job.common.serialize.SerializationUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
@@ -23,19 +25,19 @@ import java.util.concurrent.ConcurrentMap;
 @Component
 public class JobHandlerManager implements MessageProcess, InitializingBean, ApplicationContextAware {
     private ApplicationContext applicationContext;
-    private final ConcurrentMap<String, JobHandler> processorMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, OpenJobHandler> processorMap = new ConcurrentHashMap<>();
 
     /**
      * 根据 handlerName 获取 JobHandler
      * @param handlerName 绑定的 handlerName
      * @return JobHandler
      */
-    public JobHandler getJobHandler(String handlerName){
-        final JobHandler jobHandler = processorMap.get(handlerName);
-        if (ObjectUtils.isEmpty(jobHandler)) {
+    public OpenJobHandler getJobHandler(String handlerName){
+        final OpenJobHandler openJobHandler = processorMap.get(handlerName);
+        if (ObjectUtils.isEmpty(openJobHandler)) {
             throw new RpcException("JobHandlerName: " + handlerName + ", there is no bound JobHandler.");
         }
-        return jobHandler;
+        return openJobHandler;
     }
 
     @Override
@@ -45,11 +47,14 @@ public class JobHandlerManager implements MessageProcess, InitializingBean, Appl
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        Map<String, JobHandler> beans = this.applicationContext.getBeansOfType(JobHandler.class);
+        Map<String, Object> beans = applicationContext.getBeansWithAnnotation(JobHandler.class);
         if (ObjectUtils.isEmpty(beans)){
             log.warn("No JobHandler instance is defined.");
         }else {
-            beans.forEach((k, v)-> this.processorMap.put(v.bindingJobHandlerName(), v));
+            beans.forEach((k,v)->{
+                JobHandler annotation = v.getClass().getAnnotation(JobHandler.class);
+                this.processorMap.put(annotation.name(), (OpenJobHandler) v);
+            });
         }
     }
 
@@ -57,8 +62,8 @@ public class JobHandlerManager implements MessageProcess, InitializingBean, Appl
     public boolean process(Message message) {
         final byte[] body = message.getBody();
         final MessageBody messageBody = SerializationUtils.deserialize(body, MessageBody.class);
-        JobHandler jobHandler = this.getJobHandler(messageBody.getHandlerName());
-        jobHandler.handler(messageBody.getParams());
+        OpenJobHandler openJobHandler = this.getJobHandler(messageBody.getHandlerName());
+        openJobHandler.handler(messageBody.getParams());
         return true;
     }
 }
