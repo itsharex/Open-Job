@@ -3,6 +3,7 @@ package org.open.job.admin.schedule;
 import com.lightcode.rpc.core.Message;
 import com.lightcode.rpc.core.exception.RpcException;
 import com.lightcode.rpc.server.cluster.ClusterInvoker;
+import com.lightcode.starter.schedule.executor.ScheduleTaskExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.open.job.admin.dto.create.OpenJobLogCreateDTO;
@@ -11,7 +12,6 @@ import org.open.job.admin.event.JobLogEvent;
 import org.open.job.admin.mapper.OpenJobMapper;
 import org.open.job.common.enums.CommonStatusEnum;
 import org.open.job.common.serialize.SerializationUtils;
-import org.open.job.starter.schedule.executor.ScheduleTaskExecutor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Component
-public class ScheduleJobExecutor implements ScheduleTaskExecutor{
+public class ScheduleJobExecutor implements ScheduleTaskExecutor {
 
     private final ApplicationEventPublisher applicationEventPublisher;
     private final ClusterInvoker clusterInvoker;
