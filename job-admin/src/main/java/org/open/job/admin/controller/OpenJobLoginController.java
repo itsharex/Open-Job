@@ -46,10 +46,10 @@ public class OpenJobLoginController {
     private HttpServletResponse response;
 
     @Autowired
-    private PasswordAuthenticationProcessor passwordAuthenticationProcessor;
+    private PasswordAuthenticationProcessor passwordAuthentication;
 
     @Autowired
-    private SmsMobileAuthenticationProcessor smsMobileAuthenticationProcessor;
+    private SmsMobileAuthenticationProcessor smsMobileAuthentication;
 
     /**
      * 创建验证码
@@ -99,7 +99,7 @@ public class OpenJobLoginController {
                 .setUsername(request.getUsername())
                 .setPassword(request.getPassword());
         try {
-            final AccessToken accessToken = passwordAuthenticationProcessor.authentication(passwordLoginRequest);
+            final AccessToken accessToken = passwordAuthentication.authentication(passwordLoginRequest);
             return Result.succeed(accessToken);
         } catch (AuthenticationException e){
             throw new ControllerException(e.getMessage());
@@ -124,7 +124,7 @@ public class OpenJobLoginController {
 
         MobileLoginRequest mobileLoginRequest = new MobileLoginRequest().setMobile(request.getMobile());
         try {
-            final AccessToken accessToken = smsMobileAuthenticationProcessor.authentication(mobileLoginRequest);
+            final AccessToken accessToken = smsMobileAuthentication.authentication(mobileLoginRequest);
             return Result.succeed(accessToken);
         } catch (AuthenticationException e){
             throw new ControllerException(e.getMessage());
