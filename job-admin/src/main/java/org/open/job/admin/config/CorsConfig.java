@@ -1,7 +1,6 @@
 package org.open.job.admin.config;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -11,7 +10,6 @@ import org.springframework.web.filter.CorsFilter;
  * @author: 李俊平
  * @Date: 2021-06-25 10:58
  */
-@Configuration
 public class CorsConfig {
 
     private CorsConfiguration buildConfig() {

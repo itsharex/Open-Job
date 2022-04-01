@@ -17,7 +17,7 @@ import java.util.Properties;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
-@Import(Jackson2ObjectMapperCustomizerConfiguration.class)
+@Import({Jackson2ObjectMapperCustomizerConfiguration.class, CorsConfig.class})
 public class SpringWebMvcConfig {
 
     /**
