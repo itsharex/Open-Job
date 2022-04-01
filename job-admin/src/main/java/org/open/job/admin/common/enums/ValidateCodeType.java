@@ -1,9 +1,9 @@
 package org.open.job.admin.common.enums;
 
 
+import com.lightcode.starter.captcha.exception.ValidateCodeException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.open.job.starter.captcha.exception.ValidateCodeException;
 
 import java.util.Arrays;
 
