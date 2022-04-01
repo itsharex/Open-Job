@@ -12,7 +12,6 @@
     <modules>
         <module>job-dependencies</module>
         <module>job-admin</module>
-        <module>job-core</module>
         <module>job-common</module>
         <module>job-client-sample</module>
     </modules>
