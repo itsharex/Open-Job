@@ -116,4 +116,6 @@ public class JobHandlerTwo implements JobHandler {
 
 ## 🎉收尾
 
-该分布式任务调度系统，是从本人之前做的一个系统中抽离出来的，开源不易，欢迎 star
+欢迎使用，欢迎 star
+
+# 版本重大更新，文档后续会更新
