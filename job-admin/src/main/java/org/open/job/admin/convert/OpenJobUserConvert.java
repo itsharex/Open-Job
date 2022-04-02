@@ -1,7 +1,7 @@
 package org.open.job.admin.convert;
 
 
-
+import com.lightcode.starter.oauth.domain.UserDetails;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -10,7 +10,6 @@ import org.open.job.admin.dto.create.OpenJobUserCreateDTO;
 import org.open.job.admin.dto.resp.OpenJobUserRespDTO;
 import org.open.job.admin.dto.update.OpenJobUserUpdateDTO;
 import org.open.job.admin.entity.OpenJobUserDO;
-import org.open.job.starter.security.service.UserDetails;
 
 /**
  * 用户表

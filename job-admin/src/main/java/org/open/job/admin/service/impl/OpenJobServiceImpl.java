@@ -4,6 +4,11 @@ import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.lightcode.starter.schedule.core.ScheduleTaskManage;
+import com.lightcode.starter.schedule.cron.CronExpression;
+import com.lightcode.starter.schedule.domain.ScheduleTask;
+import com.lightcode.starter.schedule.executor.ScheduleTaskExecutor;
+import com.lightcode.starter.security.context.UserSecurityContextHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.open.job.admin.convert.OpenJobConvert;
 import org.open.job.admin.dto.create.OpenJobCreateDTO;
@@ -16,12 +21,9 @@ import org.open.job.admin.service.OpenJobService;
 import org.open.job.common.enums.CommonStatusEnum;
 import org.open.job.common.exception.ServiceException;
 import org.open.job.common.vo.PageResult;
-import org.open.job.starter.schedule.core.ScheduleTaskManage;
-import org.open.job.starter.schedule.cron.CronExpression;
-import org.open.job.starter.schedule.domain.ScheduleTask;
-import org.open.job.starter.schedule.executor.ScheduleTaskExecutor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -62,6 +64,8 @@ public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> im
         if (!CronExpression.isValidExpression(cronExpression)){
             throw new ServiceException("Invalid cronExpression");
         }
+        openJobCreateDTO.setCreateTime(LocalDateTime.now());
+        openJobCreateDTO.setCreateUser(UserSecurityContextHolder.getUserId());
         int insert = openJobMapper.insert(OpenJobConvert.INSTANCE.convert(openJobCreateDTO));
         return insert != 0;
     }

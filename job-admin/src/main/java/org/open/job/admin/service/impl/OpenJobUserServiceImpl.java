@@ -3,6 +3,8 @@ package org.open.job.admin.service.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.lightcode.starter.oauth.domain.UserDetails;
+import com.lightcode.starter.oauth.service.UserDetailService;
 import org.open.job.admin.convert.OpenJobUserConvert;
 import org.open.job.admin.dto.create.OpenJobUserCreateDTO;
 import org.open.job.admin.dto.req.OpenJobUserReqDTO;
@@ -12,8 +14,6 @@ import org.open.job.admin.entity.OpenJobUserDO;
 import org.open.job.admin.mapper.OpenJobUserMapper;
 import org.open.job.admin.service.OpenJobUserService;
 import org.open.job.common.vo.PageResult;
-import org.open.job.starter.security.service.UserDetailService;
-import org.open.job.starter.security.service.UserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,7 +1,7 @@
 package org.open.job.admin.dto.resp;
 
+import com.lightcode.rpc.core.enums.ClientStatus;
 import lombok.Data;
-import org.open.job.core.ClientStatus;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

@@ -1,5 +1,6 @@
 package org.open.job.admin.controller;
 
+import com.lightcode.starter.security.context.UserSecurityContextHolder;
 import org.open.job.admin.dto.create.OpenJobUserCreateDTO;
 import org.open.job.admin.dto.req.OpenJobUserReqDTO;
 import org.open.job.admin.dto.resp.OpenJobUserRespDTO;
@@ -7,7 +8,6 @@ import org.open.job.admin.dto.update.OpenJobUserUpdateDTO;
 import org.open.job.admin.service.OpenJobUserService;
 import org.open.job.common.vo.PageResult;
 import org.open.job.common.vo.Result;
-import org.open.job.starter.security.context.UserSecurityContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
