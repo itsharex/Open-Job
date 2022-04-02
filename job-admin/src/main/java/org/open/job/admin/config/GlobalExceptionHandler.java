@@ -1,5 +1,7 @@
 package org.open.job.admin.config;
 
+import com.lightcode.starter.oauth.exception.AuthenticationException;
+import com.lightcode.starter.security.exception.SecurityException;
 import lombok.extern.slf4j.Slf4j;
 import org.open.job.common.exception.BaseCheckedException;
 import org.open.job.common.exception.BaseException;
@@ -188,8 +190,20 @@ public class GlobalExceptionHandler {
     return Result.failed(ex.getCode(), ex.getMessage());
   }
 
+  @ExceptionHandler({SecurityException.class})
+  public Result<Object> securityException(SecurityException ex) {
+    log.warn("[securityException]", ex);
+    return Result.failed(ex.getCode(), ex.getMessage());
+  }
+
+  @ExceptionHandler({AuthenticationException.class})
+  public Result<Object> authenticationException(AuthenticationException ex) {
+    log.warn("[AuthenticationException]", ex);
+    return Result.failed(ex.getCode(), ex.getMessage());
+  }
+
   @ExceptionHandler({RuntimeException.class})
-  public Result<Object> runtime(HttpServletRequest request, RuntimeException ex) {
+  public Result<Object> runtime(RuntimeException ex) {
     log.warn("[runtimeExceptionHandler]", ex);
     return Result.failed(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage());
   }
