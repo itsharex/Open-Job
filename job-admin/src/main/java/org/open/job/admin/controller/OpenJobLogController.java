@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Validated
 @RestController
-@RequestMapping("/openJobLog")
+@RequestMapping("/logger")
 public class OpenJobLogController {
 
   @Autowired

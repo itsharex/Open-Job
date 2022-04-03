@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Validated
 @RestController
-@RequestMapping("/instanceManager")
+@RequestMapping("/instance")
 public class OpenJobInstanceController {
 
     @Autowired

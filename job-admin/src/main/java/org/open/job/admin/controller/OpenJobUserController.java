@@ -24,7 +24,7 @@ import javax.validation.Valid;
  */
 @Validated
 @RestController
-@RequestMapping("/openJobUser")
+@RequestMapping("/user")
 public class OpenJobUserController {
 
   @Autowired

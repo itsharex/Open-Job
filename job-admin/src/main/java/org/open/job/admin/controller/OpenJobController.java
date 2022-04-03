@@ -23,7 +23,7 @@ import java.util.List;
  */
 @Validated
 @RestController
-@RequestMapping("/openJob")
+@RequestMapping("/task")
 public class OpenJobController {
 
     @Autowired
