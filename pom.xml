@@ -14,6 +14,7 @@
         <module>job-admin</module>
         <module>job-common</module>
         <module>job-client-sample</module>
+        <module>job-client</module>
     </modules>
 
     <properties>
