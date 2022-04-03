@@ -1,23 +1,11 @@
 package org.open.job.admin.controller;
 
 import com.lightcode.starter.captcha.core.image.ImageValidateCode;
-import com.lightcode.starter.captcha.exception.ValidateCodeException;
 import com.lightcode.starter.captcha.processor.CaptchaProcessor;
 import com.lightcode.starter.captcha.request.CaptchaGenerateRequest;
-import com.lightcode.starter.captcha.request.CaptchaVerifyRequest;
-import com.lightcode.starter.oauth.core.password.PasswordAuthenticationProcessor;
-import com.lightcode.starter.oauth.core.sms.SmsMobileAuthenticationProcessor;
-import com.lightcode.starter.oauth.exception.AuthenticationException;
-import com.lightcode.starter.oauth.request.MobileLoginRequest;
-import com.lightcode.starter.oauth.request.PasswordLoginRequest;
-import com.lightcode.starter.oauth.token.AccessToken;
 import lombok.extern.slf4j.Slf4j;
 import org.open.job.admin.common.enums.ValidateCodeType;
 import org.open.job.admin.dto.req.OpenJobCaptchaRequest;
-import org.open.job.admin.dto.req.OpenJobMobileLoginRequest;
-import org.open.job.admin.dto.req.OpenJobPasswordLoginRequest;
-import org.open.job.common.exception.ControllerException;
-import org.open.job.common.vo.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -43,16 +30,13 @@ public class OpenJobCaptchaController {
     @Autowired
     private CaptchaProcessor captchaProcessor;
 
-    @Resource
-    private HttpServletResponse response;
-
     /**
      * 创建验证码
      */
     @PostMapping("/create")
-    public void createCode(@RequestBody @Valid OpenJobCaptchaRequest request) throws Exception {
+    public void createCode(@RequestBody @Valid OpenJobCaptchaRequest request, HttpServletResponse response) throws Exception {
         CaptchaGenerateRequest captchaGenerateRequest = new CaptchaGenerateRequest();
-        captchaGenerateRequest.setRequestId(request.getRequestId());
+        captchaGenerateRequest.setRequestId(request.getDeviceId());
         captchaGenerateRequest.setType(request.getType());
 
         captchaProcessor.create(captchaGenerateRequest, validateCode -> {

@@ -22,27 +22,6 @@ logging:
   level:
     com.pro: INFO
 
-
-
-org:
-  open:
-    job:
-      # 验证码插件相关配置
-      captcha:
-        code:
-          image:
-            length: 4 #图形验证码的位数为6，将覆盖默认配置中的4
-            width: 200 #图形验证码的宽度为100，将覆盖默认配置中的67，但由于请求中设置的宽度为200，所以真正的宽度将为200
-            height: 60
-          scan:
-            width: 300 #二维码宽度
-            height: 300 #二维码高度
-            margin: 1 #二维码外边距，0到4
-
-      # 安全相关配置
-      security:
-        store: redis
-        accessTokenExpiresIn: 7200
 com:
   lightcode:
     captcha:
@@ -54,3 +33,7 @@ com:
         width: 300 #二维码宽度
         height: 300 #二维码高度
         margin: 1 #二维码外边距，0到4
+    security:
+      ignore-paths:
+        - "/captcha/**"
+        - "/login/**"

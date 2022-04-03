@@ -17,7 +17,7 @@ public class OpenJobCaptchaRequest implements Serializable {
     private String type;
 
     @NotBlank(message = "请求唯一 id 不能为空")
-    private String requestId;
+    private String deviceId;
 
     private String mobile;
 }
