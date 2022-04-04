@@ -25,9 +25,6 @@ public interface OpenJobUserConvert {
 
     OpenJobUserRespDTO convert(OpenJobUserDO openJobUserDO);
 
-    @Mappings({@Mapping(source = "phone", target = "mobile")})
-    UserDetails convertDetails(OpenJobUserDO openJobUserDO);
-
     OpenJobUserDO convert(OpenJobUserCreateDTO openJobUserCreateDTO);
 
     OpenJobUserDO convert(OpenJobUserUpdateDTO openJobUserUpdateDTO);

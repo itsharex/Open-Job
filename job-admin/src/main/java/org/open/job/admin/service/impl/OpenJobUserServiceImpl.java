@@ -64,12 +64,22 @@ public class OpenJobUserServiceImpl extends ServiceImpl<OpenJobUserMapper, OpenJ
     @Override
     public UserDetails loadUserByUsername(String username) {
         OpenJobUserDO openJobUserDO = this.openJobUserMapper.loadUserByUsername(username);
-        return OpenJobUserConvert.INSTANCE.convertDetails(openJobUserDO);
+        return convert(openJobUserDO);
     }
 
     @Override
     public UserDetails loadUserByMobile(String mobile) {
         OpenJobUserDO openJobUserDO = this.openJobUserMapper.loadUserByMobile(mobile);
-        return OpenJobUserConvert.INSTANCE.convertDetails(openJobUserDO);
+        return convert(openJobUserDO);
+    }
+
+    private UserDetails convert(OpenJobUserDO openJobUserDO){
+        UserDetails userDetails = new UserDetails();
+        userDetails.setId(openJobUserDO.getId());
+        userDetails.setUsername(openJobUserDO.getUsername());
+        userDetails.setPassword(openJobUserDO.getPassword());
+        userDetails.setMobile(openJobUserDO.getPhone());
+        userDetails.setAccountLocked(openJobUserDO.getStatus() == 1);
+        return userDetails;
     }
 }
