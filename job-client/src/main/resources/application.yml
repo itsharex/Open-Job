@@ -5,9 +5,7 @@ spring:
   profiles:
     active: dev
   application:
-    name: job-client-1
-  main:
-    allow-bean-definition-overriding: true # SpringBoot 2.1需要设置
+    name: job-client
 
 
 logging:
