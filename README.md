@@ -50,7 +50,7 @@ git clone https://github.com/lijunping365/Open-Job-Admin.git
 
 ```xml
 <dependency>
-    <groupId>org.open.job</groupId>
+    <groupId>com.saucesubfresh.job</groupId>
     <artifactId>job-starter-client</artifactId>
     <version>1.0-SNAPSHOT</version>
 </dependency>

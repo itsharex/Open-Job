@@ -13,7 +13,7 @@ spring:
 
 mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml
-  type-enums-package: org.open.job.admin.enums*;org.open.job.common.enums*
+  type-enums-package: com.saucesubfresh.job.admin.enums*;com.saucesubfresh.job.common.enums*
   global-config:
     db-config:
       id-type: auto
