@@ -7,7 +7,7 @@ import com.saucesubfresh.job.client.annotation.JobHandler;
  * @author lijunping on 2022/2/25
  */
 @Slf4j
-@JobHandler(name = "openJobHandlerOne")
+@JobHandler(name = "job-one")
 public class OpenJobHandlerOne implements OpenJobHandler {
 
     @Override
