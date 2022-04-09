@@ -1,6 +1,6 @@
 package org.open.job.admin.dto.resp;
 
-import com.lightcode.rpc.core.enums.ClientStatus;
+import com.saucesubfresh.rpc.core.enums.ClientStatus;
 import lombok.Data;
 
 import java.io.Serializable;

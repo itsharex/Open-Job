@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>Open-Job</artifactId>
-        <groupId>org.open.job</groupId>
+        <groupId>com.saucesubfresh</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -13,37 +13,37 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.open.job</groupId>
+            <groupId>com.saucesubfresh</groupId>
             <artifactId>job-common</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>com.lightcode</groupId>
+            <groupId>com.saucesubfresh</groupId>
             <artifactId>open-rpc-server</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>com.lightcode</groupId>
+            <groupId>com.saucesubfresh</groupId>
             <artifactId>open-starter-captcha</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>com.lightcode</groupId>
+            <groupId>com.saucesubfresh</groupId>
             <artifactId>open-starter-oauth</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>com.lightcode</groupId>
+            <groupId>com.saucesubfresh</groupId>
             <artifactId>open-starter-security</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>com.lightcode</groupId>
+            <groupId>com.saucesubfresh</groupId>
             <artifactId>open-starter-schedule</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>

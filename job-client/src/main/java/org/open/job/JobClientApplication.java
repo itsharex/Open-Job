@@ -1,6 +1,6 @@
 package org.open.job;
 
-import com.lightcode.rpc.client.annotation.EnableLightRpcClient;
+import com.saucesubfresh.rpc.client.annotation.EnableLightRpcClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

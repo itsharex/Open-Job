@@ -1,7 +1,7 @@
 package org.open.job;
 
-import com.lightcode.rpc.server.annotation.EnableLightRpcServer;
-import com.lightcode.starter.security.annotation.EnableSecurity;
+import com.saucesubfresh.rpc.server.annotation.EnableLightRpcServer;
+import com.saucesubfresh.starter.security.annotation.EnableSecurity;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

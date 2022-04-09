@@ -1,7 +1,7 @@
 package org.open.job.admin.config;
 
-import com.lightcode.starter.oauth.exception.AuthenticationException;
-import com.lightcode.starter.security.exception.SecurityException;
+import com.saucesubfresh.starter.oauth.exception.AuthenticationException;
+import com.saucesubfresh.starter.security.exception.SecurityException;
 import lombok.extern.slf4j.Slf4j;
 import org.open.job.common.exception.BaseCheckedException;
 import org.open.job.common.exception.BaseException;

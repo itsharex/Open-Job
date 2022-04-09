@@ -1,7 +1,7 @@
 package org.open.job.admin.convert;
 
 
-import com.lightcode.starter.oauth.domain.UserDetails;
+import com.saucesubfresh.starter.oauth.domain.UserDetails;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;

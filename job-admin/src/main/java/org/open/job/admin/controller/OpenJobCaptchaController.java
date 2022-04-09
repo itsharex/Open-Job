@@ -1,8 +1,8 @@
 package org.open.job.admin.controller;
 
-import com.lightcode.starter.captcha.core.image.ImageValidateCode;
-import com.lightcode.starter.captcha.processor.CaptchaProcessor;
-import com.lightcode.starter.captcha.request.CaptchaGenerateRequest;
+import com.saucesubfresh.starter.captcha.core.image.ImageValidateCode;
+import com.saucesubfresh.starter.captcha.processor.CaptchaProcessor;
+import com.saucesubfresh.starter.captcha.request.CaptchaGenerateRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.open.job.admin.common.enums.ValidateCodeType;
 import org.open.job.admin.dto.req.OpenJobCaptchaRequest;
