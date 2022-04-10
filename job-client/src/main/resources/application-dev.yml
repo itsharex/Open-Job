@@ -5,4 +5,5 @@ com:
         server-address: 127.0.0.1
         server-port: 5200
         client-address: 5201
+        client-name: job-client-services
 
