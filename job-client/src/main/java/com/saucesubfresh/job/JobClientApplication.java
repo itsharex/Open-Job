@@ -1,13 +1,13 @@
 package com.saucesubfresh.job;
 
-import com.saucesubfresh.rpc.client.annotation.EnableLightRpcClient;
+import com.saucesubfresh.rpc.client.annotation.EnableOpenRpcClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * @author lijunping on 2022/2/25
  */
-@EnableLightRpcClient
+@EnableOpenRpcClient
 @SpringBootApplication
 public class JobClientApplication {
 
