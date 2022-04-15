@@ -21,7 +21,6 @@
         <dependency>
             <groupId>com.saucesubfresh</groupId>
             <artifactId>open-rpc-client</artifactId>
-            <version>1.0.0</version>
         </dependency>
 
         <dependency>
