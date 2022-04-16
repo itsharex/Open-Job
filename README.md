@@ -1,10 +1,30 @@
 # Open-Job
 
-开源分布式任务调度系统，[项目官方文档地址](https://lijunping365.github.io/#/)
+<p align="center">
+🔥2022 最新的轻量级分布式任务调度系统
+</p>
+
+<p align="center">
+  <a href="https://search.maven.org/search?q=g:com.saucesubfresh%20a:open-starter-*">
+    <img alt="maven" src="https://img.shields.io/github/v/release/lijunping365/Open-Job?include_prereleases&logo=Open-Job&style=plastic">
+  </a>
+
+  <a href="https://www.apache.org/licenses/LICENSE-2.0">
+    <img alt="licenses" src="https://img.shields.io/badge/license-Apache%202-4EB1BA.svg?style=flat-square">
+  </a>
+
+  <a href="https://github.com/lijunping365/Open-Job">
+    <img alt="github" src="https://badgen.net/github/stars/lijunping365/Open-Job?icon=github" >
+  </a>
+  
+  <a href="https://github.com/lijunping365/Open-Job">
+      <img alt="forks" src="https://badgen.net/github/forks/lijunping365/Open-Job?icon=github&color=4ab8a1" >
+    </a>
+</p>
 
 ## 🎨 Open-Job 介绍
 
-🔥2022 最新的轻量级分布式任务调度系统
+[项目官方文档地址](https://lijunping365.github.io/#/)
 
 ## ✨ 已实现功能点
 
@@ -50,9 +70,9 @@ git clone https://github.com/lijunping365/Open-Job-Admin.git
 
 ```xml
 <dependency>
-    <groupId>com.saucesubfresh.job</groupId>
-    <artifactId>job-starter-client</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <groupId>com.saucesubfresh</groupId>
+    <artifactId>open-rpc-client</artifactId>
+    <version>1.0.0</version>
 </dependency>
 ```
 
@@ -62,14 +82,9 @@ git clone https://github.com/lijunping365/Open-Job-Admin.git
 
 ```java
 @Slf4j
-@Component
-public class JobHandlerOne implements JobHandler {
+@JobHandler(name = "job-one")
+public class OpenJobHandlerOne implements OpenJobHandler {
 
-    @Override
-    public String bindingJobHandlerName() {
-        return JobHandlerNameConstants.JOB_ONE;
-    }
-    
     @Override
     public void handler(String params) {
         log.info("JobHandlerOne 处理任务");
@@ -81,13 +96,8 @@ public class JobHandlerOne implements JobHandler {
 
 ```java
 @Slf4j
-@Component
-public class JobHandlerTwo implements JobHandler {
-
-    @Override
-    public String bindingJobHandlerName() {
-        return JobHandlerNameConstants.JOB_TWO;
-    }
+@JobHandler(name = "job-two")
+public class OpenJobHandlerTwo implements OpenJobHandler {
 
     @Override
     public void handler(String params) {
@@ -117,5 +127,3 @@ public class JobHandlerTwo implements JobHandler {
 ## 🎉收尾
 
 欢迎使用，欢迎 star
-
-# 版本重大更新，文档后续会更新
