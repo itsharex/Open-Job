@@ -34,4 +34,6 @@ public interface OpenJobService {
     boolean run(Long id);
 
     List<String> nextTriggerTime(String cronExpress);
+
+    String validateCron(String cronExpress);
 }

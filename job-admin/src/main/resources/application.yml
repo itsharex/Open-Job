@@ -20,7 +20,9 @@ mybatis-plus:
 
 logging:
   level:
-    com.pro: INFO
+    com.saucesubfresh: INFO
+
+report-cron-express: "0 59 23 * * ? *"
 
 com:
   saucesubfresh:

@@ -52,6 +52,12 @@ public class OpenJobInstanceServiceImpl implements OpenJobInstanceService {
         return serviceDiscovery.onlineClient(clientId);
     }
 
+    @Override
+    public List<OpenJobInstanceRespDTO> getInstanceList() {
+        List<ClientInformation> instances = instanceStore.getAll();
+        return convertList(instances);
+    }
+
     private List<OpenJobInstanceRespDTO> convertList(List<ClientInformation> instances) {
         if (CollectionUtils.isEmpty(instances)){
             return new ArrayList<>();

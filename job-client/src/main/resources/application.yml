@@ -10,6 +10,6 @@ spring:
 
 logging:
   level:
-    com.pro: INFO
+    com.saucesubfresh: INFO
 
 # debug: true

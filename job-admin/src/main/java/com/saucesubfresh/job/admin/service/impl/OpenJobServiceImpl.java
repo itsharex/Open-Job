@@ -23,6 +23,7 @@ import com.saucesubfresh.job.common.exception.ServiceException;
 import com.saucesubfresh.job.common.vo.PageResult;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -134,6 +135,16 @@ public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> im
             result.add(e.getMessage());
         }
         return result;
+    }
+
+    @Override
+    public String validateCron(String cronExpress) {
+        try {
+            CronExpression.validateExpression(cronExpress);
+            return "success";
+        } catch (ParseException e) {
+            return e.getMessage();
+        }
     }
 
     private ScheduleTask createScheduleTask(OpenJobDO openJobDO){
