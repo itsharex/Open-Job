@@ -1,6 +1,8 @@
 package com.saucesubfresh.job.admin.schedule;
 
+import com.saucesubfresh.job.admin.common.enums.SystemScheduleEnum;
 import com.saucesubfresh.job.admin.event.JobLogEvent;
+import com.saucesubfresh.job.admin.service.OpenJobReportService;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.server.cluster.ClusterInvoker;
@@ -31,20 +33,25 @@ public class ScheduleJobExecutor implements ScheduleTaskExecutor {
     private final ApplicationEventPublisher applicationEventPublisher;
     private final ClusterInvoker clusterInvoker;
     private final OpenJobMapper openJobMapper;
+    private final OpenJobReportService openJobReportService;
 
-    public ScheduleJobExecutor(ApplicationEventPublisher applicationEventPublisher, ClusterInvoker clusterInvoker, OpenJobMapper openJobMapper) {
+    public ScheduleJobExecutor(ApplicationEventPublisher applicationEventPublisher, ClusterInvoker clusterInvoker, OpenJobMapper openJobMapper, OpenJobReportService openJobReportService) {
         this.applicationEventPublisher = applicationEventPublisher;
         this.clusterInvoker = clusterInvoker;
         this.openJobMapper = openJobMapper;
+        this.openJobReportService = openJobReportService;
     }
 
     @Override
     public void execute(List<Long> taskList){
+        // 系统任务
+        executeSystemTask(taskList);
+        // 执行其他任务
         List<OpenJobDO> jobList = openJobMapper.queryList(taskList);
         if (CollectionUtils.isEmpty(jobList)){
             return;
         }
-        // 1 组装任务
+        // 组装任务
         List<Message> messages = jobList.stream().map(e->{
             MessageBody messageBody = new MessageBody();
             messageBody.setHandlerName(e.getHandlerName());
@@ -56,7 +63,7 @@ public class ScheduleJobExecutor implements ScheduleTaskExecutor {
             return message;
         }).collect(Collectors.toList());
 
-        // 2 分发任务
+        // 分发任务
         messages.forEach(message->{
             String cause = null;
             try {
@@ -68,6 +75,11 @@ public class ScheduleJobExecutor implements ScheduleTaskExecutor {
         });
     }
 
+    private void executeSystemTask(List<Long> taskList){
+        if (taskList.contains(SystemScheduleEnum.REPORT.getValue())){
+            openJobReportService.insertReport();
+        }
+    }
 
     private void createLog(Long jobId, String cause){
         OpenJobLogCreateDTO openJobLogCreateDTO = new OpenJobLogCreateDTO();

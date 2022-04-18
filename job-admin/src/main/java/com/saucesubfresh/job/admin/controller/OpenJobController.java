@@ -29,7 +29,6 @@ public class OpenJobController {
     @Autowired
     private OpenJobService openJobService;
 
-
     @GetMapping("/page")
     public Result<PageResult<OpenJobRespDTO>> page(OpenJobReqDTO OpenJobReqDTO) {
         return Result.succeed(openJobService.selectPage(OpenJobReqDTO));
@@ -73,5 +72,10 @@ public class OpenJobController {
     @GetMapping("/nextTriggerTime")
     public Result<List<String>> nextTriggerTime(@RequestParam("cronExpress") String cronExpress){
         return Result.succeed(openJobService.nextTriggerTime(cronExpress));
+    }
+
+    @GetMapping("/validateCron")
+    public Result<String> validateCron(@RequestParam("cronExpress") String cronExpress){
+        return Result.succeed(openJobService.validateCron(cronExpress));
     }
 }

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.saucesubfresh.job.admin.dto.req.OpenJobLogReqDTO;
 import com.saucesubfresh.job.admin.entity.OpenJobLogDO;
+import com.saucesubfresh.job.common.enums.CommonStatusEnum;
 import org.springframework.stereotype.Repository;
 
 import java.util.Objects;
@@ -25,6 +26,16 @@ public interface OpenJobLogMapper extends BaseMapper<OpenJobLogDO> {
             .eq(Objects.nonNull(openJobLogReqDTO.getStatus()), OpenJobLogDO::getStatus, openJobLogReqDTO.getStatus())
             .between(Objects.nonNull(openJobLogReqDTO.getBeginTime()), OpenJobLogDO::getCreateTime, openJobLogReqDTO.getBeginTime(), openJobLogReqDTO.getEndTime())
             .orderByDesc(OpenJobLogDO::getCreateTime)
+        );
+    }
+
+    default int getScheduleTotalCount(){
+        return selectCount(Wrappers.lambdaQuery());
+    }
+
+    default int getScheduleSucceedCount(){
+        return selectCount(Wrappers.<OpenJobLogDO>lambdaQuery()
+                .eq(OpenJobLogDO::getStatus, CommonStatusEnum.YES.getValue())
         );
     }
 }
