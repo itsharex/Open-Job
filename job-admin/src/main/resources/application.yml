@@ -43,5 +43,7 @@ com:
         - "/captcha/**"
         - "/login/**"
     alarm:
+      # 这里的 {xxxxxx} 替换成你的钉钉机器人的 secret
       secret: xxxxxx
+      # 这里 {xxxxxxxx} 替换成你的钉钉机器人的 access_token
       webhook: https://oapi.dingtalk.com/robot/send?access_token=xxxxxxxx
