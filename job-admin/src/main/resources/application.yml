@@ -42,3 +42,6 @@ com:
       ignore-paths:
         - "/captcha/**"
         - "/login/**"
+    alarm:
+      secret: xxxxxx
+      webhook: https://oapi.dingtalk.com/robot/send?access_token=xxxxxxxx
