@@ -1,5 +1,7 @@
 package com.saucesubfresh.job.admin.config;
 
+import com.saucesubfresh.job.common.vo.ResultEnum;
+import com.saucesubfresh.starter.captcha.exception.ValidateCodeException;
 import com.saucesubfresh.starter.oauth.exception.AuthenticationException;
 import com.saucesubfresh.starter.security.exception.SecurityException;
 import lombok.extern.slf4j.Slf4j;
@@ -194,6 +196,12 @@ public class GlobalExceptionHandler {
   public Result<Object> securityException(SecurityException ex) {
     log.warn("[securityException]", ex);
     return Result.failed(ex.getCode(), ex.getMessage());
+  }
+
+  @ExceptionHandler({ValidateCodeException.class})
+  public Result<Object> validateCodeException(ValidateCodeException ex) {
+    log.warn("[validateCodeException]", ex);
+    return Result.failed(ResultEnum.ERROR.getCode(), ex.getMessage());
   }
 
   @ExceptionHandler({AuthenticationException.class})
