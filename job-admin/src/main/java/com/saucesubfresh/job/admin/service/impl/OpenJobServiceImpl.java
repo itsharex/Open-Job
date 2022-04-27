@@ -1,6 +1,5 @@
 package com.saucesubfresh.job.admin.service.impl;
 
-import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -9,6 +8,7 @@ import com.saucesubfresh.job.admin.dto.req.OpenJobReqDTO;
 import com.saucesubfresh.job.admin.entity.OpenJobDO;
 import com.saucesubfresh.job.admin.mapper.OpenJobMapper;
 import com.saucesubfresh.job.admin.service.OpenJobService;
+import com.saucesubfresh.job.common.time.LocalDateTimeUtil;
 import com.saucesubfresh.starter.schedule.core.ScheduleTaskManage;
 import com.saucesubfresh.starter.schedule.cron.CronExpression;
 import com.saucesubfresh.starter.schedule.domain.ScheduleTask;
@@ -126,7 +126,7 @@ public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> im
             for (int i = 0; i < 5; i++) {
                 lastTime = new CronExpression(cronExpress).getNextValidTimeAfter(lastTime);
                 if (lastTime != null) {
-                    result.add(DateUtil.formatDateTime(lastTime));
+                    result.add(formatTime(lastTime));
                 } else {
                     break;
                 }
@@ -152,5 +152,10 @@ public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> im
         scheduleTask.setTaskId(openJobDO.getId());
         scheduleTask.setCronExpression(openJobDO.getCronExpression());
         return scheduleTask;
+    }
+
+    private String formatTime(Date date){
+        LocalDateTime localDateTime = LocalDateTimeUtil.convertDateToLDT(date);
+        return LocalDateTimeUtil.format(localDateTime, LocalDateTimeUtil.DATETIME_FORMATTER);
     }
 }
