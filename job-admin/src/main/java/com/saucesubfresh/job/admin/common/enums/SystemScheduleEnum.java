@@ -10,7 +10,11 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum SystemScheduleEnum {
 
-    REPORT("报表记录", -1L)
+    REPORT("报表记录", -1L),
+
+    CLEAR_LOG("定时清除任务日志和采集日志", -2L),
+
+    ALARM_MESSAGE("定时发送钉钉报警", -3L),
 
     ;
 

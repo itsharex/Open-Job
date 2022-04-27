@@ -8,6 +8,7 @@ import com.saucesubfresh.job.admin.entity.OpenJobLogDO;
 import com.saucesubfresh.job.common.enums.CommonStatusEnum;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -36,6 +37,12 @@ public interface OpenJobLogMapper extends BaseMapper<OpenJobLogDO> {
     default int getScheduleSucceedCount(){
         return selectCount(Wrappers.<OpenJobLogDO>lambdaQuery()
                 .eq(OpenJobLogDO::getStatus, CommonStatusEnum.YES.getValue())
+        );
+    }
+
+    default void clearLog(Integer interval){
+        delete(Wrappers.<OpenJobLogDO>lambdaQuery()
+                .lt(OpenJobLogDO::getCreateTime, LocalDateTime.now().plusDays(-interval))
         );
     }
 }

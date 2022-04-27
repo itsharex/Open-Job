@@ -1,7 +1,9 @@
-package com.saucesubfresh.job.admin.schedule;
+package com.saucesubfresh.job.admin.component.schedule;
 
 import com.saucesubfresh.job.admin.common.enums.SystemScheduleEnum;
+import com.saucesubfresh.job.admin.component.alarm.AlarmService;
 import com.saucesubfresh.job.admin.event.JobLogEvent;
+import com.saucesubfresh.job.admin.mapper.OpenJobLogMapper;
 import com.saucesubfresh.job.admin.service.OpenJobReportService;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.RpcException;
@@ -14,6 +16,7 @@ import com.saucesubfresh.job.admin.entity.OpenJobDO;
 import com.saucesubfresh.job.admin.mapper.OpenJobMapper;
 import com.saucesubfresh.job.common.enums.CommonStatusEnum;
 import com.saucesubfresh.job.common.serialize.SerializationUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -30,15 +33,27 @@ import java.util.stream.Collectors;
 @Component
 public class ScheduleJobExecutor implements ScheduleTaskExecutor {
 
+    @Value("${clear-interval}")
+    private Integer clearInterval;
+
     private final ApplicationEventPublisher applicationEventPublisher;
     private final ClusterInvoker clusterInvoker;
     private final OpenJobMapper openJobMapper;
+    private final OpenJobLogMapper openJobLogMapper;
+    private final AlarmService alarmService;
     private final OpenJobReportService openJobReportService;
 
-    public ScheduleJobExecutor(ApplicationEventPublisher applicationEventPublisher, ClusterInvoker clusterInvoker, OpenJobMapper openJobMapper, OpenJobReportService openJobReportService) {
+    public ScheduleJobExecutor(ApplicationEventPublisher applicationEventPublisher,
+                               ClusterInvoker clusterInvoker,
+                               OpenJobMapper openJobMapper,
+                               OpenJobLogMapper openJobLogMapper,
+                               AlarmService alarmService,
+                               OpenJobReportService openJobReportService) {
         this.applicationEventPublisher = applicationEventPublisher;
         this.clusterInvoker = clusterInvoker;
         this.openJobMapper = openJobMapper;
+        this.openJobLogMapper = openJobLogMapper;
+        this.alarmService = alarmService;
         this.openJobReportService = openJobReportService;
     }
 
@@ -78,6 +93,12 @@ public class ScheduleJobExecutor implements ScheduleTaskExecutor {
     private void executeSystemTask(List<Long> taskList){
         if (taskList.contains(SystemScheduleEnum.REPORT.getValue())){
             openJobReportService.insertReport();
+        }
+        if (taskList.contains(SystemScheduleEnum.CLEAR_LOG.getValue())){
+            openJobLogMapper.clearLog(clearInterval);
+        }
+        if (taskList.contains(SystemScheduleEnum.ALARM_MESSAGE.getValue())){
+            alarmService.sendAlarm();
         }
     }
 
