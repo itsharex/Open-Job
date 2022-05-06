@@ -119,9 +119,7 @@ public class AlarmService {
         if (Objects.isNull(request)){
             return;
         }
-        alarmExecutor.doAlarm(request, callbackMessage -> {
-            log.info("send alarm yet");
-        });
+        alarmExecutor.doAlarm(request);
     }
 
     /**
