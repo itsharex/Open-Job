@@ -1,12 +1,17 @@
 package com.saucesubfresh.job.admin.controller;
 
+import com.saucesubfresh.job.admin.dto.req.OpenJobCaptchaRequest;
+import com.saucesubfresh.job.admin.dto.resp.OpenJobCaptchaRespDTO;
+import com.saucesubfresh.job.common.exception.ControllerException;
+import com.saucesubfresh.job.common.vo.Result;
+import com.saucesubfresh.starter.captcha.core.image.ImageCodeGenerator;
 import com.saucesubfresh.starter.captcha.core.image.ImageValidateCode;
-import com.saucesubfresh.starter.captcha.processor.CaptchaProcessor;
+import com.saucesubfresh.starter.captcha.core.sms.SmsCodeGenerator;
+import com.saucesubfresh.starter.captcha.core.sms.ValidateCode;
+import com.saucesubfresh.starter.captcha.exception.ValidateCodeException;
 import com.saucesubfresh.starter.captcha.request.CaptchaGenerateRequest;
 import lombok.extern.slf4j.Slf4j;
-import com.saucesubfresh.job.admin.common.enums.ValidateCodeType;
-import com.saucesubfresh.job.admin.dto.req.OpenJobCaptchaRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Base64Utils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
@@ -27,35 +32,48 @@ import java.io.IOException;
 @RequestMapping("/captcha")
 public class OpenJobCaptchaController {
 
-    @Autowired
-    private CaptchaProcessor captchaProcessor;
+    private final ImageCodeGenerator imageCodeGenerator;
+    private final SmsCodeGenerator smsCodeGenerator;
 
-    /**
-     * 创建验证码
-     */
-    @PostMapping("/create")
-    public void createCode(@RequestBody @Valid OpenJobCaptchaRequest request, HttpServletResponse response) throws Exception {
+    public OpenJobCaptchaController(ImageCodeGenerator imageCodeGenerator, SmsCodeGenerator smsCodeGenerator) {
+        this.imageCodeGenerator = imageCodeGenerator;
+        this.smsCodeGenerator = smsCodeGenerator;
+    }
+
+    @PostMapping("/create/image")
+    public Result<OpenJobCaptchaRespDTO> createImageCode(@RequestBody @Valid OpenJobCaptchaRequest request) {
+        OpenJobCaptchaRespDTO openJobCaptchaRespDTO = new OpenJobCaptchaRespDTO();
         CaptchaGenerateRequest captchaGenerateRequest = new CaptchaGenerateRequest();
         captchaGenerateRequest.setRequestId(request.getDeviceId());
-        captchaGenerateRequest.setType(request.getType());
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try {
+            ImageValidateCode imageValidateCode = imageCodeGenerator.create(captchaGenerateRequest);
+            ImageIO.write(imageValidateCode.getImage(), "JPEG", byteArrayOutputStream);
+            byte[] bytes = byteArrayOutputStream.toByteArray();
+            String base64ImgCode = Base64Utils.encodeToString(bytes);
+            openJobCaptchaRespDTO.setImageCode(base64ImgCode);
+            openJobCaptchaRespDTO.setSuccess(true);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            throw new ControllerException(e.getMessage());
+        }
+        return Result.succeed(openJobCaptchaRespDTO);
+    }
 
-        captchaProcessor.create(captchaGenerateRequest, validateCode -> {
-            final String type = request.getType();
-            final ValidateCodeType codeType = ValidateCodeType.getValidateCodeType(type);
-            switch (codeType){
-                case IMAGE:
-                    try {
-                        ImageValidateCode imageValidateCode = (ImageValidateCode) validateCode;
-                        ImageIO.write(imageValidateCode.getImage(), "JPEG", response.getOutputStream());
-                    } catch (IOException e) {
-                        log.error(e.getMessage(), e);
-                    }
-                    break;
-                case SMS:
-                    log.info("向手机号: {}发送短信验证码: {}", request.getMobile(), validateCode.getCode());
-                    break;
-            }
-        });
+    @PostMapping("/create/sms")
+    public Result<OpenJobCaptchaRespDTO> createSmsCode(@RequestBody @Valid OpenJobCaptchaRequest request) {
+        OpenJobCaptchaRespDTO openJobCaptchaRespDTO = new OpenJobCaptchaRespDTO();
+        CaptchaGenerateRequest captchaGenerateRequest = new CaptchaGenerateRequest();
+        captchaGenerateRequest.setRequestId(request.getDeviceId());
+        try {
+            ValidateCode validateCode = smsCodeGenerator.create(captchaGenerateRequest);
+            openJobCaptchaRespDTO.setSuccess(true);
+            log.info("向手机号: {}发送短信验证码: {}", request.getMobile(), validateCode.getCode());
+        } catch (ValidateCodeException e) {
+            log.error(e.getMessage(), e);
+            throw new ControllerException(e.getMessage());
+        }
+        return Result.succeed(openJobCaptchaRespDTO);
     }
 
 }

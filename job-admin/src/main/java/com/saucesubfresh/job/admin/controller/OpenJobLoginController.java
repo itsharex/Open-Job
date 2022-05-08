@@ -1,7 +1,7 @@
 package com.saucesubfresh.job.admin.controller;
 
 import com.saucesubfresh.starter.captcha.exception.ValidateCodeException;
-import com.saucesubfresh.starter.captcha.processor.CaptchaProcessor;
+import com.saucesubfresh.starter.captcha.processor.CaptchaVerifyProcessor;
 import com.saucesubfresh.starter.captcha.request.CaptchaVerifyRequest;
 import com.saucesubfresh.starter.oauth.core.password.PasswordAuthenticationProcessor;
 import com.saucesubfresh.starter.oauth.core.sms.SmsMobileAuthenticationProcessor;
@@ -33,7 +33,7 @@ import javax.validation.Valid;
 public class OpenJobLoginController {
 
     @Autowired
-    private CaptchaProcessor captchaProcessor;
+    private CaptchaVerifyProcessor captchaVerifyProcessor;
 
     @Autowired
     private PasswordAuthenticationProcessor passwordAuthentication;
@@ -52,7 +52,7 @@ public class OpenJobLoginController {
                 .setRequestId(request.getDeviceId())
                 .setCode(request.getCaptcha());
         try {
-            captchaProcessor.validate(captchaVerifyRequest);
+            captchaVerifyProcessor.validate(captchaVerifyRequest);
         } catch (ValidateCodeException e){
             throw new ControllerException(e.getMessage());
         }
@@ -79,7 +79,7 @@ public class OpenJobLoginController {
                 .setRequestId(request.getDeviceId())
                 .setCode(request.getCaptcha());
         try {
-            captchaProcessor.validate(captchaVerifyRequest);
+            captchaVerifyProcessor.validate(captchaVerifyRequest);
         } catch (ValidateCodeException e){
             throw new ControllerException(e.getMessage());
         }
