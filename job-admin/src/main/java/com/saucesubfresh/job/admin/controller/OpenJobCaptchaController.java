@@ -6,6 +6,7 @@ import com.saucesubfresh.job.common.exception.ControllerException;
 import com.saucesubfresh.job.common.vo.Result;
 import com.saucesubfresh.starter.captcha.core.image.ImageCodeGenerator;
 import com.saucesubfresh.starter.captcha.core.image.ImageValidateCode;
+import com.saucesubfresh.starter.captcha.core.math.MathImageCodeGenerator;
 import com.saucesubfresh.starter.captcha.core.sms.SmsCodeGenerator;
 import com.saucesubfresh.starter.captcha.core.sms.ValidateCode;
 import com.saucesubfresh.starter.captcha.exception.ValidateCodeException;
@@ -34,10 +35,32 @@ public class OpenJobCaptchaController {
 
     private final ImageCodeGenerator imageCodeGenerator;
     private final SmsCodeGenerator smsCodeGenerator;
+    private final MathImageCodeGenerator mathImageCodeGenerator;
 
-    public OpenJobCaptchaController(ImageCodeGenerator imageCodeGenerator, SmsCodeGenerator smsCodeGenerator) {
+    public OpenJobCaptchaController(ImageCodeGenerator imageCodeGenerator, SmsCodeGenerator smsCodeGenerator, MathImageCodeGenerator mathImageCodeGenerator) {
         this.imageCodeGenerator = imageCodeGenerator;
         this.smsCodeGenerator = smsCodeGenerator;
+        this.mathImageCodeGenerator = mathImageCodeGenerator;
+    }
+
+    @PostMapping("/create/mathImage")
+    public Result<OpenJobCaptchaRespDTO> createMathImageCode(@RequestBody @Valid OpenJobCaptchaRequest request) {
+        OpenJobCaptchaRespDTO openJobCaptchaRespDTO = new OpenJobCaptchaRespDTO();
+        CaptchaGenerateRequest captchaGenerateRequest = new CaptchaGenerateRequest();
+        captchaGenerateRequest.setRequestId(request.getDeviceId());
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try {
+            ImageValidateCode imageValidateCode = mathImageCodeGenerator.create(captchaGenerateRequest);
+            ImageIO.write(imageValidateCode.getImage(), "JPEG", byteArrayOutputStream);
+            byte[] bytes = byteArrayOutputStream.toByteArray();
+            String base64ImgCode = Base64Utils.encodeToString(bytes);
+            openJobCaptchaRespDTO.setImageCode(base64ImgCode);
+            openJobCaptchaRespDTO.setSuccess(true);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            throw new ControllerException(e.getMessage());
+        }
+        return Result.succeed(openJobCaptchaRespDTO);
     }
 
     @PostMapping("/create/image")
