@@ -45,42 +45,28 @@ public class OpenJobCaptchaController {
 
     @PostMapping("/create/mathImage")
     public Result<OpenJobCaptchaRespDTO> createMathImageCode(@RequestBody @Valid OpenJobCaptchaRequest request) {
-        OpenJobCaptchaRespDTO openJobCaptchaRespDTO = new OpenJobCaptchaRespDTO();
         CaptchaGenerateRequest captchaGenerateRequest = new CaptchaGenerateRequest();
         captchaGenerateRequest.setRequestId(request.getDeviceId());
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
             ImageValidateCode imageValidateCode = mathImageCodeGenerator.create(captchaGenerateRequest);
-            ImageIO.write(imageValidateCode.getImage(), "JPEG", byteArrayOutputStream);
-            byte[] bytes = byteArrayOutputStream.toByteArray();
-            String base64ImgCode = Base64Utils.encodeToString(bytes);
-            openJobCaptchaRespDTO.setImageCode(base64ImgCode);
-            openJobCaptchaRespDTO.setSuccess(true);
-        } catch (IOException e) {
+            return Result.succeed(convert(imageValidateCode));
+        } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new ControllerException(e.getMessage());
         }
-        return Result.succeed(openJobCaptchaRespDTO);
     }
 
     @PostMapping("/create/image")
     public Result<OpenJobCaptchaRespDTO> createImageCode(@RequestBody @Valid OpenJobCaptchaRequest request) {
-        OpenJobCaptchaRespDTO openJobCaptchaRespDTO = new OpenJobCaptchaRespDTO();
         CaptchaGenerateRequest captchaGenerateRequest = new CaptchaGenerateRequest();
         captchaGenerateRequest.setRequestId(request.getDeviceId());
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
             ImageValidateCode imageValidateCode = imageCodeGenerator.create(captchaGenerateRequest);
-            ImageIO.write(imageValidateCode.getImage(), "JPEG", byteArrayOutputStream);
-            byte[] bytes = byteArrayOutputStream.toByteArray();
-            String base64ImgCode = Base64Utils.encodeToString(bytes);
-            openJobCaptchaRespDTO.setImageCode(base64ImgCode);
-            openJobCaptchaRespDTO.setSuccess(true);
-        } catch (IOException e) {
+            return Result.succeed(convert(imageValidateCode));
+        } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new ControllerException(e.getMessage());
         }
-        return Result.succeed(openJobCaptchaRespDTO);
     }
 
     @PostMapping("/create/sms")
@@ -97,6 +83,17 @@ public class OpenJobCaptchaController {
             throw new ControllerException(e.getMessage());
         }
         return Result.succeed(openJobCaptchaRespDTO);
+    }
+
+    private OpenJobCaptchaRespDTO convert(ImageValidateCode imageValidateCode) throws IOException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ImageIO.write(imageValidateCode.getImage(), "JPEG", byteArrayOutputStream);
+        byte[] bytes = byteArrayOutputStream.toByteArray();
+        String base64ImgCode = Base64Utils.encodeToString(bytes);
+        OpenJobCaptchaRespDTO openJobCaptchaRespDTO = new OpenJobCaptchaRespDTO();
+        openJobCaptchaRespDTO.setImageCode(base64ImgCode);
+        openJobCaptchaRespDTO.setSuccess(true);
+        return openJobCaptchaRespDTO;
     }
 
 }
