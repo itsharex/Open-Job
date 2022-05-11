@@ -58,11 +58,11 @@ public class JobHandlerManager implements MessageProcess, InitializingBean, Appl
     }
 
     @Override
-    public boolean process(Message message) {
+    public byte[] process(Message message) {
         final byte[] body = message.getBody();
         final MessageBody messageBody = SerializationUtils.deserialize(body, MessageBody.class);
         OpenJobHandler openJobHandler = this.getJobHandler(messageBody.getHandlerName());
         openJobHandler.handler(messageBody.getParams());
-        return true;
+        return null;
     }
 }

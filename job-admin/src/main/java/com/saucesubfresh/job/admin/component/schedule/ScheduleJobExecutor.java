@@ -7,6 +7,7 @@ import com.saucesubfresh.job.admin.mapper.OpenJobLogMapper;
 import com.saucesubfresh.job.admin.service.OpenJobReportService;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.RpcException;
+import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 import com.saucesubfresh.rpc.server.cluster.ClusterInvoker;
 import com.saucesubfresh.starter.schedule.executor.ScheduleTaskExecutor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -82,7 +84,11 @@ public class ScheduleJobExecutor implements ScheduleTaskExecutor {
         messages.forEach(message->{
             String cause = null;
             try {
-                clusterInvoker.invoke(message);
+                MessageResponseBody response = clusterInvoker.invoke(message);
+                if (Objects.isNull(response)){
+                    return;
+                }
+                cause = response.getErrorMsg();
             }catch (RpcException e){
                 cause = e.getMessage();
             }
