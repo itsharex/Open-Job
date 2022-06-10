@@ -2,10 +2,14 @@ package com.saucesubfresh.job.admin.component.schedule;
 
 import com.saucesubfresh.job.admin.common.enums.SystemScheduleEnum;
 import com.saucesubfresh.job.admin.component.alarm.AlarmService;
+import com.saucesubfresh.job.admin.domain.ScheduleJob;
+import com.saucesubfresh.job.admin.entity.OpenJobAppDO;
 import com.saucesubfresh.job.admin.event.JobLogEvent;
+import com.saucesubfresh.job.admin.mapper.OpenJobAppMapper;
 import com.saucesubfresh.job.admin.mapper.OpenJobLogMapper;
 import com.saucesubfresh.job.admin.service.OpenJobReportService;
 import com.saucesubfresh.rpc.core.Message;
+import com.saucesubfresh.rpc.core.enums.ResponseStatus;
 import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 import com.saucesubfresh.rpc.server.cluster.ClusterInvoker;
@@ -43,6 +47,7 @@ public class ScheduleJobExecutor implements ScheduleTaskExecutor {
     private final OpenJobMapper openJobMapper;
     private final OpenJobLogMapper openJobLogMapper;
     private final AlarmService alarmService;
+    private final OpenJobAppMapper openJobAppMapper;
     private final OpenJobReportService openJobReportService;
 
     public ScheduleJobExecutor(ApplicationEventPublisher applicationEventPublisher,
@@ -50,12 +55,13 @@ public class ScheduleJobExecutor implements ScheduleTaskExecutor {
                                OpenJobMapper openJobMapper,
                                OpenJobLogMapper openJobLogMapper,
                                AlarmService alarmService,
-                               OpenJobReportService openJobReportService) {
+                               OpenJobAppMapper openJobAppMapper, OpenJobReportService openJobReportService) {
         this.applicationEventPublisher = applicationEventPublisher;
         this.clusterInvoker = clusterInvoker;
         this.openJobMapper = openJobMapper;
         this.openJobLogMapper = openJobLogMapper;
         this.alarmService = alarmService;
+        this.openJobAppMapper = openJobAppMapper;
         this.openJobReportService = openJobReportService;
     }
 
@@ -69,7 +75,8 @@ public class ScheduleJobExecutor implements ScheduleTaskExecutor {
             return;
         }
         // 组装任务
-        List<Message> messages = jobList.stream().map(e->{
+        List<ScheduleJob> scheduleJobs = jobList.stream().map(e->{
+            ScheduleJob scheduleJob = new ScheduleJob();
             MessageBody messageBody = new MessageBody();
             messageBody.setHandlerName(e.getHandlerName());
             messageBody.setParams(e.getParams());
@@ -77,20 +84,25 @@ public class ScheduleJobExecutor implements ScheduleTaskExecutor {
             Message message = new Message();
             message.setMsgId(String.valueOf(e.getId()));
             message.setBody(serializeData);
-            return message;
+            OpenJobAppDO openJobAppDO = openJobAppMapper.selectById(e.getAppId());
+            scheduleJob.setAppName(openJobAppDO.getAppName());
+            scheduleJob.setMessage(message);
+            return scheduleJob;
         }).collect(Collectors.toList());
 
         // 分发任务
-        messages.forEach(message->{
+        scheduleJobs.forEach(scheduleJob->{
             String cause = null;
+            MessageResponseBody response = null;
+            final String appName = scheduleJob.getAppName();
+            final Message message = scheduleJob.getMessage();
             try {
-                MessageResponseBody response = clusterInvoker.invoke(message);
-                if (Objects.isNull(response)){
-                    return;
-                }
-                cause = response.getErrorMsg();
+                response = clusterInvoker.invoke(appName, message);
             }catch (RpcException e){
                 cause = e.getMessage();
+            }
+            if (Objects.nonNull(response) && response.getStatus() != ResponseStatus.SUCCESS){
+                cause = response.getErrorMsg();
             }
             createLog(Long.parseLong(message.getMsgId()), cause);
         });

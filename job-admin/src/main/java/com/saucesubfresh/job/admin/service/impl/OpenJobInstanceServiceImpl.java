@@ -1,14 +1,15 @@
 package com.saucesubfresh.job.admin.service.impl;
 
 import com.saucesubfresh.job.admin.dto.req.OpenJobInstanceReqDTO;
+import com.saucesubfresh.job.admin.dto.resp.OpenJobAppRespDTO;
 import com.saucesubfresh.job.admin.dto.resp.OpenJobInstanceRespDTO;
+import com.saucesubfresh.job.admin.service.OpenJobAppService;
 import com.saucesubfresh.job.admin.service.OpenJobInstanceService;
-import com.saucesubfresh.rpc.core.information.ClientInformation;
-import com.saucesubfresh.rpc.server.discovery.ServiceDiscovery;
-import com.saucesubfresh.rpc.server.store.InstanceStore;
 import com.saucesubfresh.job.common.time.LocalDateTimeUtil;
 import com.saucesubfresh.job.common.vo.PageResult;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.saucesubfresh.rpc.core.information.ClientInformation;
+import com.saucesubfresh.rpc.server.manager.InstanceManager;
+import com.saucesubfresh.rpc.server.store.InstanceStore;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -24,15 +25,20 @@ import java.util.stream.Collectors;
 @Service
 public class OpenJobInstanceServiceImpl implements OpenJobInstanceService {
 
-    @Autowired(required = false)
-    private ServiceDiscovery serviceDiscovery;
+    private final InstanceStore instanceStore;
+    private final InstanceManager InstanceManager;
+    private final OpenJobAppService openJobAppService;
 
-    @Autowired
-    private InstanceStore instanceStore;
+    public OpenJobInstanceServiceImpl(InstanceStore instanceStore, InstanceManager instanceManager, OpenJobAppService openJobAppService) {
+        this.instanceStore = instanceStore;
+        InstanceManager = instanceManager;
+        this.openJobAppService = openJobAppService;
+    }
 
     @Override
     public PageResult<OpenJobInstanceRespDTO> selectPage(OpenJobInstanceReqDTO instanceReqDTO) {
-        List<ClientInformation> instances = instanceStore.getAll();
+        final OpenJobAppRespDTO openJobApp = openJobAppService.getById(instanceReqDTO.getAppId());
+        List<ClientInformation> instances = instanceStore.getByNamespace(openJobApp.getAppName());
         List<OpenJobInstanceRespDTO> jobInstance = convertList(instances);
         return PageResult.<OpenJobInstanceRespDTO>newBuilder()
                 .records(jobInstance)
@@ -44,18 +50,12 @@ public class OpenJobInstanceServiceImpl implements OpenJobInstanceService {
 
     @Override
     public Boolean offlineClient(String clientId) {
-        return serviceDiscovery.offlineClient(clientId);
+        return InstanceManager.offlineClient(clientId);
     }
 
     @Override
     public Boolean onlineClient(String clientId) {
-        return serviceDiscovery.onlineClient(clientId);
-    }
-
-    @Override
-    public List<OpenJobInstanceRespDTO> getInstanceList() {
-        List<ClientInformation> instances = instanceStore.getAll();
-        return convertList(instances);
+        return InstanceManager.onlineClient(clientId);
     }
 
     private List<OpenJobInstanceRespDTO> convertList(List<ClientInformation> instances) {

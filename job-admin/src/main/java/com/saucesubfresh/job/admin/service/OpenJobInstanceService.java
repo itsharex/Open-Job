@@ -17,6 +17,4 @@ public interface OpenJobInstanceService {
     Boolean offlineClient(String clientId);
 
     Boolean onlineClient(String clientId);
-
-    List<OpenJobInstanceRespDTO> getInstanceList();
 }

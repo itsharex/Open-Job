@@ -23,6 +23,7 @@ public interface OpenJobMapper extends BaseMapper<OpenJobDO> {
 
     default Page<OpenJobDO> queryPage(OpenJobReqDTO openJobReqDTO){
         return selectPage(openJobReqDTO.page(), Wrappers.<OpenJobDO>lambdaQuery()
+                .eq(Objects.nonNull(openJobReqDTO.getAppId()), OpenJobDO::getAppId, openJobReqDTO.getAppId())
                 .like(Objects.nonNull(openJobReqDTO.getJobName()), OpenJobDO::getJobName, openJobReqDTO.getJobName())
                 .like(Objects.nonNull(openJobReqDTO.getHandlerName()), OpenJobDO::getHandlerName, openJobReqDTO.getHandlerName())
                 .eq(Objects.nonNull(openJobReqDTO.getStatus()), OpenJobDO::getStatus, openJobReqDTO.getStatus())

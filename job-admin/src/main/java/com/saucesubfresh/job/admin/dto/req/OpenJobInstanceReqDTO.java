@@ -15,6 +15,10 @@ public class OpenJobInstanceReqDTO implements Serializable {
     private static final long serialVersionUID = 4199379444084998224L;
 
     /**
+     * 应用 id
+     */
+    private Long appId;
+    /**
      * 客户端地址：端口
      */
     private String clientId;
