@@ -14,10 +14,12 @@ import com.saucesubfresh.job.admin.mapper.OpenJobAppMapper;
 import com.saucesubfresh.job.admin.service.OpenJobAppService;
 import com.saucesubfresh.job.common.vo.PageResult;
 import com.saucesubfresh.rpc.server.namespace.NamespaceService;
+import com.saucesubfresh.starter.security.context.UserSecurityContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,7 +46,10 @@ public class OpenJobAppServiceImpl extends ServiceImpl<OpenJobAppMapper, OpenJob
 
     @Override
     public boolean save(OpenJobAppCreateDTO openJobAppCreateDTO) {
-        openJobAppMapper.insert(OpenJobAppConvert.INSTANCE.convert(openJobAppCreateDTO));
+        OpenJobAppDO openJobAppDO = OpenJobAppConvert.INSTANCE.convert(openJobAppCreateDTO);
+        openJobAppDO.setCreateTime(LocalDateTime.now());
+        openJobAppDO.setCreateUser(UserSecurityContextHolder.getUserId());
+        openJobAppMapper.insert(openJobAppDO);
         return true;
     }
 
