@@ -43,8 +43,9 @@ public class OpenJobAppServiceImpl extends ServiceImpl<OpenJobAppMapper, OpenJob
     }
 
     @Override
-    public void save(OpenJobAppCreateDTO openJobAppCreateDTO) {
+    public boolean save(OpenJobAppCreateDTO openJobAppCreateDTO) {
         openJobAppMapper.insert(OpenJobAppConvert.INSTANCE.convert(openJobAppCreateDTO));
+        return true;
     }
 
     @Override
@@ -57,6 +58,12 @@ public class OpenJobAppServiceImpl extends ServiceImpl<OpenJobAppMapper, OpenJob
     public boolean deleteById(Long id) {
         openJobAppMapper.deleteById(id);
         return true;
+    }
+
+    @Override
+    public List<OpenJobAppRespDTO> queryList() {
+        List<OpenJobAppDO> openJobAppDOS = openJobAppMapper.selectList(Wrappers.lambdaQuery());
+        return OpenJobAppConvert.INSTANCE.convertList(openJobAppDOS);
     }
 
     @Override

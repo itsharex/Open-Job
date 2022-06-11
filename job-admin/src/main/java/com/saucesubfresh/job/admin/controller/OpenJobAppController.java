@@ -1,5 +1,6 @@
 package com.saucesubfresh.job.admin.controller;
 
+import com.saucesubfresh.job.admin.dto.create.OpenJobAppCreateDTO;
 import com.saucesubfresh.job.admin.dto.req.OpenJobAppReqDTO;
 import com.saucesubfresh.job.admin.dto.resp.OpenJobAppRespDTO;
 import com.saucesubfresh.job.admin.dto.update.OpenJobAppUpdateDTO;
@@ -11,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 
 /**
@@ -33,9 +35,19 @@ public class OpenJobAppController {
     return Result.succeed(openJobAppService.selectPage(openJobAppReqDTO));
   }
 
+  @GetMapping("/list")
+  public Result<List<OpenJobAppRespDTO>> list() {
+    return Result.succeed(openJobAppService.queryList());
+  }
+
   @GetMapping("/info/{id}")
   public Result<OpenJobAppRespDTO> info(@PathVariable("id") Long id) {
     return Result.succeed(openJobAppService.getById(id));
+  }
+
+  @PostMapping("/save")
+  public Result<Boolean> save(@RequestBody @Valid OpenJobAppCreateDTO openJobAppCreateDTO) {
+    return Result.succeed(openJobAppService.save(openJobAppCreateDTO));
   }
 
   @PutMapping("/update")

@@ -7,6 +7,8 @@ import com.saucesubfresh.job.admin.entity.OpenJobAppDO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 /**
  * 任务运行日志
  *
@@ -25,6 +27,7 @@ public interface OpenJobAppConvert {
 
     OpenJobAppDO convert(OpenJobAppUpdateDTO OpenJobAppUpdateDTO);
 
+    List<OpenJobAppRespDTO> convertList(List<OpenJobAppDO> openJobAppDOS);
 }
 
 

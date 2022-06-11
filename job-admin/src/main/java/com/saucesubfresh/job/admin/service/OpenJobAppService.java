@@ -6,6 +6,8 @@ import com.saucesubfresh.job.admin.dto.resp.OpenJobAppRespDTO;
 import com.saucesubfresh.job.admin.dto.update.OpenJobAppUpdateDTO;
 import com.saucesubfresh.job.common.vo.PageResult;
 
+import java.util.List;
+
 /**
  * 任务运行日志
  *
@@ -19,10 +21,12 @@ public interface OpenJobAppService {
 
     OpenJobAppRespDTO getById(Long id);
 
-    void save(OpenJobAppCreateDTO openJobAppCreateDTO);
+    boolean save(OpenJobAppCreateDTO openJobAppCreateDTO);
 
     boolean updateById(OpenJobAppUpdateDTO openJobAppUpdateDTO);
 
     boolean deleteById(Long id);
+
+    List<OpenJobAppRespDTO> queryList();
 }
 
