@@ -2,6 +2,7 @@ package com.saucesubfresh.job.core.collector;
 
 import com.saucesubfresh.job.core.annotation.JobHandlerForMethod;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.context.ApplicationContext;
@@ -47,7 +48,8 @@ public class JobHandlerCollectorForMethod extends AbstractJobHandlerCollector im
             for (Map.Entry<Method, JobHandlerForMethod> methodJobHandlerForMethodEntry : annotatedMethods.entrySet()) {
                 Method executeMethod = methodJobHandlerForMethodEntry.getKey();
                 JobHandlerForMethod annotation = methodJobHandlerForMethodEntry.getValue();
-                log.info("{}-{}-{}", annotation, bean, executeMethod);
+                log.info("annotation{}-bean{}-executeMethod{}", annotation, bean, executeMethod);
+                buildJobHandler(annotation, bean, executeMethod);
             }
         }
     }
@@ -62,5 +64,20 @@ public class JobHandlerCollectorForMethod extends AbstractJobHandlerCollector im
         this.applicationContext = applicationContext;
     }
 
+    protected void buildJobHandler(JobHandlerForMethod jobHandler, Object bean, Method executeMethod){
+        if (jobHandler == null) {
+            return;
+        }
 
+        String name = jobHandler.value();
+        Class<?> clazz = bean.getClass();
+        String methodName = executeMethod.getName();
+        if (StringUtils.isBlank(name)) {
+            throw new RuntimeException("open-job method-jobHandler name invalid, for[" + clazz + "#" + methodName + "] .");
+        }
+        if (handlerMap.get(name) != null) {
+            throw new RuntimeException("xxl-job jobhandler[" + name + "] naming conflicts.");
+        }
+        executeMethod.setAccessible(true);
+    }
 }
