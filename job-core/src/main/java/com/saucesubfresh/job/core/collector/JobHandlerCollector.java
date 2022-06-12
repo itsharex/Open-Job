@@ -12,9 +12,9 @@ public interface JobHandlerCollector {
     void collectJobHandler();
 
     /**
-     * 根据 handlerName 获取 JobHandlerForClass
+     * 根据 handlerName 获取 OpenJobHandler
      * @param handlerName 绑定的 handlerName
-     * @return JobHandlerForClass
+     * @return OpenJobHandler
      */
     OpenJobHandler getJobHandler(String handlerName);
 }

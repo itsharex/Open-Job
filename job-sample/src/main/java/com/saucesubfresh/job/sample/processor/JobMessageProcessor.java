@@ -2,7 +2,6 @@ package com.saucesubfresh.job.sample.processor;
 
 import com.saucesubfresh.job.common.serialize.SerializationUtils;
 import com.saucesubfresh.job.core.collector.JobHandlerCollector;
-import com.saucesubfresh.job.core.collector.JobHandlerCollectorForClass;
 import com.saucesubfresh.job.core.collector.OpenJobHandler;
 import com.saucesubfresh.rpc.client.process.MessageProcess;
 import com.saucesubfresh.rpc.core.Message;
@@ -31,7 +30,7 @@ public class JobMessageProcessor implements MessageProcess{
         String handlerName = messageBody.getHandlerName();
         OpenJobHandler openJobHandler = jobHandlerCollector.getJobHandler(handlerName);
         if (ObjectUtils.isEmpty(openJobHandler)) {
-            throw new RpcException("JobHandlerName: " + handlerName + ", there is no bound JobHandlerForClass.");
+            throw new RpcException("JobHandlerName: " + handlerName + ", there is no bound JobHandler.");
         }
         try {
             openJobHandler.handler(messageBody.getParams());

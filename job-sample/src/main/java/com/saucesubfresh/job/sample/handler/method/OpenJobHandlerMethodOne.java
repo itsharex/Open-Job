@@ -1,6 +1,5 @@
 package com.saucesubfresh.job.sample.handler.method;
 
-import com.saucesubfresh.job.core.annotation.JobHandlerForClass;
 import com.saucesubfresh.job.core.annotation.JobHandlerForMethod;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

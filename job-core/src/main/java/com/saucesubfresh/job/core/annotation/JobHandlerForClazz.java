@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Component
-public @interface JobHandlerForClass {
+public @interface JobHandlerForClazz {
 
     @AliasFor("name")
     String value() default "";

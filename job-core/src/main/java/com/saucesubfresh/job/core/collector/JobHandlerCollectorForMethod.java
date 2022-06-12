@@ -21,6 +21,7 @@ import java.util.Map;
 @Slf4j
 @Component
 public class JobHandlerCollectorForMethod extends AbstractJobHandlerCollector implements ApplicationContextAware, SmartInitializingSingleton {
+
     private ApplicationContext applicationContext;
 
     @Override
