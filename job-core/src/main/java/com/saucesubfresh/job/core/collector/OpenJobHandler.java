@@ -10,5 +10,5 @@ public interface OpenJobHandler {
      *
      * @param params params
      */
-    void handler(String params);
+    void handler(String params) throws Exception;
 }

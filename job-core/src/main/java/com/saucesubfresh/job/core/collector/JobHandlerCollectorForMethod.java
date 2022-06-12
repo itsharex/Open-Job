@@ -79,5 +79,6 @@ public class JobHandlerCollectorForMethod extends AbstractJobHandlerCollector im
             throw new RuntimeException("open-job jobHandler[" + name + "] naming conflicts.");
         }
         executeMethod.setAccessible(true);
+        handlerMap.put(name, new MethodJobHandler(bean, executeMethod));
     }
 }

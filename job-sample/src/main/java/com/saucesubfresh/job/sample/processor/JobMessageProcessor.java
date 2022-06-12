@@ -33,7 +33,12 @@ public class JobMessageProcessor implements MessageProcess{
         if (ObjectUtils.isEmpty(openJobHandler)) {
             throw new RpcException("JobHandlerName: " + handlerName + ", there is no bound JobHandlerForClass.");
         }
-        openJobHandler.handler(messageBody.getParams());
+        try {
+            openJobHandler.handler(messageBody.getParams());
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new RpcException("JobHandlerName: " + handlerName + ", execute exception:" + e.getMessage());
+        }
         return null;
     }
 }

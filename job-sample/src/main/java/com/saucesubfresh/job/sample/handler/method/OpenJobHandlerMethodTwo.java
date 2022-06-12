@@ -13,11 +13,11 @@ public class OpenJobHandlerMethodTwo {
 
     @JobHandlerForMethod(name = "job-method-two1")
     public void handlerTwo1(String params) {
-        log.info("JobHandlerOne 处理任务");
+        log.info("JobHandlerOne 处理任务, 任务参数 {}", params);
     }
 
     @JobHandlerForMethod(name = "job-method-two2")
     public void handlerTwo2(String params) {
-        log.info("JobHandlerOne 处理任务");
+        log.info("JobHandlerOne 处理任务, 任务参数 {}", params);
     }
 }
