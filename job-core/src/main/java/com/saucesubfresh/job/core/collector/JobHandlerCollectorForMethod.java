@@ -76,7 +76,7 @@ public class JobHandlerCollectorForMethod extends AbstractJobHandlerCollector im
             throw new RuntimeException("open-job method-jobHandler name invalid, for[" + clazz + "#" + methodName + "] .");
         }
         if (handlerMap.get(name) != null) {
-            throw new RuntimeException("xxl-job jobhandler[" + name + "] naming conflicts.");
+            throw new RuntimeException("open-job jobHandler[" + name + "] naming conflicts.");
         }
         executeMethod.setAccessible(true);
     }
