@@ -1,4 +1,4 @@
-package com.saucesubfresh.job.client.annotation;
+package com.saucesubfresh.job.core.annotation;
 
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Component
-public @interface JobHandler {
+public @interface JobHandlerForClass {
 
     @AliasFor("name")
     String value() default "";

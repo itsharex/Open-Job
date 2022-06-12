@@ -1,4 +1,4 @@
-package com.saucesubfresh.job.client.config;
+package com.saucesubfresh.job.sample.config;
 
 import com.alibaba.nacos.api.NacosFactory;
 import com.alibaba.nacos.api.PropertyKeyConst;

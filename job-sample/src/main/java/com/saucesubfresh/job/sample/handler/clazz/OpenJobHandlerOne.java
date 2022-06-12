@@ -1,13 +1,14 @@
-package com.saucesubfresh.job.client.handler;
+package com.saucesubfresh.job.sample.handler.clazz;
 
+import com.saucesubfresh.job.core.annotation.JobHandlerForClass;
+import com.saucesubfresh.job.core.collector.OpenJobHandler;
 import lombok.extern.slf4j.Slf4j;
-import com.saucesubfresh.job.client.annotation.JobHandler;
 
 /**
  * @author lijunping on 2022/2/25
  */
 @Slf4j
-@JobHandler(name = "job-one")
+@JobHandlerForClass(name = "job-one")
 public class OpenJobHandlerOne implements OpenJobHandler {
 
     @Override

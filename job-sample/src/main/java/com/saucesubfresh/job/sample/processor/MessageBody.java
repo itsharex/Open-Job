@@ -1,4 +1,4 @@
-package com.saucesubfresh.job.client.handler;
+package com.saucesubfresh.job.sample.processor;
 
 import lombok.Data;
 
@@ -12,7 +12,7 @@ import java.io.Serializable;
 public class MessageBody implements Serializable {
     private static final long serialVersionUID = 8230301428590315404L;
     /**
-     * The name of JobHandler
+     * The name of JobHandlerForClass
      */
     private String handlerName;
     /**

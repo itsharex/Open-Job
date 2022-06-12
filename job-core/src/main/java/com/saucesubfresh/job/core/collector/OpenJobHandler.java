@@ -1,4 +1,4 @@
-package com.saucesubfresh.job.client.handler;
+package com.saucesubfresh.job.core.collector;
 
 /**
  * @author lijunping on 2022/1/19
