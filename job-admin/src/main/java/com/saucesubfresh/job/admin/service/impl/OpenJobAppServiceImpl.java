@@ -66,8 +66,8 @@ public class OpenJobAppServiceImpl extends ServiceImpl<OpenJobAppMapper, OpenJob
     }
 
     @Override
-    public List<OpenJobAppRespDTO> queryList() {
-        List<OpenJobAppDO> openJobAppDOS = openJobAppMapper.selectList(Wrappers.lambdaQuery());
+    public List<OpenJobAppRespDTO> queryList(String appName) {
+        List<OpenJobAppDO> openJobAppDOS = openJobAppMapper.queryList(appName);
         return OpenJobAppConvert.INSTANCE.convertList(openJobAppDOS);
     }
 

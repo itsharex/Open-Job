@@ -27,6 +27,6 @@ public interface OpenJobAppService {
 
     boolean deleteById(Long id);
 
-    List<OpenJobAppRespDTO> queryList();
+    List<OpenJobAppRespDTO> queryList(String appName);
 }
 

@@ -36,8 +36,8 @@ public class OpenJobAppController {
   }
 
   @GetMapping("/list")
-  public Result<List<OpenJobAppRespDTO>> list() {
-    return Result.succeed(openJobAppService.queryList());
+  public Result<List<OpenJobAppRespDTO>> list(@RequestParam(required = false) String appName) {
+    return Result.succeed(openJobAppService.queryList(appName));
   }
 
   @GetMapping("/info/{id}")
