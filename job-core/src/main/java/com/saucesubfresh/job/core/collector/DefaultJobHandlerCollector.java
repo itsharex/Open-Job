@@ -10,6 +10,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.MethodIntrospector;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -20,12 +21,39 @@ import java.util.Map;
  */
 @Slf4j
 @Component
-public class JobHandlerCollectorForMethod extends AbstractJobHandlerCollector implements ApplicationContextAware, SmartInitializingSingleton {
+public class DefaultJobHandlerCollector extends AbstractJobHandlerCollector implements ApplicationContextAware, SmartInitializingSingleton {
 
     private ApplicationContext applicationContext;
 
     @Override
     public void collectJobHandler() {
+        this.collectClazzJobHandler();
+        this.collectMethodJobHandler();
+    }
+
+    @Override
+    public void afterSingletonsInstantiated() {
+        this.collectJobHandler();
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
+    private void collectClazzJobHandler(){
+        Map<String, Object> beans = applicationContext.getBeansWithAnnotation(JobHandler.class);
+        if (ObjectUtils.isEmpty(beans)){
+            log.warn("No JobHandler instance is defined.");
+        }else {
+            beans.forEach((k,v)->{
+                JobHandler annotation = v.getClass().getAnnotation(JobHandler.class);
+                handlerMap.put(annotation.name(), (OpenJobHandler) v);
+            });
+        }
+    }
+
+    private void collectMethodJobHandler(){
         String[] beanDefinitionNames = applicationContext.getBeanNamesForType(Object.class, false, true);
         for (String beanDefinitionName : beanDefinitionNames) {
             Object bean = applicationContext.getBean(beanDefinitionName);
@@ -55,17 +83,7 @@ public class JobHandlerCollectorForMethod extends AbstractJobHandlerCollector im
         }
     }
 
-    @Override
-    public void afterSingletonsInstantiated() {
-        this.collectJobHandler();
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
-
-    protected void buildJobHandler(JobHandler jobHandler, Object bean, Method executeMethod){
+    private void buildJobHandler(JobHandler jobHandler, Object bean, Method executeMethod){
         if (jobHandler == null) {
             return;
         }
