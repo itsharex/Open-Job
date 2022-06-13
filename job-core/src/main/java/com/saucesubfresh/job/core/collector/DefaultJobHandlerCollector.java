@@ -9,7 +9,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.MethodIntrospector;
 import org.springframework.core.annotation.AnnotatedElementUtils;
-import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 import java.lang.reflect.Method;
@@ -20,7 +19,6 @@ import java.util.Map;
  * @Date: 2022-06-12 17:30
  */
 @Slf4j
-@Component
 public class DefaultJobHandlerCollector extends AbstractJobHandlerCollector implements ApplicationContextAware, SmartInitializingSingleton {
 
     private ApplicationContext applicationContext;
@@ -77,7 +75,6 @@ public class DefaultJobHandlerCollector extends AbstractJobHandlerCollector impl
             for (Map.Entry<Method, JobHandler> methodJobHandlerEntry : annotatedMethods.entrySet()) {
                 Method executeMethod = methodJobHandlerEntry.getKey();
                 JobHandler annotation = methodJobHandlerEntry.getValue();
-                log.info("annotation{}-bean{}-executeMethod{}", annotation, bean, executeMethod);
                 buildJobHandler(annotation, bean, executeMethod);
             }
         }
