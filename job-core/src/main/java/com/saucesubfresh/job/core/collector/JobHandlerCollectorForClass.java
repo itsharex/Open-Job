@@ -1,6 +1,6 @@
 package com.saucesubfresh.job.core.collector;
 
-import com.saucesubfresh.job.core.annotation.JobHandlerForClazz;
+import com.saucesubfresh.job.core.annotation.JobHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
@@ -20,12 +20,12 @@ public class JobHandlerCollectorForClass extends AbstractJobHandlerCollector imp
 
     @Override
     public void collectJobHandler() {
-        Map<String, Object> beans = applicationContext.getBeansWithAnnotation(JobHandlerForClazz.class);
+        Map<String, Object> beans = applicationContext.getBeansWithAnnotation(JobHandler.class);
         if (ObjectUtils.isEmpty(beans)){
             log.warn("No JobHandler instance is defined.");
         }else {
             beans.forEach((k,v)->{
-                JobHandlerForClazz annotation = v.getClass().getAnnotation(JobHandlerForClazz.class);
+                JobHandler annotation = v.getClass().getAnnotation(JobHandler.class);
                 handlerMap.put(annotation.name(), (OpenJobHandler) v);
             });
         }

@@ -1,6 +1,6 @@
 package com.saucesubfresh.job.core.collector;
 
-import com.saucesubfresh.job.core.annotation.JobHandlerForMethod;
+import com.saucesubfresh.job.core.annotation.JobHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
@@ -30,13 +30,13 @@ public class JobHandlerCollectorForMethod extends AbstractJobHandlerCollector im
         for (String beanDefinitionName : beanDefinitionNames) {
             Object bean = applicationContext.getBean(beanDefinitionName);
             // referred to ：org.springframework.context.event.EventListenerMethodProcessor.processBean
-            Map<Method, JobHandlerForMethod> annotatedMethods = null;
+            Map<Method, JobHandler> annotatedMethods = null;
             try {
                 annotatedMethods = MethodIntrospector.selectMethods(bean.getClass(),
-                        new MethodIntrospector.MetadataLookup<JobHandlerForMethod>() {
+                        new MethodIntrospector.MetadataLookup<JobHandler>() {
                             @Override
-                            public JobHandlerForMethod inspect(Method method) {
-                                return AnnotatedElementUtils.findMergedAnnotation(method, JobHandlerForMethod.class);
+                            public JobHandler inspect(Method method) {
+                                return AnnotatedElementUtils.findMergedAnnotation(method, JobHandler.class);
                             }
                         });
             } catch (Throwable ex) {
@@ -46,9 +46,9 @@ public class JobHandlerCollectorForMethod extends AbstractJobHandlerCollector im
                 continue;
             }
 
-            for (Map.Entry<Method, JobHandlerForMethod> methodJobHandlerForMethodEntry : annotatedMethods.entrySet()) {
-                Method executeMethod = methodJobHandlerForMethodEntry.getKey();
-                JobHandlerForMethod annotation = methodJobHandlerForMethodEntry.getValue();
+            for (Map.Entry<Method, JobHandler> methodJobHandlerEntry : annotatedMethods.entrySet()) {
+                Method executeMethod = methodJobHandlerEntry.getKey();
+                JobHandler annotation = methodJobHandlerEntry.getValue();
                 log.info("annotation{}-bean{}-executeMethod{}", annotation, bean, executeMethod);
                 buildJobHandler(annotation, bean, executeMethod);
             }
@@ -65,7 +65,7 @@ public class JobHandlerCollectorForMethod extends AbstractJobHandlerCollector im
         this.applicationContext = applicationContext;
     }
 
-    protected void buildJobHandler(JobHandlerForMethod jobHandler, Object bean, Method executeMethod){
+    protected void buildJobHandler(JobHandler jobHandler, Object bean, Method executeMethod){
         if (jobHandler == null) {
             return;
         }

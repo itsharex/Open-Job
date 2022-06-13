@@ -1,14 +1,16 @@
 package com.saucesubfresh.job.sample.handler.clazz;
 
-import com.saucesubfresh.job.core.annotation.JobHandlerForClazz;
+import com.saucesubfresh.job.core.annotation.JobHandler;
 import com.saucesubfresh.job.core.collector.OpenJobHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 /**
  * @author lijunping on 2022/2/25
  */
 @Slf4j
-@JobHandlerForClazz(name = "job-two")
+@JobHandler(name = "job-two")
+@Component
 public class OpenJobHandlerTwo implements OpenJobHandler {
 
     @Override
