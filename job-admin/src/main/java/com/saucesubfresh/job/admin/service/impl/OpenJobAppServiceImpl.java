@@ -13,23 +13,27 @@ import com.saucesubfresh.job.admin.entity.OpenJobAppDO;
 import com.saucesubfresh.job.admin.mapper.OpenJobAppMapper;
 import com.saucesubfresh.job.admin.service.OpenJobAppService;
 import com.saucesubfresh.job.common.vo.PageResult;
-import com.saucesubfresh.rpc.server.namespace.NamespaceService;
+import com.saucesubfresh.rpc.server.discovery.ServiceDiscovery;
 import com.saucesubfresh.starter.security.context.UserSecurityContextHolder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
 @Service
-public class OpenJobAppServiceImpl extends ServiceImpl<OpenJobAppMapper, OpenJobAppDO> implements OpenJobAppService, NamespaceService {
+public class OpenJobAppServiceImpl extends ServiceImpl<OpenJobAppMapper, OpenJobAppDO> implements OpenJobAppService{
 
-    @Autowired
-    private OpenJobAppMapper openJobAppMapper;
+    private final OpenJobAppMapper openJobAppMapper;
+    private final ServiceDiscovery serviceDiscovery;
+
+    public OpenJobAppServiceImpl(OpenJobAppMapper openJobAppMapper, ServiceDiscovery serviceDiscovery) {
+        this.openJobAppMapper = openJobAppMapper;
+        this.serviceDiscovery = serviceDiscovery;
+    }
 
     @Override
     public PageResult<OpenJobAppRespDTO> selectPage(OpenJobAppReqDTO openJobAppReqDTO) {
@@ -71,12 +75,13 @@ public class OpenJobAppServiceImpl extends ServiceImpl<OpenJobAppMapper, OpenJob
         return OpenJobAppConvert.INSTANCE.convertList(openJobAppDOS);
     }
 
-    @Override
-    public List<String> loadNamespace() {
+    @PostConstruct
+    public void startSubscribe() {
         List<OpenJobAppDO> openJobAppDOS = openJobAppMapper.selectList(Wrappers.lambdaQuery());
         if (CollectionUtils.isEmpty(openJobAppDOS)){
-            return Collections.emptyList();
+            return;
         }
-        return openJobAppDOS.stream().map(OpenJobAppDO::getAppName).collect(Collectors.toList());
+        List<String> namespaces = openJobAppDOS.stream().map(OpenJobAppDO::getAppName).collect(Collectors.toList());
+        serviceDiscovery.subscribe(namespaces);
     }
 }
