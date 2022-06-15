@@ -54,18 +54,21 @@ public class OpenJobAppServiceImpl extends ServiceImpl<OpenJobAppMapper, OpenJob
         openJobAppDO.setCreateTime(LocalDateTime.now());
         openJobAppDO.setCreateUser(UserSecurityContextHolder.getUserId());
         openJobAppMapper.insert(openJobAppDO);
+        this.startSubscribe();
         return true;
     }
 
     @Override
     public boolean updateById(OpenJobAppUpdateDTO openJobAppUpdateDTO) {
         openJobAppMapper.updateById(OpenJobAppConvert.INSTANCE.convert(openJobAppUpdateDTO));
+        this.startSubscribe();
         return true;
     }
 
     @Override
     public boolean deleteById(Long id) {
         openJobAppMapper.deleteById(id);
+        this.startSubscribe();
         return true;
     }
 
