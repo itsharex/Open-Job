@@ -1,5 +1,6 @@
 package com.saucesubfresh.job.sample.processor;
 
+import com.saucesubfresh.job.common.domain.MessageBody;
 import com.saucesubfresh.job.common.serialize.SerializationUtils;
 import com.saucesubfresh.job.core.collector.JobHandlerCollector;
 import com.saucesubfresh.job.core.collector.OpenJobHandler;

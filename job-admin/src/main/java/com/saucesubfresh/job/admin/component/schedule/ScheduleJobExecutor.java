@@ -8,6 +8,7 @@ import com.saucesubfresh.job.admin.event.JobLogEvent;
 import com.saucesubfresh.job.admin.mapper.OpenJobAppMapper;
 import com.saucesubfresh.job.admin.mapper.OpenJobLogMapper;
 import com.saucesubfresh.job.admin.service.OpenJobReportService;
+import com.saucesubfresh.job.common.domain.MessageBody;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.enums.ResponseStatus;
 import com.saucesubfresh.rpc.core.exception.RpcException;

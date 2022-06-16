@@ -1,4 +1,4 @@
-package com.saucesubfresh.job.admin.component.schedule;
+package com.saucesubfresh.job.common.domain;
 
 import lombok.Data;
 
