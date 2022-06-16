@@ -151,7 +151,7 @@
                 </executions>
                 <configuration>
                     <includeSystemScope>true</includeSystemScope>
-                    <mainClass>com.saucesubfresh.JobAdminApplication</mainClass>
+                    <mainClass>com.saucesubfresh.job.JobAdminApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>

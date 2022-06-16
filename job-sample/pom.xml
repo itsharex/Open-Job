@@ -76,7 +76,7 @@
                 </executions>
                 <configuration>
                     <includeSystemScope>true</includeSystemScope>
-                    <mainClass>com.saucesubfresh.JobClientApplication</mainClass>
+                    <mainClass>com.saucesubfresh.job.JobClientApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>
