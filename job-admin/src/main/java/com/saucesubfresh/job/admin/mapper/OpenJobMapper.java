@@ -44,4 +44,11 @@ public interface OpenJobMapper extends BaseMapper<OpenJobDO> {
                 .eq(OpenJobDO::getStatus, CommonStatusEnum.YES.getValue())
         );
     }
+
+    default List<OpenJobDO> queryStartJob(){
+        return selectList(Wrappers.<OpenJobDO>lambdaQuery()
+                .eq(OpenJobDO::getStatus, CommonStatusEnum.YES.getValue())
+        );
+    }
+
 }

@@ -22,12 +22,6 @@ logging:
   level:
     com.saucesubfresh: INFO
 
-# 报表任务
-report-cron-express: "0 59 23 * * ? *"
-# 清除日志任务（每周五）
-clear-cron-express: "0 0 12 ? * 6"
-# 报警任务（除去周六日，每天早上9点触发）
-alarm-cron-express: "0 0 9 ? * 2,3,4,5,6"
 # 清除多少天前的日志
 clear-interval: 7
 

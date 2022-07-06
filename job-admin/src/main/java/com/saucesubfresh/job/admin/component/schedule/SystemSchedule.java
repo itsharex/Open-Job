@@ -1,12 +1,11 @@
 package com.saucesubfresh.job.admin.component.schedule;
 
-import com.saucesubfresh.job.admin.common.enums.SystemScheduleEnum;
-import com.saucesubfresh.starter.schedule.core.ScheduleTaskManage;
-import com.saucesubfresh.starter.schedule.domain.ScheduleTask;
+import com.saucesubfresh.job.admin.component.alarm.AlarmService;
+import com.saucesubfresh.job.admin.mapper.OpenJobLogMapper;
+import com.saucesubfresh.job.admin.service.OpenJobReportService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
 
 /**
  * @author lijunping on 2022/4/22
@@ -14,51 +13,43 @@ import javax.annotation.PostConstruct;
 @Component
 public class SystemSchedule {
 
-    @Value("${report-cron-express}")
-    private String reportCronExpress;
+    @Value("${clear-interval}")
+    private Integer clearInterval;
 
-    @Value("${clear-cron-express}")
-    private String clearCronExpress;
+    private final AlarmService alarmService;
+    private final OpenJobLogMapper openJobLogMapper;
+    private final OpenJobReportService openJobReportService;
 
-    @Value("${alarm-cron-express}")
-    private String alarmCronExpress;
-
-    private final ScheduleTaskManage scheduleTaskManage;
-
-    public SystemSchedule(ScheduleTaskManage scheduleTaskManage) {
-        this.scheduleTaskManage = scheduleTaskManage;
+    public SystemSchedule(AlarmService alarmService,
+                          OpenJobLogMapper openJobLogMapper,
+                          OpenJobReportService openJobReportService) {
+        this.alarmService = alarmService;
+        this.openJobLogMapper = openJobLogMapper;
+        this.openJobReportService = openJobReportService;
     }
+
 
     /**
      * 定时插入报表任务
      */
-    @PostConstruct
+    @Scheduled(cron = "0 59 23 * * ?")
     public void addReportTask(){
-        ScheduleTask scheduleTask = new ScheduleTask();
-        scheduleTask.setTaskId(SystemScheduleEnum.REPORT.getValue());
-        scheduleTask.setCronExpression(reportCronExpress);
-        scheduleTaskManage.addScheduleTask(scheduleTask);
+        openJobReportService.insertReport();
     }
 
     /**
      * 定时清除任务日志任务
      */
-    @PostConstruct
+    @Scheduled(cron = "0 0 12 ? * 6")
     public void clearTaskLogTask(){
-        ScheduleTask scheduleTask = new ScheduleTask();
-        scheduleTask.setTaskId(SystemScheduleEnum.CLEAR_LOG.getValue());
-        scheduleTask.setCronExpression(clearCronExpress);
-        scheduleTaskManage.addScheduleTask(scheduleTask);
+        openJobLogMapper.clearLog(clearInterval);
     }
 
     /**
      * 定时发送钉钉消息任务
      */
-    @PostConstruct
+    @Scheduled(cron = "0 0 9 ? * 2,3,4,5,6")
     public void sendPaddingAlarmTask(){
-        ScheduleTask scheduleTask = new ScheduleTask();
-        scheduleTask.setTaskId(SystemScheduleEnum.ALARM_MESSAGE.getValue());
-        scheduleTask.setCronExpression(alarmCronExpress);
-        scheduleTaskManage.addScheduleTask(scheduleTask);
+        alarmService.sendAlarm();
     }
 }
