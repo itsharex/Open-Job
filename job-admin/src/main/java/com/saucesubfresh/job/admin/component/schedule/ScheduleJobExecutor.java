@@ -53,15 +53,11 @@ public class ScheduleJobExecutor implements ScheduleTaskExecutor {
     }
 
     @Override
-    public void execute(List<ScheduleTask> taskList){
+    public void execute(List<Long> taskList){
         if (CollectionUtils.isEmpty(taskList)){
             return;
         }
-        List<Long> taskIdList = new ArrayList<>();
-        for (ScheduleTask scheduleTask : taskList) {
-            taskIdList.add(scheduleTask.getTaskId());
-        }
-        List<OpenJobDO> jobList = openJobMapper.queryList(taskIdList);
+        List<OpenJobDO> jobList = openJobMapper.queryList(taskList);
 
         // 组装任务
         List<ScheduleJob> scheduleJobs = jobList.stream().map(e->{

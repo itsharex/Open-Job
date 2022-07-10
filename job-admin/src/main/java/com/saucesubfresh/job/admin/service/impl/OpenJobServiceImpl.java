@@ -15,36 +15,43 @@ import com.saucesubfresh.job.common.enums.CommonStatusEnum;
 import com.saucesubfresh.job.common.exception.ServiceException;
 import com.saucesubfresh.job.common.time.LocalDateTimeUtil;
 import com.saucesubfresh.job.common.vo.PageResult;
-import com.saucesubfresh.starter.schedule.core.ScheduleTaskManage;
 import com.saucesubfresh.starter.schedule.cron.CronExpression;
 import com.saucesubfresh.starter.schedule.domain.ScheduleTask;
 import com.saucesubfresh.starter.schedule.executor.ScheduleTaskExecutor;
+import com.saucesubfresh.starter.schedule.loader.ScheduleTaskLoader;
+import com.saucesubfresh.starter.schedule.manager.ScheduleTaskPoolManager;
 import com.saucesubfresh.starter.security.context.UserSecurityContextHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
  * @author lijunping on 2022/2/17
  */
 @Service
-public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> implements OpenJobService {
+public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> implements OpenJobService, ScheduleTaskLoader {
 
-    private final ScheduleTaskExecutor scheduleTaskExecutor;
-    private final ScheduleTaskManage scheduleTaskManage;
     private final OpenJobMapper openJobMapper;
+    private final ScheduleTaskExecutor scheduleTaskExecutor;
+    private final ScheduleTaskPoolManager scheduleTaskPoolManager;
 
-    public OpenJobServiceImpl(ScheduleTaskExecutor scheduleTaskExecutor, ScheduleTaskManage scheduleTaskManage, OpenJobMapper openJobMapper) {
-        this.scheduleTaskExecutor = scheduleTaskExecutor;
-        this.scheduleTaskManage = scheduleTaskManage;
+    public OpenJobServiceImpl(OpenJobMapper openJobMapper,
+                              ScheduleTaskExecutor scheduleTaskExecutor,
+                              ScheduleTaskPoolManager scheduleTaskPoolManager) {
         this.openJobMapper = openJobMapper;
+        this.scheduleTaskExecutor = scheduleTaskExecutor;
+        this.scheduleTaskPoolManager = scheduleTaskPoolManager;
     }
+
 
     @Override
     public PageResult<OpenJobRespDTO> selectPage(OpenJobReqDTO openJobReqDTO) {
@@ -87,7 +94,7 @@ public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> im
         openJobMapper.updateById(openJobDO);
         ScheduleTask scheduleTask = createScheduleTask(openJobDO);
         try {
-            scheduleTaskManage.addScheduleTask(scheduleTask);
+            scheduleTaskPoolManager.add(scheduleTask);
         }catch (Exception e){
             log.error(e.getMessage(), e);
             return Boolean.FALSE;
@@ -100,9 +107,8 @@ public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> im
         OpenJobDO openJobDO = openJobMapper.selectById(id);
         openJobDO.setStatus(CommonStatusEnum.NO.getValue());
         openJobMapper.updateById(openJobDO);
-        ScheduleTask scheduleTask = createScheduleTask(openJobDO);
         try {
-            scheduleTaskManage.removeScheduleTask(scheduleTask);
+            scheduleTaskPoolManager.remove(id);
         }catch (Exception e){
             log.error(e.getMessage(), e);
             return Boolean.FALSE;
@@ -112,11 +118,9 @@ public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> im
 
     @Override
     public boolean deleteById(Long id) {
-        OpenJobDO openJobDO = openJobMapper.selectById(id);
         openJobMapper.deleteById(id);
-        ScheduleTask scheduleTask = createScheduleTask(openJobDO);
         try {
-            scheduleTaskManage.removeScheduleTask(scheduleTask);
+            scheduleTaskPoolManager.remove(id);
         }catch (Exception e){
             log.error(e.getMessage(), e);
             return Boolean.FALSE;
@@ -126,9 +130,7 @@ public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> im
 
     @Override
     public boolean run(Long id) {
-        OpenJobDO openJobDO = openJobMapper.selectById(id);
-        ScheduleTask scheduleTask = createScheduleTask(openJobDO);
-        scheduleTaskExecutor.execute(List.of(scheduleTask));
+        scheduleTaskExecutor.execute(List.of(id));
         return true;
     }
 
@@ -152,6 +154,15 @@ public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> im
     }
 
     @Override
+    public List<ScheduleTask> loadScheduleTask() {
+        List<OpenJobDO> scheduleTasks = openJobMapper.queryStartJob();
+        if (CollectionUtils.isEmpty(scheduleTasks)){
+            return Collections.emptyList();
+        }
+        return scheduleTasks.stream().map(this::createScheduleTask).collect(Collectors.toList());
+    }
+
+    @Override
     public String validateCron(String cronExpress) {
         try {
             CronExpression.validateExpression(cronExpress);
@@ -166,7 +177,7 @@ public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> im
         boolean equals = StringUtils.equals(oldJob.getCronExpression(), newJob.getCronExpression());
         if (!equals && status){
             ScheduleTask scheduleTask = createScheduleTask(newJob);
-            scheduleTaskManage.addScheduleTask(scheduleTask);
+            scheduleTaskPoolManager.add(scheduleTask);
         }
     }
 
