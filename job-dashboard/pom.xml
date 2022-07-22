@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>job-admin</artifactId>
+    <artifactId>job-dashboard</artifactId>
 
     <dependencies>
         <dependency>
@@ -151,7 +151,7 @@
                 </executions>
                 <configuration>
                     <includeSystemScope>true</includeSystemScope>
-                    <mainClass>com.saucesubfresh.job.JobAdminApplication</mainClass>
+                    <mainClass>com.saucesubfresh.job.JobDashboardApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>
