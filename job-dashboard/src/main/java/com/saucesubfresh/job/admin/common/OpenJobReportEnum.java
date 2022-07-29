@@ -1,4 +1,4 @@
-package com.saucesubfresh.job.admin.common.enums;
+package com.saucesubfresh.job.admin.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

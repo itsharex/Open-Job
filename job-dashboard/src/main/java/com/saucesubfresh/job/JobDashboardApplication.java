@@ -13,9 +13,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @EnableOpenRpcServer
 @SpringBootApplication
-public class JobAdminApplication {
+public class JobDashboardApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(JobAdminApplication.class, args);
+        SpringApplication.run(JobDashboardApplication.class, args);
     }
 }
