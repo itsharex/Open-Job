@@ -1,4 +1,4 @@
-package com.saucesubfresh.job.admin.component.schedule;
+package com.saucesubfresh.job.admin.task;
 
 import com.saucesubfresh.job.admin.component.alarm.AlarmService;
 import com.saucesubfresh.job.admin.mapper.OpenJobLogMapper;

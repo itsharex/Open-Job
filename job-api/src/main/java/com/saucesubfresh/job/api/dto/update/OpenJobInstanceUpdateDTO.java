@@ -1,6 +1,5 @@
 package com.saucesubfresh.job.api.dto.update;
 
-import com.saucesubfresh.rpc.core.enums.ClientStatus;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -25,7 +24,7 @@ public class OpenJobInstanceUpdateDTO implements Serializable {
     /**
      * 在线状态
      */
-    private ClientStatus status;
+    private String status;
     /**
      * 权重
      */

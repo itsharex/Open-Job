@@ -1,10 +1,8 @@
 com:
   saucesubfresh:
     rpc:
-      client:
+      server:
         server-address: 127.0.0.1
         server-port: 5200
-        client-name: job-client-services
-        client-port: 5201
-        client-address: 127.0.0.1
+        server-name: open-job-services
 

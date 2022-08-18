@@ -7,9 +7,9 @@ import com.saucesubfresh.job.admin.service.OpenJobAppService;
 import com.saucesubfresh.job.admin.service.OpenJobInstanceService;
 import com.saucesubfresh.job.common.time.LocalDateTimeUtil;
 import com.saucesubfresh.job.common.vo.PageResult;
-import com.saucesubfresh.rpc.core.information.ClientInformation;
-import com.saucesubfresh.rpc.server.manager.InstanceManager;
-import com.saucesubfresh.rpc.server.store.InstanceStore;
+import com.saucesubfresh.rpc.client.manager.InstanceManager;
+import com.saucesubfresh.rpc.client.store.InstanceStore;
+import com.saucesubfresh.rpc.core.information.ServerInformation;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -26,19 +26,19 @@ import java.util.stream.Collectors;
 public class OpenJobInstanceServiceImpl implements OpenJobInstanceService {
 
     private final InstanceStore instanceStore;
-    private final InstanceManager InstanceManager;
+    private final InstanceManager instanceManager;
     private final OpenJobAppService openJobAppService;
 
     public OpenJobInstanceServiceImpl(InstanceStore instanceStore, InstanceManager instanceManager, OpenJobAppService openJobAppService) {
         this.instanceStore = instanceStore;
-        InstanceManager = instanceManager;
+        this.instanceManager = instanceManager;
         this.openJobAppService = openJobAppService;
     }
 
     @Override
     public PageResult<OpenJobInstanceRespDTO> selectPage(OpenJobInstanceReqDTO instanceReqDTO) {
         final OpenJobAppRespDTO openJobApp = openJobAppService.getById(instanceReqDTO.getAppId());
-        List<ClientInformation> instances = instanceStore.getByNamespace(openJobApp.getAppName());
+        List<ServerInformation> instances = instanceStore.getByNamespace(openJobApp.getAppName());
         List<OpenJobInstanceRespDTO> jobInstance = convertList(instances);
         return PageResult.<OpenJobInstanceRespDTO>newBuilder()
                 .records(jobInstance)
@@ -50,25 +50,25 @@ public class OpenJobInstanceServiceImpl implements OpenJobInstanceService {
 
     @Override
     public Boolean offlineClient(String clientId) {
-        return InstanceManager.offlineClient(clientId);
+        return instanceManager.offlineServer(clientId);
     }
 
     @Override
     public Boolean onlineClient(String clientId) {
-        return InstanceManager.onlineClient(clientId);
+        return instanceManager.offlineServer(clientId);
     }
 
-    private List<OpenJobInstanceRespDTO> convertList(List<ClientInformation> instances) {
+    private List<OpenJobInstanceRespDTO> convertList(List<ServerInformation> instances) {
         if (CollectionUtils.isEmpty(instances)){
             return new ArrayList<>();
         }
 
         return instances.stream().map(e->{
             OpenJobInstanceRespDTO instance = new OpenJobInstanceRespDTO();
-            instance.setClientId(e.getClientId());
+            instance.setClientId(e.getServerId());
             LocalDateTime localDateTime = LocalDateTimeUtil.toLocalDateTime(e.getOnlineTime());
             instance.setOnlineTime(localDateTime);
-            instance.setStatus(e.getStatus());
+            instance.setStatus(e.getStatus().name());
             instance.setWeight(e.getWeight());
             return instance;
         }).collect(Collectors.toList());

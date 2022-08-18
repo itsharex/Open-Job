@@ -1,6 +1,5 @@
 package com.saucesubfresh.job.api.dto.req;
 
-import com.saucesubfresh.rpc.core.enums.Status;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -29,7 +28,7 @@ public class OpenJobInstanceReqDTO implements Serializable {
     /**
      * 在线状态
      */
-    private Status status;
+    private String status;
     /**
      * 权重
      */

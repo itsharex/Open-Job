@@ -4,9 +4,9 @@ import com.saucesubfresh.job.common.domain.MessageBody;
 import com.saucesubfresh.job.common.serialize.SerializationUtils;
 import com.saucesubfresh.job.core.collector.JobHandlerCollector;
 import com.saucesubfresh.job.core.collector.OpenJobHandler;
-import com.saucesubfresh.rpc.client.process.MessageProcess;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.RpcException;
+import com.saucesubfresh.rpc.server.process.MessageProcess;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
@@ -16,7 +16,7 @@ import org.springframework.util.ObjectUtils;
  */
 @Slf4j
 @Component
-public class JobMessageProcessor implements MessageProcess{
+public class JobMessageProcessor implements MessageProcess {
 
     private final JobHandlerCollector jobHandlerCollector;
 
