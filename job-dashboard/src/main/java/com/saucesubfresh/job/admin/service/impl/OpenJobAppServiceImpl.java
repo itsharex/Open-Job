@@ -13,19 +13,20 @@ import com.saucesubfresh.job.admin.entity.OpenJobAppDO;
 import com.saucesubfresh.job.admin.mapper.OpenJobAppMapper;
 import com.saucesubfresh.job.admin.service.OpenJobAppService;
 import com.saucesubfresh.job.common.vo.PageResult;
-import com.saucesubfresh.rpc.server.discovery.ServiceDiscovery;
+import com.saucesubfresh.rpc.client.discovery.ServiceDiscovery;
+import com.saucesubfresh.rpc.client.namespace.NamespaceService;
 import com.saucesubfresh.starter.security.context.UserSecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
 @Service
-public class OpenJobAppServiceImpl extends ServiceImpl<OpenJobAppMapper, OpenJobAppDO> implements OpenJobAppService{
+public class OpenJobAppServiceImpl extends ServiceImpl<OpenJobAppMapper, OpenJobAppDO> implements OpenJobAppService, NamespaceService {
 
     private final OpenJobAppMapper openJobAppMapper;
     private final ServiceDiscovery serviceDiscovery;
@@ -54,21 +55,21 @@ public class OpenJobAppServiceImpl extends ServiceImpl<OpenJobAppMapper, OpenJob
         openJobAppDO.setCreateTime(LocalDateTime.now());
         openJobAppDO.setCreateUser(UserSecurityContextHolder.getUserId());
         openJobAppMapper.insert(openJobAppDO);
-        this.startSubscribe();
+        this.reSubscribe();
         return true;
     }
 
     @Override
     public boolean updateById(OpenJobAppUpdateDTO openJobAppUpdateDTO) {
         openJobAppMapper.updateById(OpenJobAppConvert.INSTANCE.convert(openJobAppUpdateDTO));
-        this.startSubscribe();
+        this.reSubscribe();
         return true;
     }
 
     @Override
     public boolean deleteById(Long id) {
         openJobAppMapper.deleteById(id);
-        this.startSubscribe();
+        this.reSubscribe();
         return true;
     }
 
@@ -78,8 +79,19 @@ public class OpenJobAppServiceImpl extends ServiceImpl<OpenJobAppMapper, OpenJob
         return OpenJobAppConvert.INSTANCE.convertList(openJobAppDOS);
     }
 
-    @PostConstruct
-    public void startSubscribe() {
+    @Override
+    public List<String> loadNamespace() {
+        List<OpenJobAppDO> openJobAppDOS = openJobAppMapper.selectList(Wrappers.lambdaQuery());
+        if (CollectionUtils.isEmpty(openJobAppDOS)){
+            return Collections.emptyList();
+        }
+        return openJobAppDOS.stream().map(OpenJobAppDO::getAppName).collect(Collectors.toList());
+    }
+
+    /**
+     * 当修改了服务名称之后重新监听
+     */
+    private void reSubscribe() {
         List<OpenJobAppDO> openJobAppDOS = openJobAppMapper.selectList(Wrappers.lambdaQuery());
         if (CollectionUtils.isEmpty(openJobAppDOS)){
             return;

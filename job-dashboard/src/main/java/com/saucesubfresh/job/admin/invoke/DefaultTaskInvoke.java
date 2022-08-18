@@ -1,12 +1,12 @@
-package com.saucesubfresh.job.admin.component.schedule;
+package com.saucesubfresh.job.admin.invoke;
 
 import com.saucesubfresh.job.admin.domain.ScheduleJob;
-import com.saucesubfresh.job.api.dto.create.OpenJobLogCreateDTO;
 import com.saucesubfresh.job.admin.entity.OpenJobAppDO;
 import com.saucesubfresh.job.admin.entity.OpenJobDO;
 import com.saucesubfresh.job.admin.event.JobLogEvent;
 import com.saucesubfresh.job.admin.mapper.OpenJobAppMapper;
 import com.saucesubfresh.job.admin.mapper.OpenJobMapper;
+import com.saucesubfresh.job.api.dto.create.OpenJobLogCreateDTO;
 import com.saucesubfresh.job.common.domain.MessageBody;
 import com.saucesubfresh.job.common.enums.CommonStatusEnum;
 import com.saucesubfresh.job.common.serialize.SerializationUtils;
@@ -15,7 +15,6 @@ import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.enums.ResponseStatus;
 import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
-import com.saucesubfresh.starter.schedule.executor.ScheduleTaskExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationEventPublisher;
@@ -28,30 +27,30 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * 定时任务远程调用实现
- * @author lijunping on 2021/8/31
+ * @author lijunping on 2022/8/18
  */
 @Slf4j
 @Component
-public class ScheduleJobExecutor implements ScheduleTaskExecutor {
+public class DefaultTaskInvoke implements TaskInvoke{
 
-    private final ApplicationEventPublisher applicationEventPublisher;
-    private final ClusterInvoker clusterInvoker;
     private final OpenJobMapper openJobMapper;
+    private final ClusterInvoker clusterInvoker;
     private final OpenJobAppMapper openJobAppMapper;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public ScheduleJobExecutor(ApplicationEventPublisher applicationEventPublisher,
-                               ClusterInvoker clusterInvoker,
-                               OpenJobMapper openJobMapper,
-                               OpenJobAppMapper openJobAppMapper) {
-        this.applicationEventPublisher = applicationEventPublisher;
-        this.clusterInvoker = clusterInvoker;
+    public DefaultTaskInvoke(OpenJobMapper openJobMapper,
+                             ClusterInvoker clusterInvoker,
+                             OpenJobAppMapper openJobAppMapper,
+                             ApplicationEventPublisher eventPublisher) {
         this.openJobMapper = openJobMapper;
+        this.clusterInvoker = clusterInvoker;
         this.openJobAppMapper = openJobAppMapper;
+        this.eventPublisher = eventPublisher;
     }
 
+
     @Override
-    public void execute(List<Long> taskList){
+    public void invoke(List<Long> taskList) {
         if (CollectionUtils.isEmpty(taskList)){
             return;
         }
@@ -98,6 +97,6 @@ public class ScheduleJobExecutor implements ScheduleTaskExecutor {
         openJobLogCreateDTO.setCause(cause);
         openJobLogCreateDTO.setCreateTime(LocalDateTime.now());
         JobLogEvent logEvent = new JobLogEvent(this, openJobLogCreateDTO);
-        applicationEventPublisher.publishEvent(logEvent);
+        eventPublisher.publishEvent(logEvent);
     }
 }

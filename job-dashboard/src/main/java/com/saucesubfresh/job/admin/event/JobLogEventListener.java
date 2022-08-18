@@ -1,6 +1,6 @@
 package com.saucesubfresh.job.admin.event;
 
-import com.saucesubfresh.job.admin.component.alarm.AlarmService;
+import com.saucesubfresh.job.admin.alarm.AlarmService;
 import com.saucesubfresh.job.api.dto.create.OpenJobLogCreateDTO;
 import com.saucesubfresh.job.admin.service.OpenJobLogService;
 import com.saucesubfresh.job.common.enums.CommonStatusEnum;
@@ -22,7 +22,6 @@ public class JobLogEventListener implements ApplicationListener<JobLogEvent> {
         this.openJobLogService = openJobLogService;
         this.alarmService = alarmService;
     }
-
 
     @Override
     public void onApplicationEvent(JobLogEvent event) {

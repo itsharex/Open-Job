@@ -1,4 +1,4 @@
-package com.saucesubfresh.job.admin.component.alarm;
+package com.saucesubfresh.job.admin.alarm;
 
 import com.saucesubfresh.job.admin.entity.OpenJobUserDO;
 import com.saucesubfresh.job.common.time.LocalDateTimeUtil;

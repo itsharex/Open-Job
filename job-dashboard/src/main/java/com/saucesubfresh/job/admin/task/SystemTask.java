@@ -1,6 +1,6 @@
 package com.saucesubfresh.job.admin.task;
 
-import com.saucesubfresh.job.admin.component.alarm.AlarmService;
+import com.saucesubfresh.job.admin.alarm.AlarmService;
 import com.saucesubfresh.job.admin.mapper.OpenJobLogMapper;
 import com.saucesubfresh.job.admin.service.OpenJobReportService;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * @author lijunping on 2022/4/22
  */
 @Component
-public class SystemSchedule {
+public class SystemTask {
 
     @Value("${clear-interval}")
     private Integer clearInterval;
@@ -20,9 +20,9 @@ public class SystemSchedule {
     private final OpenJobLogMapper openJobLogMapper;
     private final OpenJobReportService openJobReportService;
 
-    public SystemSchedule(AlarmService alarmService,
-                          OpenJobLogMapper openJobLogMapper,
-                          OpenJobReportService openJobReportService) {
+    public SystemTask(AlarmService alarmService,
+                      OpenJobLogMapper openJobLogMapper,
+                      OpenJobReportService openJobReportService) {
         this.alarmService = alarmService;
         this.openJobLogMapper = openJobLogMapper;
         this.openJobReportService = openJobReportService;

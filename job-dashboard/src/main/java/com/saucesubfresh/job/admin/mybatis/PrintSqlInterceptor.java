@@ -1,4 +1,4 @@
-package com.saucesubfresh.job.admin.component.mybatis;
+package com.saucesubfresh.job.admin.mybatis;
 
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import lombok.extern.slf4j.Slf4j;
