@@ -1,7 +1,7 @@
 package com.saucesubfresh.job.admin.controller;
 
-import com.saucesubfresh.job.admin.dto.req.OpenJobCaptchaRequest;
-import com.saucesubfresh.job.admin.dto.resp.OpenJobCaptchaRespDTO;
+import com.saucesubfresh.job.api.dto.req.OpenJobCaptchaRequest;
+import com.saucesubfresh.job.api.dto.resp.OpenJobCaptchaRespDTO;
 import com.saucesubfresh.job.common.exception.ControllerException;
 import com.saucesubfresh.job.common.vo.Result;
 import com.saucesubfresh.starter.captcha.core.image.ImageCodeGenerator;

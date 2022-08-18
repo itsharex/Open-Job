@@ -1,8 +1,8 @@
 package com.saucesubfresh.job.admin.convert;
 
-import com.saucesubfresh.job.admin.dto.create.OpenJobAppCreateDTO;
-import com.saucesubfresh.job.admin.dto.resp.OpenJobAppRespDTO;
-import com.saucesubfresh.job.admin.dto.update.OpenJobAppUpdateDTO;
+import com.saucesubfresh.job.api.dto.create.OpenJobAppCreateDTO;
+import com.saucesubfresh.job.api.dto.resp.OpenJobAppRespDTO;
+import com.saucesubfresh.job.api.dto.update.OpenJobAppUpdateDTO;
 import com.saucesubfresh.job.admin.entity.OpenJobAppDO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

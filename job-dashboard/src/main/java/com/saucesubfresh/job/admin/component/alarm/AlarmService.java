@@ -3,7 +3,7 @@ package com.saucesubfresh.job.admin.component.alarm;
 import com.saucesubfresh.job.admin.entity.OpenJobUserDO;
 import com.saucesubfresh.job.common.time.LocalDateTimeUtil;
 import com.google.common.base.Throwables;
-import com.saucesubfresh.job.admin.dto.create.OpenJobLogCreateDTO;
+import com.saucesubfresh.job.api.dto.create.OpenJobLogCreateDTO;
 import com.saucesubfresh.job.admin.entity.OpenJobDO;
 import com.saucesubfresh.job.admin.mapper.OpenJobMapper;
 import com.saucesubfresh.job.admin.mapper.OpenJobUserMapper;

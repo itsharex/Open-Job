@@ -20,7 +20,7 @@
 
         <dependency>
             <groupId>com.saucesubfresh</groupId>
-            <artifactId>open-rpc-client</artifactId>
+            <artifactId>open-rpc-server</artifactId>
         </dependency>
 
         <dependency>

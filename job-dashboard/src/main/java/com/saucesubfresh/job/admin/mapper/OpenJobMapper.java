@@ -3,7 +3,7 @@ package com.saucesubfresh.job.admin.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.saucesubfresh.job.admin.dto.req.OpenJobReqDTO;
+import com.saucesubfresh.job.api.dto.req.OpenJobReqDTO;
 import com.saucesubfresh.job.admin.entity.OpenJobDO;
 import com.saucesubfresh.job.common.enums.CommonStatusEnum;
 import org.springframework.stereotype.Repository;

@@ -1,6 +1,6 @@
 package com.saucesubfresh.job.admin.service;
 
-import com.saucesubfresh.job.admin.dto.resp.OpenJobReportRespDTO;
+import com.saucesubfresh.job.api.dto.resp.OpenJobReportRespDTO;
 
 import java.util.List;
 

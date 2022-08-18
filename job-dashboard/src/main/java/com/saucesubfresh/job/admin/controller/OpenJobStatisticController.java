@@ -1,7 +1,7 @@
 package com.saucesubfresh.job.admin.controller;
 
-import com.saucesubfresh.job.admin.dto.resp.OpenJobStatisticNumberRespDTO;
-import com.saucesubfresh.job.admin.dto.resp.OpenJobStatisticReportRespDTO;
+import com.saucesubfresh.job.api.dto.resp.OpenJobStatisticNumberRespDTO;
+import com.saucesubfresh.job.api.dto.resp.OpenJobStatisticReportRespDTO;
 import com.saucesubfresh.job.admin.service.OpenJobStatisticService;
 import com.saucesubfresh.job.common.vo.Result;
 import org.springframework.beans.factory.annotation.Autowired;

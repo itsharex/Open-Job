@@ -1,9 +1,9 @@
 package com.saucesubfresh.job.admin.service;
 
 
-import com.saucesubfresh.job.admin.dto.req.OpenJobLogReqDTO;
-import com.saucesubfresh.job.admin.dto.create.OpenJobLogCreateDTO;
-import com.saucesubfresh.job.admin.dto.resp.OpenJobLogRespDTO;
+import com.saucesubfresh.job.api.dto.req.OpenJobLogReqDTO;
+import com.saucesubfresh.job.api.dto.create.OpenJobLogCreateDTO;
+import com.saucesubfresh.job.api.dto.resp.OpenJobLogRespDTO;
 import com.saucesubfresh.job.common.vo.PageResult;
 
 /**

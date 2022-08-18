@@ -1,8 +1,8 @@
 package com.saucesubfresh.job.admin.service.impl;
 
-import com.saucesubfresh.job.admin.dto.req.OpenJobInstanceReqDTO;
-import com.saucesubfresh.job.admin.dto.resp.OpenJobAppRespDTO;
-import com.saucesubfresh.job.admin.dto.resp.OpenJobInstanceRespDTO;
+import com.saucesubfresh.job.api.dto.req.OpenJobInstanceReqDTO;
+import com.saucesubfresh.job.api.dto.resp.OpenJobAppRespDTO;
+import com.saucesubfresh.job.api.dto.resp.OpenJobInstanceRespDTO;
 import com.saucesubfresh.job.admin.service.OpenJobAppService;
 import com.saucesubfresh.job.admin.service.OpenJobInstanceService;
 import com.saucesubfresh.job.common.time.LocalDateTimeUtil;

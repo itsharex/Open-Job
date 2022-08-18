@@ -1,7 +1,7 @@
 package com.saucesubfresh.job.admin.service.impl;
 
 import com.saucesubfresh.job.admin.convert.OpenJobReportConvert;
-import com.saucesubfresh.job.admin.dto.resp.OpenJobReportRespDTO;
+import com.saucesubfresh.job.api.dto.resp.OpenJobReportRespDTO;
 import com.saucesubfresh.job.admin.entity.OpenJobReportDO;
 import com.saucesubfresh.job.admin.mapper.OpenJobLogMapper;
 import com.saucesubfresh.job.admin.mapper.OpenJobReportMapper;

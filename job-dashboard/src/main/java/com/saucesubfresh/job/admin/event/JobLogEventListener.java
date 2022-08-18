@@ -1,10 +1,9 @@
 package com.saucesubfresh.job.admin.event;
 
 import com.saucesubfresh.job.admin.component.alarm.AlarmService;
-import com.saucesubfresh.job.admin.dto.create.OpenJobLogCreateDTO;
+import com.saucesubfresh.job.api.dto.create.OpenJobLogCreateDTO;
 import com.saucesubfresh.job.admin.service.OpenJobLogService;
 import com.saucesubfresh.job.common.enums.CommonStatusEnum;
-import com.saucesubfresh.starter.alarm.provider.dingtalk.DingtalkAlarmExecutor;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 

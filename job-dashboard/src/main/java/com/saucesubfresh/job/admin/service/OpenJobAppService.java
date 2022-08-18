@@ -1,9 +1,9 @@
 package com.saucesubfresh.job.admin.service;
 
-import com.saucesubfresh.job.admin.dto.create.OpenJobAppCreateDTO;
-import com.saucesubfresh.job.admin.dto.req.OpenJobAppReqDTO;
-import com.saucesubfresh.job.admin.dto.resp.OpenJobAppRespDTO;
-import com.saucesubfresh.job.admin.dto.update.OpenJobAppUpdateDTO;
+import com.saucesubfresh.job.api.dto.create.OpenJobAppCreateDTO;
+import com.saucesubfresh.job.api.dto.req.OpenJobAppReqDTO;
+import com.saucesubfresh.job.api.dto.resp.OpenJobAppRespDTO;
+import com.saucesubfresh.job.api.dto.update.OpenJobAppUpdateDTO;
 import com.saucesubfresh.job.common.vo.PageResult;
 
 import java.util.List;

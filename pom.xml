@@ -15,6 +15,7 @@
         <module>job-common</module>
         <module>job-sample</module>
         <module>job-core</module>
+        <module>job-api</module>
     </modules>
 
     <properties>

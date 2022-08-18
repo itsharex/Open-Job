@@ -4,7 +4,7 @@ package com.saucesubfresh.job.admin.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.saucesubfresh.job.admin.dto.req.OpenJobUserReqDTO;
+import com.saucesubfresh.job.api.dto.req.OpenJobUserReqDTO;
 import org.apache.commons.lang3.StringUtils;
 import com.saucesubfresh.job.admin.entity.OpenJobUserDO;
 import org.springframework.stereotype.Repository;

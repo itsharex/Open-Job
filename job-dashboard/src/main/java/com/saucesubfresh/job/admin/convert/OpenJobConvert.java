@@ -3,9 +3,9 @@ package com.saucesubfresh.job.admin.convert;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
-import com.saucesubfresh.job.admin.dto.create.OpenJobCreateDTO;
-import com.saucesubfresh.job.admin.dto.resp.OpenJobRespDTO;
-import com.saucesubfresh.job.admin.dto.update.OpenJobUpdateDTO;
+import com.saucesubfresh.job.api.dto.create.OpenJobCreateDTO;
+import com.saucesubfresh.job.api.dto.resp.OpenJobRespDTO;
+import com.saucesubfresh.job.api.dto.update.OpenJobUpdateDTO;
 import com.saucesubfresh.job.admin.entity.OpenJobDO;
 
 import java.util.List;

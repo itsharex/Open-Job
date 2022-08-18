@@ -1,7 +1,7 @@
 package com.saucesubfresh.job.admin.event;
 
 import lombok.Getter;
-import com.saucesubfresh.job.admin.dto.create.OpenJobLogCreateDTO;
+import com.saucesubfresh.job.api.dto.create.OpenJobLogCreateDTO;
 import org.springframework.context.ApplicationEvent;
 
 /**

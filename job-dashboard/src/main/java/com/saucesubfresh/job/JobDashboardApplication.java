@@ -1,6 +1,6 @@
 package com.saucesubfresh.job;
 
-import com.saucesubfresh.rpc.server.annotation.EnableOpenRpcServer;
+import com.saucesubfresh.rpc.client.annotation.EnableOpenRpcClient;
 import com.saucesubfresh.starter.security.annotation.EnableSecurity;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,7 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @EnableSecurity
 @EnableScheduling
-@EnableOpenRpcServer
+@EnableOpenRpcClient
 @SpringBootApplication
 public class JobDashboardApplication {
 
