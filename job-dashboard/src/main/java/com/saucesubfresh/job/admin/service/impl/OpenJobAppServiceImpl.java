@@ -14,7 +14,6 @@ import com.saucesubfresh.job.admin.mapper.OpenJobAppMapper;
 import com.saucesubfresh.job.admin.service.OpenJobAppService;
 import com.saucesubfresh.job.common.vo.PageResult;
 import com.saucesubfresh.rpc.client.discovery.ServiceDiscovery;
-import com.saucesubfresh.rpc.client.namespace.NamespaceService;
 import com.saucesubfresh.starter.security.context.UserSecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -26,7 +25,7 @@ import java.util.stream.Collectors;
 
 
 @Service
-public class OpenJobAppServiceImpl extends ServiceImpl<OpenJobAppMapper, OpenJobAppDO> implements OpenJobAppService, NamespaceService {
+public class OpenJobAppServiceImpl extends ServiceImpl<OpenJobAppMapper, OpenJobAppDO> implements OpenJobAppService{
 
     private final OpenJobAppMapper openJobAppMapper;
     private final ServiceDiscovery serviceDiscovery;
@@ -77,15 +76,6 @@ public class OpenJobAppServiceImpl extends ServiceImpl<OpenJobAppMapper, OpenJob
     public List<OpenJobAppRespDTO> queryList(String appName) {
         List<OpenJobAppDO> openJobAppDOS = openJobAppMapper.queryList(appName);
         return OpenJobAppConvert.INSTANCE.convertList(openJobAppDOS);
-    }
-
-    @Override
-    public List<String> loadNamespace() {
-        List<OpenJobAppDO> openJobAppDOS = openJobAppMapper.selectList(Wrappers.lambdaQuery());
-        if (CollectionUtils.isEmpty(openJobAppDOS)){
-            return Collections.emptyList();
-        }
-        return openJobAppDOS.stream().map(OpenJobAppDO::getAppName).collect(Collectors.toList());
     }
 
     /**
