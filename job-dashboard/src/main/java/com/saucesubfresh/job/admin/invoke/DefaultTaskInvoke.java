@@ -24,6 +24,7 @@ import org.springframework.util.CollectionUtils;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -47,7 +48,6 @@ public class DefaultTaskInvoke implements TaskInvoke{
         this.openJobAppMapper = openJobAppMapper;
         this.eventPublisher = eventPublisher;
     }
-
 
     @Override
     public void invoke(List<Long> taskList) {
@@ -73,24 +73,37 @@ public class DefaultTaskInvoke implements TaskInvoke{
         }).collect(Collectors.toList());
 
         // 分发任务
-        scheduleJobs.forEach(scheduleJob->{
-            String cause = null;
+        scheduleJobs.forEach(scheduleJob -> {
+            String errMsg = null;
             MessageResponseBody response = null;
-            final String appName = scheduleJob.getAppName();
-            final Message message = scheduleJob.getMessage();
             try {
-                response = clusterInvoker.invoke(appName, message);
+                response = doInvoke(scheduleJob);
             }catch (RpcException e){
-                cause = e.getMessage();
+                log.error(e.getMessage(), e);
+                errMsg = e.getMessage();
             }
-            if (Objects.nonNull(response) && response.getStatus() != ResponseStatus.SUCCESS){
-                cause = response.getErrorMsg();
-            }
-            createLog(Long.parseLong(message.getMsgId()), cause);
+            recordLog(scheduleJob, response, errMsg);
         });
     }
 
-    private void createLog(Long jobId, String cause){
+    private MessageResponseBody doInvoke(ScheduleJob scheduleJob){
+        MessageResponseBody response;
+        String appName = scheduleJob.getAppName();
+        Message message = scheduleJob.getMessage();
+        try {
+            response = clusterInvoker.invoke(appName, message);
+        }catch (RpcException e){
+            throw new RpcException(e.getMessage());
+        }
+        if (Objects.nonNull(response) && response.getStatus() != ResponseStatus.SUCCESS){
+            throw new RpcException("Job 服务端处理失败");
+        }
+        return response;
+    }
+
+    private void recordLog(ScheduleJob scheduleJob, MessageResponseBody response, String cause){
+        long jobId = Long.parseLong(scheduleJob.getMessage().getMsgId());
+        String requestId = Optional.ofNullable(response).map(MessageResponseBody::getRequestId).orElse("");
         OpenJobLogCreateDTO openJobLogCreateDTO = new OpenJobLogCreateDTO();
         openJobLogCreateDTO.setJobId(jobId);
         openJobLogCreateDTO.setStatus(StringUtils.isBlank(cause) ? CommonStatusEnum.YES.getValue() : CommonStatusEnum.NO.getValue());

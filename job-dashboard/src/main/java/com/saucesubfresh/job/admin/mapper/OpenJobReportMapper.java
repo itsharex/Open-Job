@@ -13,7 +13,6 @@ import java.util.List;
 @Repository
 public interface OpenJobReportMapper extends BaseMapper<OpenJobReportDO> {
 
-
     default List<OpenJobReportDO> queryList(){
         return selectList(Wrappers.lambdaQuery());
     }
