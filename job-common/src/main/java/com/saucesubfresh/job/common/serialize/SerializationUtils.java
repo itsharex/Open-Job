@@ -11,10 +11,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SerializationUtils {
     /**
-     * 避免每次序列化都重新申请Buffer空间
-     */
-    private static final LinkedBuffer BUFFER = LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE);
-    /**
      * 缓存Schema
      */
     private static final Map<Class<?>, Schema<?>> SCHEMA_CACHE = new ConcurrentHashMap<>();
@@ -23,11 +19,12 @@ public class SerializationUtils {
     public static <T> byte[] serialize(T obj) {
         Class<T> clazz = (Class<T>) obj.getClass();
         Schema<T> schema = getSchema(clazz);
+        LinkedBuffer buffer = LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE);
         byte[] data;
         try {
-            data = ProtostuffIOUtil.toByteArray(obj, schema, BUFFER);
+            data = ProtostuffIOUtil.toByteArray(obj, schema, buffer);
         } finally {
-            BUFFER.clear();
+            buffer.clear();
         }
         return data;
     }
@@ -41,12 +38,6 @@ public class SerializationUtils {
 
     @SuppressWarnings("unchecked")
     private static <T> Schema<T> getSchema(Class<T> clazz) {
-        Schema<T> schema = (Schema<T>) SCHEMA_CACHE.get(clazz);
-        if (schema == null) {
-            schema = RuntimeSchema.createFrom(clazz);
-            SCHEMA_CACHE.put(clazz, schema);
-        }
-        return schema;
+        return (Schema<T>) SCHEMA_CACHE.computeIfAbsent(clazz, RuntimeSchema::createFrom);
     }
-
 }
