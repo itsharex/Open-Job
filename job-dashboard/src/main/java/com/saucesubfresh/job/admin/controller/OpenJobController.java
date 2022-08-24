@@ -3,6 +3,7 @@ package com.saucesubfresh.job.admin.controller;
 import com.saucesubfresh.job.api.dto.req.OpenJobReqDTO;
 import com.saucesubfresh.job.api.dto.create.OpenJobCreateDTO;
 import com.saucesubfresh.job.api.dto.resp.OpenJobRespDTO;
+import com.saucesubfresh.job.api.dto.resp.OpenJobTriggerTimeDTO;
 import com.saucesubfresh.job.api.dto.update.OpenJobUpdateDTO;
 import com.saucesubfresh.job.admin.service.OpenJobService;
 import com.saucesubfresh.job.common.vo.PageResult;
@@ -70,7 +71,7 @@ public class OpenJobController {
     }
 
     @GetMapping("/nextTriggerTime")
-    public Result<List<String>> nextTriggerTime(@RequestParam("cronExpress") String cronExpress){
+    public Result<OpenJobTriggerTimeDTO> nextTriggerTime(@RequestParam("cronExpress") String cronExpress){
         return Result.succeed(openJobService.nextTriggerTime(cronExpress));
     }
 

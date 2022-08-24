@@ -7,6 +7,7 @@ import com.saucesubfresh.job.admin.convert.OpenJobConvert;
 import com.saucesubfresh.job.api.dto.create.OpenJobCreateDTO;
 import com.saucesubfresh.job.api.dto.req.OpenJobReqDTO;
 import com.saucesubfresh.job.api.dto.resp.OpenJobRespDTO;
+import com.saucesubfresh.job.api.dto.resp.OpenJobTriggerTimeDTO;
 import com.saucesubfresh.job.api.dto.update.OpenJobUpdateDTO;
 import com.saucesubfresh.job.admin.entity.OpenJobDO;
 import com.saucesubfresh.job.admin.mapper.OpenJobMapper;
@@ -56,7 +57,6 @@ public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> im
         this.scheduleTaskPoolManager = scheduleTaskPoolManager;
         this.scheduleTaskQueueManager = scheduleTaskQueueManager;
     }
-
 
     @Override
     public PageResult<OpenJobRespDTO> selectPage(OpenJobReqDTO openJobReqDTO) {
@@ -127,22 +127,18 @@ public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> im
     }
 
     @Override
-    public List<String> nextTriggerTime(String cronExpress) {
+    public OpenJobTriggerTimeDTO nextTriggerTime(String cronExpress) {
+        OpenJobTriggerTimeDTO dto = new OpenJobTriggerTimeDTO();
         List<String> result = new ArrayList<>();
+        String errMsg = null;
         try {
-            Date lastTime = new Date();
-            for (int i = 0; i < 5; i++) {
-                lastTime = new CronExpression(cronExpress).getNextValidTimeAfter(lastTime);
-                if (lastTime != null) {
-                    result.add(formatTime(lastTime));
-                } else {
-                    break;
-                }
-            }
+            result = genNextTimes(5, cronExpress);
         } catch (Exception e) {
-            result.add(e.getMessage());
+            errMsg = e.getMessage();
         }
-        return result;
+        dto.setTimes(result);
+        dto.setErrMsg(errMsg);
+        return dto;
     }
 
     @Override
@@ -182,8 +178,15 @@ public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> im
         return scheduleTask;
     }
 
-    private String formatTime(Date date){
-        LocalDateTime localDateTime = LocalDateTimeUtil.convertDateToLDT(date);
-        return LocalDateTimeUtil.format(localDateTime, LocalDateTimeUtil.DATETIME_FORMATTER);
+    private List<String> genNextTimes(int size, String cronExpress) throws ParseException {
+        List<String> result = new ArrayList<>();
+        Date lastTime = new Date();
+        for (int i = 0; i < size; i++) {
+            lastTime = new CronExpression(cronExpress).getNextValidTimeAfter(lastTime);
+            LocalDateTime localDateTime = LocalDateTimeUtil.convertDateToLDT(lastTime);
+            String time = LocalDateTimeUtil.format(localDateTime, LocalDateTimeUtil.DATETIME_FORMATTER);
+            result.add(time);
+        }
+        return result;
     }
 }

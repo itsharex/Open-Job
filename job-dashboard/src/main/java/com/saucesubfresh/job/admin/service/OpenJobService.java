@@ -3,6 +3,7 @@ package com.saucesubfresh.job.admin.service;
 import com.saucesubfresh.job.api.dto.req.OpenJobReqDTO;
 import com.saucesubfresh.job.api.dto.create.OpenJobCreateDTO;
 import com.saucesubfresh.job.api.dto.resp.OpenJobRespDTO;
+import com.saucesubfresh.job.api.dto.resp.OpenJobTriggerTimeDTO;
 import com.saucesubfresh.job.api.dto.update.OpenJobUpdateDTO;
 import com.saucesubfresh.job.common.vo.PageResult;
 
@@ -33,7 +34,7 @@ public interface OpenJobService {
 
     boolean run(Long id);
 
-    List<String> nextTriggerTime(String cronExpress);
+    OpenJobTriggerTimeDTO nextTriggerTime(String cronExpress);
 
     String validateCron(String cronExpress);
 }
