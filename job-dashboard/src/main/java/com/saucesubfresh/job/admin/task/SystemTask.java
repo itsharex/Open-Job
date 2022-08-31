@@ -1,6 +1,5 @@
 package com.saucesubfresh.job.admin.task;
 
-import com.saucesubfresh.job.admin.alarm.AlarmService;
 import com.saucesubfresh.job.admin.mapper.OpenJobLogMapper;
 import com.saucesubfresh.job.admin.service.OpenJobReportService;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,14 +15,11 @@ public class SystemTask {
     @Value("${clear-interval}")
     private Integer clearInterval;
 
-    private final AlarmService alarmService;
     private final OpenJobLogMapper openJobLogMapper;
     private final OpenJobReportService openJobReportService;
 
-    public SystemTask(AlarmService alarmService,
-                      OpenJobLogMapper openJobLogMapper,
+    public SystemTask(OpenJobLogMapper openJobLogMapper,
                       OpenJobReportService openJobReportService) {
-        this.alarmService = alarmService;
         this.openJobLogMapper = openJobLogMapper;
         this.openJobReportService = openJobReportService;
     }
@@ -43,13 +39,5 @@ public class SystemTask {
     @Scheduled(cron = "0 0 12 ? * 6")
     public void clearTaskLogTask(){
         openJobLogMapper.clearLog(clearInterval);
-    }
-
-    /**
-     * 定时发送钉钉消息任务
-     */
-    @Scheduled(cron = "0 0 9 ? * 2,3,4,5,6")
-    public void sendPaddingAlarmTask(){
-        alarmService.sendAlarm();
     }
 }

@@ -21,7 +21,7 @@ import java.util.TimeZone;
  *
  * @author lijunping
  */
-public class Jackson2ObjectMapperCustomizerConfiguration {
+public class JacksonCustomizerConfiguration {
 
   @Value("${spring.jackson.date-format:yyyy-MM-dd HH:mm:ss}")
   private String pattern;

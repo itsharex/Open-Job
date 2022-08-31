@@ -1,6 +1,8 @@
 package com.saucesubfresh.job.admin.event;
 
-import com.saucesubfresh.job.admin.alarm.AlarmService;
+import com.saucesubfresh.job.admin.alarm.DefaultAlarmService;
+import com.saucesubfresh.job.admin.convert.OpenJobAlarmMessageConvert;
+import com.saucesubfresh.job.admin.domain.AlarmMessage;
 import com.saucesubfresh.job.api.dto.create.OpenJobLogCreateDTO;
 import com.saucesubfresh.job.admin.service.OpenJobLogService;
 import com.saucesubfresh.job.common.enums.CommonStatusEnum;
@@ -16,9 +18,9 @@ import java.util.Objects;
 public class JobLogEventListener implements ApplicationListener<JobLogEvent> {
 
     private final OpenJobLogService openJobLogService;
-    private final AlarmService alarmService;
+    private final DefaultAlarmService alarmService;
 
-    public JobLogEventListener(OpenJobLogService openJobLogService, AlarmService alarmService) {
+    public JobLogEventListener(OpenJobLogService openJobLogService, DefaultAlarmService alarmService) {
         this.openJobLogService = openJobLogService;
         this.alarmService = alarmService;
     }
@@ -30,7 +32,7 @@ public class JobLogEventListener implements ApplicationListener<JobLogEvent> {
         if (!Objects.equals(jobLogCreateDTO.getStatus(), CommonStatusEnum.NO.getValue())){
             return;
         }
-
-        alarmService.sendAlarm(jobLogCreateDTO);
+        AlarmMessage alarmMessage = OpenJobAlarmMessageConvert.INSTANCE.convert(jobLogCreateDTO);
+        alarmService.sendAlarm(alarmMessage);
     }
 }
