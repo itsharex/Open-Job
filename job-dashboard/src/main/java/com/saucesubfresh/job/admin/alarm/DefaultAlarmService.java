@@ -6,6 +6,7 @@ import com.saucesubfresh.job.admin.entity.OpenJobUserDO;
 import com.saucesubfresh.job.admin.mapper.OpenJobMapper;
 import com.saucesubfresh.job.admin.mapper.OpenJobUserMapper;
 import com.saucesubfresh.job.common.time.LocalDateTimeUtil;
+import com.saucesubfresh.starter.alarm.exception.AlarmException;
 import com.saucesubfresh.starter.alarm.provider.dingtalk.DingtalkAlarmExecutor;
 import com.saucesubfresh.starter.alarm.provider.dingtalk.DingtalkMessageRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -85,6 +86,11 @@ public class DefaultAlarmService implements AlarmService{
         if (Objects.isNull(request)){
             return;
         }
-        alarmExecutor.doAlarm(request);
+        try{
+            alarmExecutor.doAlarm(request);
+            log.info("send alarm yet");
+        }catch (AlarmException e){
+            log.error("send alarm message failed {}", e.getMessage());
+        }
     }
 }
