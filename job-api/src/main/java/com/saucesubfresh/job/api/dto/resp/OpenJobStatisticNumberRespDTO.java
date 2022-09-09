@@ -1,6 +1,9 @@
 package com.saucesubfresh.job.api.dto.resp;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
@@ -9,7 +12,9 @@ import java.io.Serializable;
  * @author lijunping on 2022/4/11
  */
 @Data
-@Accessors(chain = true)
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class OpenJobStatisticNumberRespDTO implements Serializable {
 
     /**

@@ -35,18 +35,17 @@ public class OpenJobStatisticServiceImpl implements OpenJobStatisticService {
 
     @Override
     public OpenJobStatisticNumberRespDTO getStatisticNumber() {
-
         int taskTotalCount = openJobMapper.getTotalCount();
         int taskRunningCount = openJobMapper.getRunningCount();
         int scheduleTotalCount = openJobLogMapper.getScheduleTotalCount();
         int scheduleSucceedCount = openJobLogMapper.getScheduleSucceedCount();
 
-        OpenJobStatisticNumberRespDTO numberRespDTO = new OpenJobStatisticNumberRespDTO();
-        numberRespDTO.setTaskTotalNum(taskTotalCount);
-        numberRespDTO.setTaskRunningNum(taskRunningCount);
-        numberRespDTO.setScheduleTotalNum(scheduleTotalCount);
-        numberRespDTO.setScheduleSucceedNum(scheduleSucceedCount);
-        return numberRespDTO;
+        return OpenJobStatisticNumberRespDTO.builder()
+                .taskTotalNum(taskTotalCount)
+                .taskRunningNum(taskRunningCount)
+                .scheduleTotalNum(scheduleTotalCount)
+                .scheduleSucceedNum(scheduleSucceedCount)
+                .build();
     }
 
     @Override
@@ -56,23 +55,28 @@ public class OpenJobStatisticServiceImpl implements OpenJobStatisticService {
             return Collections.emptyList();
         }
 
-        List<OpenJobStatisticReportRespDTO> openJobStatisticReportRespDTOS = reportRespDTOS.stream().map(e -> {
+        List<OpenJobStatisticReportRespDTO> execTotal = build(reportRespDTOS, OpenJobReportEnum.TASK_EXEC_TOTAL_COUNT);
+        List<OpenJobStatisticReportRespDTO> execSuccess = build(reportRespDTOS, OpenJobReportEnum.TASK_EXEC_SUCCESS_COUNT);
+        execTotal.addAll(execSuccess);
+        return execTotal;
+    }
+
+    private List<OpenJobStatisticReportRespDTO> build(List<OpenJobReportRespDTO> reportRespDTOS, OpenJobReportEnum reportEnum){
+        return reportRespDTOS.stream().map(e -> {
             OpenJobStatisticReportRespDTO openJobStatisticReportRespDTO = new OpenJobStatisticReportRespDTO();
             openJobStatisticReportRespDTO.setDate(e.getCreateTime());
-            openJobStatisticReportRespDTO.setName(OpenJobReportEnum.TASK_EXEC_TOTAL_COUNT.getName());
-            openJobStatisticReportRespDTO.setValue(e.getTaskExecTotalCount());
+            Integer value = null;
+            switch (reportEnum){
+                case TASK_EXEC_TOTAL_COUNT:
+                    value = e.getTaskExecTotalCount();
+                    break;
+                case TASK_EXEC_SUCCESS_COUNT:
+                    value = e.getTaskExecSuccessCount();
+                    break;
+            }
+            openJobStatisticReportRespDTO.setName(reportEnum.getName());
+            openJobStatisticReportRespDTO.setValue(value);
             return openJobStatisticReportRespDTO;
         }).collect(Collectors.toList());
-
-        final List<OpenJobStatisticReportRespDTO> taskExecSuccessList = reportRespDTOS.stream().map(e -> {
-            OpenJobStatisticReportRespDTO openJobStatisticReportRespDTO = new OpenJobStatisticReportRespDTO();
-            openJobStatisticReportRespDTO.setDate(e.getCreateTime());
-            openJobStatisticReportRespDTO.setName(OpenJobReportEnum.TASK_EXEC_SUCCESS_COUNT.getName());
-            openJobStatisticReportRespDTO.setValue(e.getTaskExecSuccessCount());
-            return openJobStatisticReportRespDTO;
-        }).collect(Collectors.toList());
-        openJobStatisticReportRespDTOS.addAll(taskExecSuccessList);
-
-        return openJobStatisticReportRespDTOS;
     }
 }
