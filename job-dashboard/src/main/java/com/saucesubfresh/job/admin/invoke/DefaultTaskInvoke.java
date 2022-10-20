@@ -103,10 +103,10 @@ public class DefaultTaskInvoke implements TaskInvoke{
 
     private MessageResponseBody doInvoke(ScheduleJob scheduleJob){
         MessageResponseBody response;
-        String appName = scheduleJob.getAppName();
         Message message = scheduleJob.getMessage();
+        message.setNamespace(scheduleJob.getAppName());
         try {
-            response = clusterInvoker.invoke(appName, message);
+            response = clusterInvoker.invoke(message);
         }catch (RpcException e){
             throw new RpcException(e.getMessage());
         }
