@@ -18,6 +18,28 @@
         <module>job-api</module>
     </modules>
 
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/lijunping365/Open-Job.git</url>
+        <connection>scm:git:https://github.com/lijunping365/Open-Job.git</connection>
+        <developerConnection>scm:git:git@github.com:lijunping365/Open-Job.git</developerConnection>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>LJP</id>
+            <name>LiJunPing</name>
+            <email>2544054976@qq.com</email>
+            <url>https://github.com/lijunping365</url>
+        </developer>
+    </developers>
+
     <properties>
         <!-- 项目基础依赖版本 -->
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
