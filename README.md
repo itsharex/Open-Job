@@ -30,7 +30,7 @@
 
 1. 定时任务基于 redis 实现，支持动态修改任务状态，同时支持拓展其他实现方式
 
-2. 客户端与服务端通信采用 Grpc，同时支持拓展其他通信方式
+2. 客户端与服务端通信采用 Grpc，同时支持 Netty
 
 3. 注册中心支持 Nacos、Zookeeper，同时支持拓展其他注册中心，而且支持节点动态上线下线
 
@@ -71,18 +71,19 @@ git clone https://github.com/lijunping365/Open-Job-Admin.git
 ```xml
 <dependency>
     <groupId>com.saucesubfresh</groupId>
-    <artifactId>open-rpc-client</artifactId>
-    <version>1.0.0</version>
+    <artifactId>open-rpc-server</artifactId>
+    <version>1.0.4</version>
 </dependency>
 ```
 
 2. 创建任务执行类并实现 JobHandler
 
-示例1
+示例1（类模式）
 
 ```java
 @Slf4j
 @JobHandler(name = "job-one")
+@Component
 public class OpenJobHandlerOne implements OpenJobHandler {
 
     @Override
@@ -92,16 +93,21 @@ public class OpenJobHandlerOne implements OpenJobHandler {
 }
 ```
 
-示例2
+示例2（方法模式）
 
 ```java
 @Slf4j
-@JobHandler(name = "job-two")
-public class OpenJobHandlerTwo implements OpenJobHandler {
+@Component
+public class OpenJobHandlerMethodOne{
 
-    @Override
-    public void handler(String params) {
-        log.info("JobHandlerTwo 处理任务");
+    @JobHandler(name = "job-method-one1")
+    public void handlerOne1(String params) {
+        log.info("JobHandlerOne 处理任务, 任务参数 {}", params);
+    }
+
+    @JobHandler(name = "job-method-one2")
+    public void handlerOne2(String params) {
+        log.info("JobHandlerOne 处理任务, 任务参数 {}", params);
     }
 }
 ```
@@ -113,12 +119,6 @@ public class OpenJobHandlerTwo implements OpenJobHandler {
 2. 启动后端服务端与后端客户端无先后顺序
 
 3. 详细说明请参阅官方文档：https://lijunping365.github.io/#/
-
-## 🔨 目前还未完成的功能
-
-1. 任务的监控功能
-
-2. 任务的报警功能
 
 ## ❓ FAQ
 
