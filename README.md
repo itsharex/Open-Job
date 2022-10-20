@@ -124,6 +124,21 @@ public class OpenJobHandlerMethodOne{
 
 有问题可以提 issues，我会及时解答
 
+## Contributing
+
+欢迎参与项目贡献！比如提交PR修复一个bug，或者新建 [Issue](https://github.com/lijunping365/Open-Job/issues/) 讨论新特性或者变更。
+
+## Copyright and License
+
+This product is open source and free, and will continue to provide free community technical support. Individual or enterprise users are free to access and use.
+
+- Licensed under the Apache License v2.0.
+- Copyright (c) 2022-present, lijunping.
+
+产品开源免费，并且将持续提供免费的社区技术支持。个人或企业内部可自由的接入和使用。如有需要可邮件联系作者免费获取项目授权。
+
 ## 🎉收尾
 
-欢迎使用，欢迎 star
+1. 欢迎大家的关注和使用，欢迎 star，本项目将持续更新
+
+2. 欢迎接入的公司在 [登记地址](https://github.com/lijunping365/Open-Job/issues/1 ) 登记，登记仅仅为了产品推广。
