@@ -112,14 +112,6 @@ public class OpenJobHandlerMethodOne{
 }
 ```
 
-注意：
-
-1. handler 方法的参数 params 为 json 字符串格式，可进行 json 序列化
-
-2. 启动后端服务端与后端客户端无先后顺序
-
-3. 详细说明请参阅官方文档：https://lijunping365.github.io/#/
-
 ## ❓ FAQ
 
 有问题可以提 issues，我会及时解答
@@ -130,12 +122,10 @@ public class OpenJobHandlerMethodOne{
 
 ## Copyright and License
 
-This product is open source and free, and will continue to provide free community technical support. Individual or enterprise users are free to access and use.
+产品开源免费，并且将持续提供免费的社区技术支持。个人或企业内部可自由的接入和使用。如有需要可邮件联系作者免费获取项目授权。
 
 - Licensed under the Apache License v2.0.
 - Copyright (c) 2022-present, lijunping.
-
-产品开源免费，并且将持续提供免费的社区技术支持。个人或企业内部可自由的接入和使用。如有需要可邮件联系作者免费获取项目授权。
 
 ## 🎉收尾
 
