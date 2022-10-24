@@ -45,10 +45,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -137,7 +134,7 @@ public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> im
 
     @Override
     public boolean run(Long id) {
-        scheduleTaskExecutor.execute(List.of(id));
+        scheduleTaskExecutor.execute(Collections.singletonList(id));
         return true;
     }
 
