@@ -72,7 +72,7 @@ git clone https://github.com/lijunping365/Open-Job-Admin.git
 <dependency>
     <groupId>com.saucesubfresh</groupId>
     <artifactId>open-rpc-server</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.6</version>
 </dependency>
 ```
 
