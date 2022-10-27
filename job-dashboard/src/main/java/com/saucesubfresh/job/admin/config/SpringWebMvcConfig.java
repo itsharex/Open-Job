@@ -19,6 +19,7 @@ import com.alibaba.nacos.api.NacosFactory;
 import com.alibaba.nacos.api.PropertyKeyConst;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingService;
+import com.saucesubfresh.job.common.thread.NamedThreadFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
@@ -26,6 +27,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 import java.util.Properties;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author lijunping on 2021/6/22
@@ -47,6 +51,18 @@ public class SpringWebMvcConfig {
         public GlobalExceptionHandler globalExceptionHandler() {
             return new GlobalExceptionHandler();
         }
+    }
+
+    @Bean(destroyMethod = "shutdown")
+    public ThreadPoolExecutor threadPoolExecutor(){
+        return new ThreadPoolExecutor(
+                Runtime.getRuntime().availableProcessors() * 2,
+                Runtime.getRuntime().availableProcessors() * 4,
+                60L,
+                TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(200),
+                new NamedThreadFactory("open-job"),
+                new ThreadPoolExecutor.AbortPolicy());
     }
 
     @Bean

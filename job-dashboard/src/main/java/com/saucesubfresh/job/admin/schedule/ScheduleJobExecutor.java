@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * 定时任务远程调用实现
@@ -31,13 +32,16 @@ import java.util.List;
 public class ScheduleJobExecutor implements ScheduleTaskExecutor {
 
     private final TaskInvoke taskInvoke;
+    private final ThreadPoolExecutor executor;
 
-    public ScheduleJobExecutor(TaskInvoke taskInvoke) {
+    public ScheduleJobExecutor(TaskInvoke taskInvoke,
+                               ThreadPoolExecutor executor) {
         this.taskInvoke = taskInvoke;
+        this.executor = executor;
     }
 
     @Override
     public void execute(List<Long> taskList) {
-        taskInvoke.invoke(taskList);
+        executor.execute(()->taskInvoke.invoke(taskList));
     }
 }
