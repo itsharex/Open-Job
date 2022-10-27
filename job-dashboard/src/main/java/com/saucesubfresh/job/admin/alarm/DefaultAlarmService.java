@@ -20,6 +20,7 @@ import com.saucesubfresh.job.admin.entity.OpenJobDO;
 import com.saucesubfresh.job.admin.entity.OpenJobUserDO;
 import com.saucesubfresh.job.admin.mapper.OpenJobMapper;
 import com.saucesubfresh.job.admin.mapper.OpenJobUserMapper;
+import com.saucesubfresh.job.common.exception.ServiceException;
 import com.saucesubfresh.job.common.time.LocalDateTimeUtil;
 import com.saucesubfresh.starter.alarm.exception.AlarmException;
 import com.saucesubfresh.starter.alarm.provider.dingtalk.DingtalkAlarmExecutor;
@@ -40,28 +41,43 @@ import java.util.Objects;
 @Component
 public class DefaultAlarmService implements AlarmService{
 
-    @Value("${alarm-template}")
+    @Value("${com.saucesubfresh.alarm.template}")
     private String alarmTemplate;
+    @Value("${com.saucesubfresh.alarm.night-begin-time}")
+    private Integer beginTime;
+    @Value("${com.saucesubfresh.alarm.night-end-time}")
+    private Integer endTime;
 
-    private final DingtalkAlarmExecutor alarmExecutor;
     private final OpenJobMapper openJobMapper;
     private final OpenJobUserMapper userMapper;
+    private final DingtalkAlarmExecutor alarmExecutor;
 
-    public DefaultAlarmService(DingtalkAlarmExecutor alarmExecutor,
-                               OpenJobMapper openJobMapper,
-                               OpenJobUserMapper userMapper) {
-        this.alarmExecutor = alarmExecutor;
+    public DefaultAlarmService(OpenJobMapper openJobMapper,
+                               OpenJobUserMapper userMapper,
+                               DingtalkAlarmExecutor alarmExecutor) {
         this.openJobMapper = openJobMapper;
         this.userMapper = userMapper;
+        this.alarmExecutor = alarmExecutor;
     }
 
 
     @Override
     public void sendAlarm(AlarmMessage alarmMessage) {
-        send(buildRequest(alarmMessage));
+        final LocalDateTime createTime = alarmMessage.getCreateTime();
+        final String hHmm = LocalDateTimeUtil.format(createTime, "HHmm");
+        final int currentTime = Integer.parseInt(hHmm);
+
+        // 控制消息发送时间段，判断是否在合法发送时间
+        if (currentTime > beginTime && currentTime < endTime){
+            log.warn("不在合法发送时间内，取消本次发送");
+            return;
+        }
+
+        DingtalkMessageRequest request = buildAlarmRequest(alarmMessage);
+        send(request);
     }
 
-    private DingtalkMessageRequest buildRequest(AlarmMessage alarmMessage){
+    private DingtalkMessageRequest buildAlarmRequest(AlarmMessage alarmMessage){
         DingtalkMessageRequest request = new DingtalkMessageRequest();
         // 发送类型
         request.setMsgtype("text");
@@ -73,7 +89,7 @@ public class DefaultAlarmService implements AlarmService{
 
         OpenJobDO openJobDO = openJobMapper.selectById(jobId);
         if (Objects.isNull(openJobDO)){
-            return null;
+            throw new ServiceException("can't find OpenJob by id");
         }
         Long userId = openJobDO.getCreateUser();
         String title = openJobDO.getJobName();
@@ -87,7 +103,7 @@ public class DefaultAlarmService implements AlarmService{
         // 发送目标
         final OpenJobUserDO crawlerUserDO = userMapper.selectById(userId);
         if (Objects.isNull(crawlerUserDO) || StringUtils.isBlank(crawlerUserDO.getPhone())){
-            return null;
+            throw new ServiceException("can't find OpenJobUser by id");
         }
 
         DingtalkMessageRequest.AtVO at = new DingtalkMessageRequest.AtVO();
@@ -98,12 +114,8 @@ public class DefaultAlarmService implements AlarmService{
     }
 
     private void send(DingtalkMessageRequest request){
-        if (Objects.isNull(request)){
-            return;
-        }
         try{
             alarmExecutor.doAlarm(request);
-            log.info("send alarm yet");
         }catch (AlarmException e){
             log.error("send alarm message failed {}", e.getMessage());
         }

@@ -27,8 +27,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class SystemTask {
 
-    @Value("${clear-interval}")
-    private Integer clearInterval;
+    @Value("${com.saucesubfresh.log.interval:7}")
+    private Integer interval;
 
     private final OpenJobLogMapper openJobLogMapper;
     private final OpenJobReportService openJobReportService;
@@ -49,10 +49,10 @@ public class SystemTask {
     }
 
     /**
-     * 定时清除任务日志任务
+     * 定时清除n天前的任务日志
      */
     @Scheduled(cron = "0 0 12 ? * 6")
     public void clearTaskLogTask(){
-        openJobLogMapper.clearLog(clearInterval);
+        openJobLogMapper.clearLog(interval);
     }
 }
