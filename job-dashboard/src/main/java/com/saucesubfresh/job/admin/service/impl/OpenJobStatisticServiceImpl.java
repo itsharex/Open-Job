@@ -15,7 +15,7 @@
  */
 package com.saucesubfresh.job.admin.service.impl;
 
-import com.saucesubfresh.job.admin.common.OpenJobReportEnum;
+import com.saucesubfresh.job.api.enums.OpenJobReportEnum;
 import com.saucesubfresh.job.api.dto.resp.OpenJobReportRespDTO;
 import com.saucesubfresh.job.api.dto.resp.OpenJobStatisticNumberRespDTO;
 import com.saucesubfresh.job.api.dto.resp.OpenJobStatisticReportRespDTO;

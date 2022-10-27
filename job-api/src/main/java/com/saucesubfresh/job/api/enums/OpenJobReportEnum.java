@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.saucesubfresh.job.admin.common;
+package com.saucesubfresh.job.api.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
