@@ -17,11 +17,11 @@ package com.saucesubfresh.job.sample.processor;
 
 import com.saucesubfresh.job.common.domain.MessageBody;
 import com.saucesubfresh.job.common.serialize.SerializationUtils;
-import com.saucesubfresh.job.core.collector.JobHandlerCollector;
-import com.saucesubfresh.job.core.collector.OpenJobHandler;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.server.process.MessageProcess;
+import com.saucesubfresh.starter.job.register.core.JobHandlerRegister;
+import com.saucesubfresh.starter.job.register.core.OpenJobHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
@@ -33,10 +33,10 @@ import org.springframework.util.ObjectUtils;
 @Component
 public class JobMessageProcessor implements MessageProcess {
 
-    private final JobHandlerCollector jobHandlerCollector;
+    private final JobHandlerRegister jobHandlerRegister;
 
-    public JobMessageProcessor(JobHandlerCollector jobHandlerCollector) {
-        this.jobHandlerCollector = jobHandlerCollector;
+    public JobMessageProcessor(JobHandlerRegister jobHandlerRegister) {
+        this.jobHandlerRegister = jobHandlerRegister;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class JobMessageProcessor implements MessageProcess {
         final byte[] body = message.getBody();
         final MessageBody messageBody = SerializationUtils.deserialize(body, MessageBody.class);
         String handlerName = messageBody.getHandlerName();
-        OpenJobHandler openJobHandler = jobHandlerCollector.getJobHandler(handlerName);
+        OpenJobHandler openJobHandler = jobHandlerRegister.getJobHandler(handlerName);
         if (ObjectUtils.isEmpty(openJobHandler)) {
             throw new RpcException("JobHandlerName: " + handlerName + ", there is no bound JobHandler.");
         }
