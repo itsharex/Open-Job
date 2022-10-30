@@ -15,8 +15,8 @@
  */
 package com.saucesubfresh.job.sample.handler.clazz;
 
-import com.saucesubfresh.job.core.annotation.JobHandler;
-import com.saucesubfresh.job.core.collector.OpenJobHandler;
+import com.saucesubfresh.starter.job.register.annotation.JobHandler;
+import com.saucesubfresh.starter.job.register.core.OpenJobHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

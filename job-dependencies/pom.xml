@@ -35,6 +35,7 @@
         <open-starter-security.version>1.0.2</open-starter-security.version>
         <open-starter-schedule.version>1.0.3</open-starter-schedule.version>
         <open-starter-alarm.version>1.0.2</open-starter-alarm.version>
+        <open-starter-job-register.version>1.0.2</open-starter-job-register.version>
         <!-- grpc -->
         <grpc.version>1.41.0</grpc.version>
         <!-- nacos -->
@@ -106,6 +107,12 @@
                 <groupId>com.saucesubfresh</groupId>
                 <artifactId>open-starter-alarm</artifactId>
                 <version>${open-starter-alarm.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.saucesubfresh</groupId>
+                <artifactId>open-starter-job-register</artifactId>
+                <version>${open-starter-job-register.version}</version>
             </dependency>
             <!-- 工具类开始 -->
             <!--  mapstruct  -->

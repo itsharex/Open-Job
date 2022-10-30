@@ -14,13 +14,18 @@
     <dependencies>
         <dependency>
             <groupId>com.saucesubfresh</groupId>
-            <artifactId>job-core</artifactId>
+            <artifactId>job-common</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>com.saucesubfresh</groupId>
             <artifactId>open-rpc-server</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.saucesubfresh</groupId>
+            <artifactId>open-starter-job-register</artifactId>
         </dependency>
 
         <dependency>
