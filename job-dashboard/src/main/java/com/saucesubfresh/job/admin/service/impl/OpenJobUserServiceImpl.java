@@ -32,6 +32,8 @@ import com.saucesubfresh.job.common.vo.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 
 @Service
 public class OpenJobUserServiceImpl extends ServiceImpl<OpenJobUserMapper, OpenJobUserDO> implements OpenJobUserService, UserDetailService {
@@ -89,6 +91,9 @@ public class OpenJobUserServiceImpl extends ServiceImpl<OpenJobUserMapper, OpenJ
     }
 
     private UserDetails convert(OpenJobUserDO openJobUserDO){
+        if (Objects.isNull(openJobUserDO)){
+            return null;
+        }
         UserDetails userDetails = new UserDetails();
         userDetails.setId(openJobUserDO.getId());
         userDetails.setUsername(openJobUserDO.getUsername());
