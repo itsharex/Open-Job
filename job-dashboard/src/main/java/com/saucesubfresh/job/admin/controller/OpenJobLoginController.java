@@ -15,6 +15,9 @@
  */
 package com.saucesubfresh.job.admin.controller;
 
+import com.saucesubfresh.job.api.dto.req.OpenJobMobileLoginRequest;
+import com.saucesubfresh.job.api.dto.req.OpenJobPasswordLoginRequest;
+import com.saucesubfresh.job.common.vo.Result;
 import com.saucesubfresh.starter.captcha.exception.ValidateCodeException;
 import com.saucesubfresh.starter.captcha.processor.CaptchaVerifyProcessor;
 import com.saucesubfresh.starter.captcha.request.CaptchaVerifyRequest;
@@ -25,10 +28,6 @@ import com.saucesubfresh.starter.oauth.request.MobileLoginRequest;
 import com.saucesubfresh.starter.oauth.request.PasswordLoginRequest;
 import com.saucesubfresh.starter.oauth.token.AccessToken;
 import lombok.extern.slf4j.Slf4j;
-import com.saucesubfresh.job.api.dto.req.OpenJobMobileLoginRequest;
-import com.saucesubfresh.job.api.dto.req.OpenJobPasswordLoginRequest;
-import com.saucesubfresh.job.common.exception.ControllerException;
-import com.saucesubfresh.job.common.vo.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -69,7 +68,7 @@ public class OpenJobLoginController {
         try {
             captchaVerifyProcessor.validate(captchaVerifyRequest);
         } catch (ValidateCodeException e){
-            throw new ControllerException(e.getMessage());
+            return Result.failed(e.getMessage());
         }
 
         PasswordLoginRequest passwordLoginRequest = new PasswordLoginRequest()
@@ -79,7 +78,7 @@ public class OpenJobLoginController {
             final AccessToken accessToken = passwordAuthentication.authentication(passwordLoginRequest);
             return Result.succeed(accessToken);
         } catch (AuthenticationException e){
-            throw new ControllerException(e.getMessage());
+            return Result.failed(e.getMessage());
         }
     }
 
@@ -96,7 +95,7 @@ public class OpenJobLoginController {
         try {
             captchaVerifyProcessor.validate(captchaVerifyRequest);
         } catch (ValidateCodeException e){
-            throw new ControllerException(e.getMessage());
+            return Result.failed(e.getMessage());
         }
 
         MobileLoginRequest mobileLoginRequest = new MobileLoginRequest().setMobile(request.getMobile());
@@ -104,7 +103,7 @@ public class OpenJobLoginController {
             final AccessToken accessToken = smsMobileAuthentication.authentication(mobileLoginRequest);
             return Result.succeed(accessToken);
         } catch (AuthenticationException e){
-            throw new ControllerException(e.getMessage());
+            return Result.failed(e.getMessage());
         }
     }
 }

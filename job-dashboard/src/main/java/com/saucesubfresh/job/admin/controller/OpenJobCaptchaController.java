@@ -17,11 +17,9 @@ package com.saucesubfresh.job.admin.controller;
 
 import com.saucesubfresh.job.api.dto.req.OpenJobCaptchaRequest;
 import com.saucesubfresh.job.api.dto.resp.OpenJobCaptchaRespDTO;
-import com.saucesubfresh.job.common.exception.ControllerException;
 import com.saucesubfresh.job.common.vo.Result;
 import com.saucesubfresh.starter.captcha.core.image.ImageCodeGenerator;
 import com.saucesubfresh.starter.captcha.core.image.ImageValidateCode;
-import com.saucesubfresh.starter.captcha.core.math.MathImageCodeGenerator;
 import com.saucesubfresh.starter.captcha.core.sms.SmsCodeGenerator;
 import com.saucesubfresh.starter.captcha.core.sms.ValidateCode;
 import com.saucesubfresh.starter.captcha.exception.ValidateCodeException;
@@ -50,25 +48,10 @@ public class OpenJobCaptchaController {
 
     private final ImageCodeGenerator imageCodeGenerator;
     private final SmsCodeGenerator smsCodeGenerator;
-    private final MathImageCodeGenerator mathImageCodeGenerator;
 
-    public OpenJobCaptchaController(ImageCodeGenerator imageCodeGenerator, SmsCodeGenerator smsCodeGenerator, MathImageCodeGenerator mathImageCodeGenerator) {
+    public OpenJobCaptchaController(ImageCodeGenerator imageCodeGenerator, SmsCodeGenerator smsCodeGenerator) {
         this.imageCodeGenerator = imageCodeGenerator;
         this.smsCodeGenerator = smsCodeGenerator;
-        this.mathImageCodeGenerator = mathImageCodeGenerator;
-    }
-
-    @PostMapping("/create/mathImage")
-    public Result<OpenJobCaptchaRespDTO> createMathImageCode(@RequestBody @Valid OpenJobCaptchaRequest request) {
-        CaptchaGenerateRequest captchaGenerateRequest = new CaptchaGenerateRequest();
-        captchaGenerateRequest.setRequestId(request.getDeviceId());
-        try {
-            ImageValidateCode imageValidateCode = mathImageCodeGenerator.create(captchaGenerateRequest);
-            return Result.succeed(convert(imageValidateCode));
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            throw new ControllerException(e.getMessage());
-        }
     }
 
     @PostMapping("/create/image")
@@ -79,8 +62,7 @@ public class OpenJobCaptchaController {
             ImageValidateCode imageValidateCode = imageCodeGenerator.create(captchaGenerateRequest);
             return Result.succeed(convert(imageValidateCode));
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            throw new ControllerException(e.getMessage());
+            return Result.failed(e.getMessage());
         }
     }
 
@@ -93,11 +75,10 @@ public class OpenJobCaptchaController {
             ValidateCode validateCode = smsCodeGenerator.create(captchaGenerateRequest);
             openJobCaptchaRespDTO.setSuccess(true);
             log.info("向手机号: {}发送短信验证码: {}", request.getMobile(), validateCode.getCode());
+            return Result.succeed(openJobCaptchaRespDTO);
         } catch (ValidateCodeException e) {
-            log.error(e.getMessage(), e);
-            throw new ControllerException(e.getMessage());
+            return Result.failed(e.getMessage());
         }
-        return Result.succeed(openJobCaptchaRespDTO);
     }
 
     private OpenJobCaptchaRespDTO convert(ImageValidateCode imageValidateCode) throws IOException {

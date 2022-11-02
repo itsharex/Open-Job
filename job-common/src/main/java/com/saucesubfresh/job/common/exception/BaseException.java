@@ -25,9 +25,9 @@ public class BaseException extends RuntimeException {
   private static final long serialVersionUID = 759363456812320490L;
 
   /**
-   * 错误码
+   * 业务异常固定错误码，主要要来给用户提示某些信息
    */
-  private Integer code = 500;
+  private Integer code = 1000;
 
   public BaseException(String msg) {
     super(msg);

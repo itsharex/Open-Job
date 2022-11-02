@@ -69,15 +69,15 @@ public class Result<T> implements Serializable {
   }
 
   public static <T> Result<T> failed() {
-    return failed(null, ResultEnum.ERROR.getCode(), ResultEnum.ERROR.getMsg());
+    return failed(null, ResultEnum.BUSINESS_EXCEPTION.getCode(), ResultEnum.BUSINESS_EXCEPTION.getMsg());
   }
 
   public static <T> Result<T> failed(String msg) {
-    return failed(null, ResultEnum.ERROR.getCode(), msg);
+    return failed(null, ResultEnum.BUSINESS_EXCEPTION.getCode(), msg);
   }
 
   public static <T> Result<T> failed(T data, String msg) {
-    return failed(data, ResultEnum.ERROR.getCode(), msg);
+    return failed(data, ResultEnum.BUSINESS_EXCEPTION.getCode(), msg);
   }
 
   public static <T> Result<T> failed(Integer code, String msg) {

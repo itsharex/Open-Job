@@ -15,17 +15,14 @@
  */
 package com.saucesubfresh.job.admin.config;
 
-import com.saucesubfresh.job.common.vo.ResultEnum;
-import com.saucesubfresh.starter.captcha.exception.ValidateCodeException;
-import com.saucesubfresh.starter.oauth.exception.AuthenticationException;
-import com.saucesubfresh.starter.security.exception.SecurityException;
-import lombok.extern.slf4j.Slf4j;
 import com.saucesubfresh.job.common.exception.BaseCheckedException;
 import com.saucesubfresh.job.common.exception.BaseException;
-import com.saucesubfresh.job.common.exception.ControllerException;
 import com.saucesubfresh.job.common.exception.ServiceException;
 import com.saucesubfresh.job.common.vo.Result;
-import org.springframework.beans.factory.annotation.Value;
+import com.saucesubfresh.job.common.vo.ResultEnum;
+import com.saucesubfresh.starter.security.exception.AccessDeniedException;
+import com.saucesubfresh.starter.security.exception.SecurityException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -39,12 +36,9 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -56,8 +50,16 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-  @Value("${spring.application.name}")
-  private String applicationName;
+  /**
+   * 处理 SpringMVC 请求方法不正确
+   * <p>
+   * 例如说，A 接口的方法为 GET 方式，结果请求方法为 POST 方式，导致不匹配
+   */
+  @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+  public Result<Object> httpRequestMethodNotSupportedExceptionHandler(HttpRequestMethodNotSupportedException ex) {
+    log.warn("[httpRequestMethodNotSupportedExceptionHandler]", ex);
+    return Result.failed(HttpStatus.BAD_REQUEST.value(), String.format("请求方法不正确:%s", ex.getMessage()));
+  }
 
   @ExceptionHandler({IllegalArgumentException.class})
   public Result<Object> badRequest(IllegalArgumentException ex) {
@@ -137,54 +139,12 @@ public class GlobalExceptionHandler {
   }
 
   /**
-   * 处理 Validator 校验不通过产生的异常
-   */
-  @ExceptionHandler(ConstraintViolationException.class)
-  public Result<Object> validate(ConstraintViolationException ex) {
-    log.warn("[constraintViolationExceptionHandler]", ex);
-    Set<ConstraintViolation<?>> constraintViolations = ex.getConstraintViolations();
-
-    String msg = constraintViolations.stream()
-      .map(constraintViolation -> constraintViolation.getPropertyPath().toString() + ":" + constraintViolation.getInvalidValue() + ":" + constraintViolation.getMessage())
-      .collect(Collectors.joining(";"));
-
-    Map<Object, String> collect = constraintViolations.stream()
-      .map(constraintViolation -> Collections.singletonMap(constraintViolation.getInvalidValue(), constraintViolation.getMessage()))
-      .flatMap(objectStringMap -> objectStringMap.entrySet().stream())
-      .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
-    return Result.failed(collect, HttpStatus.BAD_REQUEST.value(), String.format("请求参数不正确:%s", msg));
-  }
-
-  /**
-   * 处理 SpringMVC 请求方法不正确
-   * <p>
-   * 例如说，A 接口的方法为 GET 方式，结果请求方法为 POST 方式，导致不匹配
-   */
-  @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-  public Result<Object> httpRequestMethodNotSupportedExceptionHandler(HttpRequestMethodNotSupportedException ex) {
-    log.warn("[httpRequestMethodNotSupportedExceptionHandler]", ex);
-    return Result.failed(HttpStatus.BAD_REQUEST.value(), String.format("请求方法不正确:%s", ex.getMessage()));
-  }
-
-  /**
    * 处理业务异常 ServiceException
    * <p>
    * 例如说，商品库存不足，用户手机号已存在。
    */
   @ExceptionHandler({ServiceException.class})
   public Result<Object> serviceException(ServiceException ex) {
-    log.warn("[serviceExceptionHandler]", ex);
-    return Result.failed(ex.getCode(), ex.getMessage());
-  }
-
-  /**
-   * 处理业务异常 ControllerException
-   * <p>
-   * 例如说，商品库存不足，用户手机号已存在。
-   */
-  @ExceptionHandler({ControllerException.class})
-  public Result<Object> controllerException(ControllerException ex) {
     log.warn("[serviceExceptionHandler]", ex);
     return Result.failed(ex.getCode(), ex.getMessage());
   }
@@ -210,19 +170,10 @@ public class GlobalExceptionHandler {
   @ExceptionHandler({SecurityException.class})
   public Result<Object> securityException(SecurityException ex) {
     log.warn("[securityException]", ex);
-    return Result.failed(ex.getCode(), ex.getMessage());
-  }
-
-  @ExceptionHandler({ValidateCodeException.class})
-  public Result<Object> validateCodeException(ValidateCodeException ex) {
-    log.warn("[validateCodeException]", ex);
-    return Result.failed(ResultEnum.ERROR.getCode(), ex.getMessage());
-  }
-
-  @ExceptionHandler({AuthenticationException.class})
-  public Result<Object> authenticationException(AuthenticationException ex) {
-    log.warn("[AuthenticationException]", ex);
-    return Result.failed(ex.getCode(), ex.getMessage());
+    if (ex instanceof AccessDeniedException){
+      return Result.failed(ResultEnum.FORBIDDEN.getCode(), ResultEnum.FORBIDDEN.getMsg());
+    }
+    return Result.failed(ResultEnum.UNAUTHORIZED.getCode(), ResultEnum.UNAUTHORIZED.getMsg());
   }
 
   @ExceptionHandler({RuntimeException.class})
