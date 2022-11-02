@@ -24,9 +24,9 @@ public class BaseCheckedException extends Exception {
   private static final long serialVersionUID = 3470726438554407056L;
 
   /**
-   * 错误码
+   * 业务异常固定错误码，主要要来给用户提示某些信息
    */
-  private Integer code = 500;
+  private Integer code = 1000;
 
   public BaseCheckedException(String message) {
     super(message);
