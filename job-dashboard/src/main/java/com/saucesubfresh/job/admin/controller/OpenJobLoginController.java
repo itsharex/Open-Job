@@ -18,12 +18,14 @@ package com.saucesubfresh.job.admin.controller;
 import com.saucesubfresh.job.api.dto.req.OpenJobMobileLoginRequest;
 import com.saucesubfresh.job.api.dto.req.OpenJobPasswordLoginRequest;
 import com.saucesubfresh.job.common.vo.Result;
+import com.saucesubfresh.job.common.vo.ResultEnum;
 import com.saucesubfresh.starter.captcha.exception.ValidateCodeException;
 import com.saucesubfresh.starter.captcha.processor.CaptchaVerifyProcessor;
 import com.saucesubfresh.starter.captcha.request.CaptchaVerifyRequest;
 import com.saucesubfresh.starter.oauth.core.password.PasswordAuthenticationProcessor;
 import com.saucesubfresh.starter.oauth.core.sms.SmsMobileAuthenticationProcessor;
 import com.saucesubfresh.starter.oauth.exception.AuthenticationException;
+import com.saucesubfresh.starter.oauth.exception.UsernameNotFoundException;
 import com.saucesubfresh.starter.oauth.request.MobileLoginRequest;
 import com.saucesubfresh.starter.oauth.request.PasswordLoginRequest;
 import com.saucesubfresh.starter.oauth.token.AccessToken;
@@ -78,6 +80,9 @@ public class OpenJobLoginController {
             final AccessToken accessToken = passwordAuthentication.authentication(passwordLoginRequest);
             return Result.succeed(accessToken);
         } catch (AuthenticationException e){
+            if(e instanceof UsernameNotFoundException){
+                return Result.failed(ResultEnum.USERNAME_OR_PASSWORD_ERROR.getMsg());
+            }
             return Result.failed(e.getMessage());
         }
     }
