@@ -111,8 +111,7 @@ public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> im
         openJobMapper.updateById(openJobDO);
         ScheduleTask scheduleTask = createScheduleTask(openJobDO);
         scheduleTaskPoolManager.add(scheduleTask);
-        long nextTime = CronHelper.getNextTime(scheduleTask.getCronExpression());
-        scheduleTaskQueueManager.put(scheduleTask.getTaskId(), nextTime);
+        scheduleTaskQueueManager.put(scheduleTask.getTaskId(), scheduleTask.getCronExpression());
         return Boolean.TRUE;
     }
 
@@ -178,8 +177,7 @@ public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> im
         if (!equals && status){
             ScheduleTask scheduleTask = createScheduleTask(newJob);
             scheduleTaskPoolManager.add(scheduleTask);
-            long nextTime = CronHelper.getNextTime(scheduleTask.getCronExpression());
-            scheduleTaskQueueManager.put(scheduleTask.getTaskId(), nextTime);
+            scheduleTaskQueueManager.put(scheduleTask.getTaskId(), scheduleTask.getCronExpression());
         }
     }
 
