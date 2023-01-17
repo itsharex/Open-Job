@@ -33,6 +33,8 @@ public class OpenJobLogRespDTO implements Serializable {
 
     private Long id;
 
+    private Long appId;
+
     private Long jobId;
 
     private Integer status;

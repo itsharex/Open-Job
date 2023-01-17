@@ -13,33 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.saucesubfresh.job.api.dto.update;
-
+package com.saucesubfresh.job.api.dto.batch;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.List;
 
 /**
- * 任务运行日志
+ * 分类表
  *
  * @author lijunping
  * @email lijunping365@gmail.com
- * @date 2021-09-06 10:10:03
+ * @date 2021-06-22 15:35:38
  */
 @Data
-public class OpenJobLogUpdateDTO implements Serializable {
+public class BatchDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Long id;
-
-    private Long jobId;
-
-    private Integer status;
-
-    private String cause;
-
-    private LocalDateTime createTime;
+    @NotEmpty(message = "要操作的主键id集合不能为空")
+    private List<Long> ids;
 
 }

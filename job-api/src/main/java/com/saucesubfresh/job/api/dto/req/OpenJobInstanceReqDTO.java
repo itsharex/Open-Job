@@ -33,9 +33,9 @@ public class OpenJobInstanceReqDTO implements Serializable {
      */
     private Long appId;
     /**
-     * 客户端地址：端口
+     * 服务端 【地址：端口】
      */
-    private String clientId;
+    private String serverId;
     /**
      * 上线时间
      */

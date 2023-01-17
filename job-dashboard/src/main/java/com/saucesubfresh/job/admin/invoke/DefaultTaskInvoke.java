@@ -15,7 +15,6 @@
  */
 package com.saucesubfresh.job.admin.invoke;
 
-import com.saucesubfresh.job.admin.domain.ScheduleJob;
 import com.saucesubfresh.job.admin.entity.OpenJobAppDO;
 import com.saucesubfresh.job.admin.entity.OpenJobDO;
 import com.saucesubfresh.job.admin.event.JobLogEvent;
@@ -40,7 +39,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * @author lijunping on 2022/8/18
@@ -70,41 +68,32 @@ public class DefaultTaskInvoke implements TaskInvoke{
             return;
         }
         List<OpenJobDO> jobList = openJobMapper.queryList(taskList);
-
-        // 组装任务
-        List<ScheduleJob> scheduleJobs = jobList.stream().map(e->{
-            ScheduleJob scheduleJob = new ScheduleJob();
+        jobList.forEach(e -> {
+            //组装消息
+            Message message = new Message();
+            message.setMsgId(String.valueOf(e.getId()));
             MessageBody messageBody = new MessageBody();
             messageBody.setHandlerName(e.getHandlerName());
             messageBody.setParams(e.getParams());
             byte[] serializeData = SerializationUtils.serialize(messageBody);
-            Message message = new Message();
-            message.setMsgId(String.valueOf(e.getId()));
             message.setBody(serializeData);
             OpenJobAppDO openJobAppDO = openJobAppMapper.selectById(e.getAppId());
-            scheduleJob.setAppName(openJobAppDO.getAppName());
-            scheduleJob.setMessage(message);
-            return scheduleJob;
-        }).collect(Collectors.toList());
-
-        // 分发任务
-        scheduleJobs.forEach(scheduleJob -> {
+            message.setNamespace(openJobAppDO.getAppName());
+            //发送消息
             String errMsg = null;
             MessageResponseBody response = null;
             try {
-                response = doInvoke(scheduleJob);
-            }catch (RpcException e){
-                log.error(e.getMessage(), e);
-                errMsg = e.getMessage();
+                response = doInvoke(message);
+            }catch (RpcException ex){
+                log.error(ex.getMessage(), ex);
+                errMsg = ex.getMessage();
             }
-            recordLog(scheduleJob, response, errMsg);
+            recordLog(e, response, errMsg);
         });
     }
 
-    private MessageResponseBody doInvoke(ScheduleJob scheduleJob){
+    private MessageResponseBody doInvoke(Message message){
         MessageResponseBody response;
-        Message message = scheduleJob.getMessage();
-        message.setNamespace(scheduleJob.getAppName());
         try {
             response = clusterInvoker.invoke(message);
         }catch (RpcException e){
@@ -116,11 +105,11 @@ public class DefaultTaskInvoke implements TaskInvoke{
         return response;
     }
 
-    private void recordLog(ScheduleJob scheduleJob, MessageResponseBody response, String cause){
-        long jobId = Long.parseLong(scheduleJob.getMessage().getMsgId());
-        String requestId = Optional.ofNullable(response).map(MessageResponseBody::getRequestId).orElse("");
+    private void recordLog(OpenJobDO jobDO, MessageResponseBody response, String cause){
         OpenJobLogCreateDTO openJobLogCreateDTO = new OpenJobLogCreateDTO();
-        openJobLogCreateDTO.setJobId(jobId);
+        String requestId = Optional.ofNullable(response).map(MessageResponseBody::getRequestId).orElse("");
+        openJobLogCreateDTO.setAppId(jobDO.getAppId());
+        openJobLogCreateDTO.setJobId(jobDO.getId());
         openJobLogCreateDTO.setStatus(StringUtils.isBlank(cause) ? CommonStatusEnum.YES.getValue() : CommonStatusEnum.NO.getValue());
         openJobLogCreateDTO.setCause(cause);
         openJobLogCreateDTO.setCreateTime(LocalDateTime.now());

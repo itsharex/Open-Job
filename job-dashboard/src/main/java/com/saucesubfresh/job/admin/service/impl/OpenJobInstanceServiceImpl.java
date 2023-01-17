@@ -73,6 +73,13 @@ public class OpenJobInstanceServiceImpl implements OpenJobInstanceService {
         return instanceManager.offlineServer(clientId);
     }
 
+    @Override
+    public List<OpenJobInstanceRespDTO> getInstanceList(Long appId) {
+        final OpenJobAppRespDTO openJobApp = openJobAppService.getById(appId);
+        List<ServerInformation> instances = instanceStore.getByNamespace(openJobApp.getAppName());
+        return convertList(instances);
+    }
+
     private List<OpenJobInstanceRespDTO> convertList(List<ServerInformation> instances) {
         if (CollectionUtils.isEmpty(instances)){
             return new ArrayList<>();

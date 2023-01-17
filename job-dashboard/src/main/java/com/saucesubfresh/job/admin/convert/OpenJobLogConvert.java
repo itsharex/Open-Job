@@ -20,7 +20,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 import com.saucesubfresh.job.api.dto.create.OpenJobLogCreateDTO;
 import com.saucesubfresh.job.api.dto.resp.OpenJobLogRespDTO;
-import com.saucesubfresh.job.api.dto.update.OpenJobLogUpdateDTO;
 import com.saucesubfresh.job.admin.entity.OpenJobLogDO;
 
 /**

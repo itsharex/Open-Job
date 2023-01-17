@@ -13,21 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.saucesubfresh.job.admin.domain;
+package com.saucesubfresh.job.api.dto.resp;
 
-import com.saucesubfresh.rpc.core.Message;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
- * @author lijunping on 2022/6/10
+ * @author lijunping on 2022/4/11
  */
 @Data
-public class ScheduleJob implements Serializable {
-    private static final long serialVersionUID = -4675286965727768773L;
-    
-    private String appName;
-    
-    private Message message;
+public class OpenJobChartRespDTO implements Serializable {
+
+    /**
+     * 日期
+     */
+    private List<LocalDate> date;
+
+    /**
+     * 当日执行总次数
+     */
+    private List<Integer> totalCount;
+
+    /**
+     * 当日执行成功次数
+     */
+    private List<Integer> successCount;
 }

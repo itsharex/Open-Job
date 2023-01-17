@@ -33,17 +33,18 @@ public class OpenJobReportDO {
      */
     @TableId
     private Long id;
-
+    /**
+     * 应用 id
+     */
+    private Long appId;
     /**
      * 任务执行总次数
      */
     private Integer taskExecTotalCount;
-
     /**
      * 任务执行成功总次数
      */
     private Integer taskExecSuccessCount;
-
     /**
      * 任务配置创建时间
      */

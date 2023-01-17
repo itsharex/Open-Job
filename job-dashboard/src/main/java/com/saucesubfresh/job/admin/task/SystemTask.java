@@ -21,6 +21,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 /**
  * @author lijunping on 2022/4/22
  */
@@ -41,18 +43,15 @@ public class SystemTask {
 
 
     /**
-     * 定时插入报表任务
+     * 每天 23：59：59 执行
+     *
+     * 1. 执行生成当日报表任务
+     * 2. 执行清除n天前的任务日志
      */
-    @Scheduled(cron = "0 59 23 * * ?")
+    @Scheduled(cron = "59 59 23 * * ?")
     public void addReportTask(){
-        openJobReportService.insertReport();
-    }
-
-    /**
-     * 定时清除n天前的任务日志
-     */
-    @Scheduled(cron = "0 0 12 ? * 6")
-    public void clearTaskLogTask(){
-        openJobLogMapper.clearLog(interval);
+        LocalDateTime now = LocalDateTime.now();
+        openJobReportService.generateReport(now);
+        openJobLogMapper.clearLog(now, interval);
     }
 }

@@ -15,8 +15,9 @@
  */
 package com.saucesubfresh.job.admin.service;
 
-import com.saucesubfresh.job.api.dto.resp.OpenJobReportRespDTO;
+import com.saucesubfresh.job.api.dto.resp.OpenJobChartRespDTO;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -24,7 +25,7 @@ import java.util.List;
  */
 public interface OpenJobReportService {
 
-    void insertReport();
+    void generateReport(LocalDateTime now);
 
-    List<OpenJobReportRespDTO> getOpenJobReportList();
+    List<OpenJobChartRespDTO> getStatisticReport();
 }

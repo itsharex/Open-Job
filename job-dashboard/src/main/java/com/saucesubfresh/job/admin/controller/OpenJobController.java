@@ -65,6 +65,16 @@ public class OpenJobController {
         return Result.succeed(openJobService.updateById(OpenJobUpdateDTO));
     }
 
+    @GetMapping("/nextTriggerTime")
+    public Result<OpenJobTriggerTimeDTO> nextTriggerTime(@RequestParam("cronExpress") String cronExpress){
+        return Result.succeed(openJobService.nextTriggerTime(cronExpress));
+    }
+
+    @GetMapping("/validateCron")
+    public Result<String> validateCron(@RequestParam("cronExpress") String cronExpress){
+        return Result.succeed(openJobService.validateCron(cronExpress));
+    }
+
     @PutMapping("/delete/{id}")
     public Result<Boolean> delete(@PathVariable("id") Long id) {
         return Result.succeed(openJobService.deleteById(id));
@@ -83,15 +93,5 @@ public class OpenJobController {
     @PutMapping("/run/{id}")
     public Result<Boolean> run(@PathVariable("id") Long id) {
         return Result.succeed(openJobService.run(id));
-    }
-
-    @GetMapping("/nextTriggerTime")
-    public Result<OpenJobTriggerTimeDTO> nextTriggerTime(@RequestParam("cronExpress") String cronExpress){
-        return Result.succeed(openJobService.nextTriggerTime(cronExpress));
-    }
-
-    @GetMapping("/validateCron")
-    public Result<String> validateCron(@RequestParam("cronExpress") String cronExpress){
-        return Result.succeed(openJobService.validateCron(cronExpress));
     }
 }

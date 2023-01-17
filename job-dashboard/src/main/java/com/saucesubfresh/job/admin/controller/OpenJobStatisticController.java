@@ -16,7 +16,7 @@
 package com.saucesubfresh.job.admin.controller;
 
 import com.saucesubfresh.job.api.dto.resp.OpenJobStatisticNumberRespDTO;
-import com.saucesubfresh.job.api.dto.resp.OpenJobStatisticReportRespDTO;
+import com.saucesubfresh.job.api.dto.resp.OpenJobChartRespDTO;
 import com.saucesubfresh.job.admin.service.OpenJobStatisticService;
 import com.saucesubfresh.job.common.vo.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +44,7 @@ public class OpenJobStatisticController {
     }
 
     @GetMapping("/report")
-    public Result<List<OpenJobStatisticReportRespDTO>> getStatisticReport() {
+    public Result<List<OpenJobChartRespDTO>> getStatisticReport() {
         return Result.succeed(crawlerStatisticService.getStatisticReport());
     }
 }

@@ -15,13 +15,17 @@
  */
 package com.saucesubfresh.job.admin.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.saucesubfresh.job.admin.convert.OpenJobReportConvert;
+import com.saucesubfresh.job.admin.entity.OpenJobAppDO;
+import com.saucesubfresh.job.admin.mapper.OpenJobAppMapper;
 import com.saucesubfresh.job.api.dto.resp.OpenJobReportRespDTO;
 import com.saucesubfresh.job.admin.entity.OpenJobReportDO;
 import com.saucesubfresh.job.admin.mapper.OpenJobLogMapper;
 import com.saucesubfresh.job.admin.mapper.OpenJobReportMapper;
 import com.saucesubfresh.job.admin.service.OpenJobReportService;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,23 +37,33 @@ import java.util.List;
 public class OpenJobReportServiceImpl implements OpenJobReportService {
     
     private final OpenJobLogMapper openJobLogMapper;
+    private final OpenJobAppMapper openJobAppMapper;
     private final OpenJobReportMapper openJobReportMapper;
 
     public OpenJobReportServiceImpl(OpenJobLogMapper openJobLogMapper,
+                                    OpenJobAppMapper openJobAppMapper,
                                     OpenJobReportMapper openJobReportMapper) {
         this.openJobLogMapper = openJobLogMapper;
+        this.openJobAppMapper = openJobAppMapper;
         this.openJobReportMapper = openJobReportMapper;
     }
 
     @Override
-    public void insertReport() {
-        int scheduleTotalCount = openJobLogMapper.getScheduleTotalCount();
-        int scheduleSucceedCount = openJobLogMapper.getScheduleSucceedCount();
-        OpenJobReportDO openJobReportDO = new OpenJobReportDO();
-        openJobReportDO.setTaskExecTotalCount(scheduleTotalCount);
-        openJobReportDO.setTaskExecSuccessCount(scheduleSucceedCount);
-        openJobReportDO.setCreateTime(LocalDateTime.now());
-        openJobReportMapper.insert(openJobReportDO);
+    public void generateReport(LocalDateTime now) {
+        List<OpenJobAppDO> openJobAppDOS = openJobAppMapper.selectList(Wrappers.lambdaQuery());
+        if (CollectionUtils.isEmpty(openJobAppDOS)){
+            return;
+        }
+        for (OpenJobAppDO appDO : openJobAppDOS) {
+            int scheduleTotalCount = openJobLogMapper.getScheduleTotalCount(appDO.getId(), now.plusDays(-1), now);
+            int scheduleSucceedCount = openJobLogMapper.getScheduleSucceedCount(appDO.getId(), now.plusDays(-1), now);
+            OpenJobReportDO openJobReportDO = new OpenJobReportDO();
+            openJobReportDO.setAppId(appDO.getId());
+            openJobReportDO.setTaskExecTotalCount(scheduleTotalCount);
+            openJobReportDO.setTaskExecSuccessCount(scheduleSucceedCount);
+            openJobReportDO.setCreateTime(now);
+            openJobReportMapper.insert(openJobReportDO);
+        }
     }
 
     @Override

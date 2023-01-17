@@ -45,19 +45,24 @@ public interface OpenJobLogMapper extends BaseMapper<OpenJobLogDO> {
         );
     }
 
-    default int getScheduleTotalCount(){
-        return selectCount(Wrappers.lambdaQuery());
-    }
-
-    default int getScheduleSucceedCount(){
+    default int getScheduleTotalCount(Long appId, LocalDateTime beginTime, LocalDateTime endTime){
         return selectCount(Wrappers.<OpenJobLogDO>lambdaQuery()
-                .eq(OpenJobLogDO::getStatus, CommonStatusEnum.YES.getValue())
+                .eq(OpenJobLogDO::getAppId, appId)
+                .between(OpenJobLogDO::getCreateTime, beginTime, endTime)
         );
     }
 
-    default void clearLog(Integer interval){
+    default int getScheduleSucceedCount(Long appId, LocalDateTime beginTime, LocalDateTime endTime){
+        return selectCount(Wrappers.<OpenJobLogDO>lambdaQuery()
+                .eq(OpenJobLogDO::getStatus, CommonStatusEnum.YES.getValue())
+                .eq(OpenJobLogDO::getAppId, appId)
+                .between(OpenJobLogDO::getCreateTime, beginTime, endTime)
+        );
+    }
+
+    default void clearLog(LocalDateTime now, Integer interval){
         delete(Wrappers.<OpenJobLogDO>lambdaQuery()
-                .lt(OpenJobLogDO::getCreateTime, LocalDateTime.now().plusDays(-interval))
+                .lt(OpenJobLogDO::getCreateTime, now.plusDays(-interval))
         );
     }
 }

@@ -19,6 +19,8 @@ import com.saucesubfresh.job.api.dto.req.OpenJobInstanceReqDTO;
 import com.saucesubfresh.job.api.dto.resp.OpenJobInstanceRespDTO;
 import com.saucesubfresh.job.common.vo.PageResult;
 
+import java.util.List;
+
 /**
  * @author: 李俊平
  * @Date: 2022-02-26 15:05
@@ -30,4 +32,6 @@ public interface OpenJobInstanceService {
     Boolean offlineClient(String clientId);
 
     Boolean onlineClient(String clientId);
+
+    List<OpenJobInstanceRespDTO> getInstanceList(Long appId);
 }
