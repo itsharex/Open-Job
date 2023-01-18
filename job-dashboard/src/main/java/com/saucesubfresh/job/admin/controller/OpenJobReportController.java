@@ -15,7 +15,8 @@
  */
 package com.saucesubfresh.job.admin.controller;
 
-import com.saucesubfresh.job.api.dto.resp.OpenJobStatisticNumberRespDTO;
+import com.saucesubfresh.job.admin.service.OpenJobReportService;
+import com.saucesubfresh.job.api.dto.resp.OpenJobStatisticRespDTO;
 import com.saucesubfresh.job.api.dto.resp.OpenJobChartRespDTO;
 import com.saucesubfresh.job.admin.service.OpenJobStatisticService;
 import com.saucesubfresh.job.common.vo.Result;
@@ -23,28 +24,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  * @author lijunping on 2022/4/11
  */
 @Validated
 @RestController
-@RequestMapping("/statistic")
-public class OpenJobStatisticController {
+@RequestMapping("/analysis")
+public class OpenJobReportController {
 
     @Autowired
     private OpenJobStatisticService crawlerStatisticService;
 
-    @GetMapping("/number")
-    public Result<OpenJobStatisticNumberRespDTO> getStatisticNumber() {
-        return Result.succeed(crawlerStatisticService.getStatisticNumber());
+    @Autowired
+    private OpenJobReportService openJobReportService;
+
+    @GetMapping("/statistic")
+    public Result<OpenJobStatisticRespDTO> getStatistic(@RequestParam("appId") Long appId) {
+        return Result.succeed(crawlerStatisticService.getStatistic(appId));
     }
 
-    @GetMapping("/report")
-    public Result<List<OpenJobChartRespDTO>> getStatisticReport() {
-        return Result.succeed(crawlerStatisticService.getStatisticReport());
+    @GetMapping("/chart")
+    public Result<OpenJobChartRespDTO> getChart(@RequestParam("appId") Long appId) {
+        return Result.succeed(openJobReportService.getChart(appId));
     }
 }

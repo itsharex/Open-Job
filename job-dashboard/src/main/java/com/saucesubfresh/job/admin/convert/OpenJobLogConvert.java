@@ -38,8 +38,6 @@ public interface OpenJobLogConvert {
 
     OpenJobLogDO convert(OpenJobLogCreateDTO OpenJobLogCreateDTO);
 
-    OpenJobLogDO convert(OpenJobLogUpdateDTO OpenJobLogUpdateDTO);
-
 }
 
 

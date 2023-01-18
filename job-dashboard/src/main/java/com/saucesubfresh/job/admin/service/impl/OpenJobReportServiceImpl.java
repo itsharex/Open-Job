@@ -16,10 +16,9 @@
 package com.saucesubfresh.job.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.saucesubfresh.job.admin.convert.OpenJobReportConvert;
 import com.saucesubfresh.job.admin.entity.OpenJobAppDO;
 import com.saucesubfresh.job.admin.mapper.OpenJobAppMapper;
-import com.saucesubfresh.job.api.dto.resp.OpenJobReportRespDTO;
+import com.saucesubfresh.job.api.dto.resp.OpenJobChartRespDTO;
 import com.saucesubfresh.job.admin.entity.OpenJobReportDO;
 import com.saucesubfresh.job.admin.mapper.OpenJobLogMapper;
 import com.saucesubfresh.job.admin.mapper.OpenJobReportMapper;
@@ -29,6 +28,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author lijunping on 2022/4/11
@@ -67,9 +67,16 @@ public class OpenJobReportServiceImpl implements OpenJobReportService {
     }
 
     @Override
-    public List<OpenJobReportRespDTO> getOpenJobReportList() {
-        List<OpenJobReportDO> openJobReportDOS = openJobReportMapper.queryList();
-        return OpenJobReportConvert.INSTANCE.convertList(openJobReportDOS);
+    public OpenJobChartRespDTO getChart(Long appId) {
+        List<OpenJobReportDO> openJobReportDOS = openJobReportMapper.queryList(appId,30);
+        if (CollectionUtils.isEmpty(openJobReportDOS)){
+            return null;
+        }
+        OpenJobChartRespDTO openJobChartRespDTO = new OpenJobChartRespDTO();
+        openJobChartRespDTO.setDate(openJobReportDOS.stream().map(e->e.getCreateTime().toLocalDate()).collect(Collectors.toList()));
+        openJobChartRespDTO.setTotalCount(openJobReportDOS.stream().map(OpenJobReportDO::getTaskExecTotalCount).collect(Collectors.toList()));
+        openJobChartRespDTO.setSuccessCount(openJobReportDOS.stream().map(OpenJobReportDO::getTaskExecSuccessCount).collect(Collectors.toList()));
+        return openJobChartRespDTO;
     }
 
 }

@@ -28,7 +28,11 @@ import java.util.List;
 @Repository
 public interface OpenJobReportMapper extends BaseMapper<OpenJobReportDO> {
 
-    default List<OpenJobReportDO> queryList(){
-        return selectList(Wrappers.lambdaQuery());
+    default List<OpenJobReportDO> queryList(Long appId, Integer count){
+        return selectList(Wrappers.<OpenJobReportDO>lambdaQuery()
+                .eq(OpenJobReportDO::getAppId, appId)
+                .orderByDesc(OpenJobReportDO::getCreateTime)
+                .last("limit " + count)
+        );
     }
 }
