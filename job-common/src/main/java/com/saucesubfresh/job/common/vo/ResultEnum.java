@@ -22,9 +22,9 @@ package com.saucesubfresh.job.common.vo;
  */
 public enum ResultEnum {
 
-  SUCCESS(200, "成功"), UNAUTHORIZED(401, "认证失败"), FORBIDDEN(403, "权限不足，无法访问"),
+  SUCCESS(200, "成功"), UNAUTHORIZED(401, "认证失败"),
 
-  BUSINESS_EXCEPTION("业务异常"), USERNAME_OR_PASSWORD_ERROR("用户名或密码错误"),
+  BUSINESS_EXCEPTION("业务异常"), USERNAME_OR_PASSWORD_ERROR("用户名或密码错误"), FORBIDDEN("权限不足，无法访问"),
 
   ;
 
