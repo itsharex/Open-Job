@@ -171,7 +171,7 @@ public class GlobalExceptionHandler {
   public Result<Object> securityException(SecurityException ex) {
     log.warn("[securityException]", ex);
     if (ex instanceof AccessDeniedException){
-      return Result.failed(ResultEnum.FORBIDDEN.getCode(), ResultEnum.FORBIDDEN.getMsg());
+      return Result.failed(ResultEnum.FORBIDDEN.getMsg());
     }
     return Result.failed(ResultEnum.UNAUTHORIZED.getCode(), ResultEnum.UNAUTHORIZED.getMsg());
   }
