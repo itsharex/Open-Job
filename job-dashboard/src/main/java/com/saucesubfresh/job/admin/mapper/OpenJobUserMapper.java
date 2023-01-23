@@ -52,6 +52,7 @@ public interface OpenJobUserMapper extends BaseMapper<OpenJobUserDO> {
         return selectPage(openJobUserReqDTO.page(), Wrappers.<OpenJobUserDO>lambdaQuery()
                 .like(StringUtils.isNotBlank(openJobUserReqDTO.getUsername()), OpenJobUserDO::getUsername, openJobUserReqDTO.getUsername())
                 .eq(StringUtils.isNotBlank(openJobUserReqDTO.getPhone()), OpenJobUserDO::getPhone, openJobUserReqDTO.getPhone())
+                .orderByDesc(OpenJobUserDO::getCreateTime)
         );
     }
 }

@@ -40,7 +40,9 @@ public interface OpenJobAppMapper extends BaseMapper<OpenJobAppDO> {
         return selectPage(openJobAppReqDTO.page(), Wrappers.<OpenJobAppDO>lambdaQuery()
                 .like(Objects.nonNull(openJobAppReqDTO.getAppDesc()), OpenJobAppDO::getAppDesc, openJobAppReqDTO.getAppDesc())
                 .like(Objects.nonNull(openJobAppReqDTO.getAppName()), OpenJobAppDO::getAppName, openJobAppReqDTO.getAppName())
-                .between(Objects.nonNull(openJobAppReqDTO.getBeginTime()), OpenJobAppDO::getCreateTime, openJobAppReqDTO.getBeginTime(), openJobAppReqDTO.getEndTime()));
+                .between(Objects.nonNull(openJobAppReqDTO.getBeginTime()), OpenJobAppDO::getCreateTime, openJobAppReqDTO.getBeginTime(), openJobAppReqDTO.getEndTime())
+                .orderByDesc(OpenJobAppDO::getCreateTime)
+        );
     }
 
     default List<OpenJobAppDO> queryList(String appName){

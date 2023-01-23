@@ -42,7 +42,9 @@ public interface OpenJobMapper extends BaseMapper<OpenJobDO> {
                 .like(Objects.nonNull(openJobReqDTO.getJobName()), OpenJobDO::getJobName, openJobReqDTO.getJobName())
                 .like(Objects.nonNull(openJobReqDTO.getHandlerName()), OpenJobDO::getHandlerName, openJobReqDTO.getHandlerName())
                 .eq(Objects.nonNull(openJobReqDTO.getStatus()), OpenJobDO::getStatus, openJobReqDTO.getStatus())
-                .between(Objects.nonNull(openJobReqDTO.getBeginTime()), OpenJobDO::getCreateTime, openJobReqDTO.getBeginTime(), openJobReqDTO.getEndTime()));
+                .between(Objects.nonNull(openJobReqDTO.getBeginTime()), OpenJobDO::getCreateTime, openJobReqDTO.getBeginTime(), openJobReqDTO.getEndTime())
+                .orderByDesc(OpenJobDO::getCreateTime)
+        );
     }
 
     default List<OpenJobDO> queryList(List<Long> taskList){
