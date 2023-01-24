@@ -19,8 +19,6 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * @author lijunping on 2022/4/11
@@ -31,15 +29,15 @@ public class OpenJobChartRespDTO implements Serializable {
     /**
      * 日期
      */
-    private List<LocalDate> date;
+    private LocalDate date;
 
     /**
      * 当日执行总次数
      */
-    private List<Integer> totalCount;
+    private Integer totalCount;
 
     /**
      * 当日执行成功次数
      */
-    private List<Integer> successCount;
+    private Integer successCount;
 }

@@ -49,8 +49,8 @@ public class OpenJobStatisticServiceImpl implements OpenJobStatisticService {
 
     @Override
     public OpenJobStatisticRespDTO getStatistic(Long appId) {
-        int taskTotalCount = openJobMapper.getTotalCount();
-        int taskRunningCount = openJobMapper.getRunningCount();
+        int taskTotalCount = openJobMapper.getTotalCount(appId);
+        int taskRunningCount = openJobMapper.getRunningCount(appId);
         List<OpenJobInstanceRespDTO> instanceList = openJobInstanceService.getInstanceList(appId);
         int instanceTotalCount = instanceList.size();
         long instanceOnlineCount = instanceList.stream().filter(e-> StringUtils.equals(e.getStatus(), Status.ON_LINE.name())).count();

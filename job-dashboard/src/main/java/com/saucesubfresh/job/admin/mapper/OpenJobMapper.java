@@ -52,13 +52,16 @@ public interface OpenJobMapper extends BaseMapper<OpenJobDO> {
                 .in(OpenJobDO::getId, taskList));
     }
 
-    default int getTotalCount(){
-        return selectCount(Wrappers.lambdaQuery());
+    default int getTotalCount(Long appId){
+        return selectCount(Wrappers.<OpenJobDO>lambdaQuery()
+                .eq(OpenJobDO::getAppId, appId)
+        );
     }
 
-    default int getRunningCount(){
+    default int getRunningCount(Long appId){
         return selectCount(Wrappers.<OpenJobDO>lambdaQuery()
                 .eq(OpenJobDO::getStatus, CommonStatusEnum.YES.getValue())
+                .eq(OpenJobDO::getAppId, appId)
         );
     }
 

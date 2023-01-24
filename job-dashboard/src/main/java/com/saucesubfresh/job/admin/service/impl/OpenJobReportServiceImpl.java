@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -67,16 +68,18 @@ public class OpenJobReportServiceImpl implements OpenJobReportService {
     }
 
     @Override
-    public OpenJobChartRespDTO getChart(Long appId) {
+    public List<OpenJobChartRespDTO> getChart(Long appId) {
         List<OpenJobReportDO> openJobReportDOS = openJobReportMapper.queryList(appId,30);
         if (CollectionUtils.isEmpty(openJobReportDOS)){
-            return null;
+            return Collections.emptyList();
         }
-        OpenJobChartRespDTO openJobChartRespDTO = new OpenJobChartRespDTO();
-        openJobChartRespDTO.setDate(openJobReportDOS.stream().map(e->e.getCreateTime().toLocalDate()).collect(Collectors.toList()));
-        openJobChartRespDTO.setTotalCount(openJobReportDOS.stream().map(OpenJobReportDO::getTaskExecTotalCount).collect(Collectors.toList()));
-        openJobChartRespDTO.setSuccessCount(openJobReportDOS.stream().map(OpenJobReportDO::getTaskExecSuccessCount).collect(Collectors.toList()));
-        return openJobChartRespDTO;
+        return openJobReportDOS.stream().map(e->{
+            OpenJobChartRespDTO openJobChartRespDTO = new OpenJobChartRespDTO();
+            openJobChartRespDTO.setDate(e.getCreateTime().toLocalDate());
+            openJobChartRespDTO.setTotalCount(e.getTaskExecTotalCount());
+            openJobChartRespDTO.setSuccessCount(e.getTaskExecSuccessCount());
+            return openJobChartRespDTO;
+        }).collect(Collectors.toList());
     }
 
 }

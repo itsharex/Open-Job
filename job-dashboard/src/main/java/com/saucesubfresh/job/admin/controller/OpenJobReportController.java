@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
  * @author lijunping on 2022/4/11
  */
@@ -47,7 +49,7 @@ public class OpenJobReportController {
     }
 
     @GetMapping("/chart")
-    public Result<OpenJobChartRespDTO> getChart(@RequestParam("appId") Long appId) {
+    public Result<List<OpenJobChartRespDTO>> getChart(@RequestParam("appId") Long appId) {
         return Result.succeed(openJobReportService.getChart(appId));
     }
 }

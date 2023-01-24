@@ -27,5 +27,5 @@ public interface OpenJobReportService {
 
     void generateReport(LocalDateTime now);
 
-    OpenJobChartRespDTO getChart(Long appId);
+    List<OpenJobChartRespDTO> getChart(Long appId);
 }
