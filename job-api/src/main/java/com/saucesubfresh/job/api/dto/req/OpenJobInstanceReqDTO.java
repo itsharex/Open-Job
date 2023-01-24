@@ -15,6 +15,7 @@
  */
 package com.saucesubfresh.job.api.dto.req;
 
+import com.saucesubfresh.job.common.vo.DateTimePageQuery;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -25,7 +26,7 @@ import java.time.LocalDateTime;
  * @Date: 2022-02-26 15:03
  */
 @Data
-public class OpenJobInstanceReqDTO implements Serializable {
+public class OpenJobInstanceReqDTO extends DateTimePageQuery implements Serializable {
     private static final long serialVersionUID = 4199379444084998224L;
 
     /**

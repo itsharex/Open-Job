@@ -82,6 +82,24 @@ public class PageResult<T> implements Serializable {
     return pageResult;
   }
 
+  /**
+   * 构建分页结果对象
+   *
+   * @param list list
+   * @param <T>   分页对象
+   * @return PageResult<T>
+   */
+  public static <T> PageResult<T> build(List<T> list, long total, long pageNum, long pageSize) {
+    PageResult<T> pageResult = PageResult.<T>newBuilder()
+            .records(list)
+            .total(total)
+            .current(pageNum)
+            .pages(getIPages(total, pageSize))
+            .build();
+    pageResult.setHasPrevious(pageResult.hasPrevious()).setHasNext(pageResult.hasNext());
+    return pageResult;
+  }
+
   private PageResult<T> setHasNext(Boolean hasNext) {
     this.hasNext = hasNext;
     return this;
@@ -108,5 +126,19 @@ public class PageResult<T> implements Serializable {
    */
   private boolean hasNext() {
     return this.current < this.getPages();
+  }
+
+  /**
+   * 当前分页总页数
+   */
+  private static long getIPages(long total, long size) {
+    if (size == 0) {
+      return 0L;
+    }
+    long pages = total / size;
+    if (total % size != 0) {
+      pages++;
+    }
+    return pages;
   }
 }

@@ -30,6 +30,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,15 +53,16 @@ public class OpenJobInstanceServiceImpl implements OpenJobInstanceService {
 
     @Override
     public PageResult<OpenJobInstanceRespDTO> selectPage(OpenJobInstanceReqDTO instanceReqDTO) {
-        final OpenJobAppRespDTO openJobApp = openJobAppService.getById(instanceReqDTO.getAppId());
+        Long appId = instanceReqDTO.getAppId();
+        OpenJobAppRespDTO openJobApp = openJobAppService.getById(appId);
         List<ServerInformation> instances = instanceStore.getByNamespace(openJobApp.getAppName());
         List<OpenJobInstanceRespDTO> jobInstance = convertList(instances);
-        return PageResult.<OpenJobInstanceRespDTO>newBuilder()
-                .records(jobInstance)
-                .total((long) jobInstance.size())
-                .current(1L)
-                .pages((long) (jobInstance.size() / 10))
-                .build();
+        if (CollectionUtils.isEmpty(jobInstance)){
+            return PageResult.<OpenJobInstanceRespDTO>newBuilder().build();
+        }
+
+        jobInstance.sort(Comparator.comparing(OpenJobInstanceRespDTO::getOnlineTime).reversed());
+        return PageResult.build(jobInstance, jobInstance.size(), instanceReqDTO.getCurrent(), instanceReqDTO.getPageSize());
     }
 
     @Override
