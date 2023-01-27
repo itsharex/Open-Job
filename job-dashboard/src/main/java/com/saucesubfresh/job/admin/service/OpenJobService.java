@@ -51,5 +51,5 @@ public interface OpenJobService {
 
     OpenJobTriggerTimeDTO nextTriggerTime(String cronExpress);
 
-    String validateCron(String cronExpress);
+    boolean validateCron(String cronExpress);
 }

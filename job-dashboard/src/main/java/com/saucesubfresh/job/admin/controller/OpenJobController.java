@@ -71,7 +71,7 @@ public class OpenJobController {
     }
 
     @GetMapping("/validateCron")
-    public Result<String> validateCron(@RequestParam("cronExpress") String cronExpress){
+    public Result<Boolean> validateCron(@RequestParam("cronExpress") String cronExpress){
         return Result.succeed(openJobService.validateCron(cronExpress));
     }
 

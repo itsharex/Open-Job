@@ -162,12 +162,12 @@ public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> im
     }
 
     @Override
-    public String validateCron(String cronExpress) {
+    public boolean validateCron(String cronExpress) {
         try {
             CronExpression.validateExpression(cronExpress);
-            return "success";
+            return Boolean.TRUE;
         } catch (ParseException e) {
-            return e.getMessage();
+            throw new ServiceException(e.getMessage());
         }
     }
 
