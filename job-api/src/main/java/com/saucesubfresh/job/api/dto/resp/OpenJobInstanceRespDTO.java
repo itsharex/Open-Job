@@ -31,7 +31,7 @@ public class OpenJobInstanceRespDTO implements Serializable {
     /**
      * 客户端地址：端口
      */
-    private String clientId;
+    private String serverId;
     /**
      * 上线时间
      */

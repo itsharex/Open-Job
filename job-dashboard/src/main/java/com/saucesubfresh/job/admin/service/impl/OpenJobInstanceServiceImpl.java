@@ -89,7 +89,7 @@ public class OpenJobInstanceServiceImpl implements OpenJobInstanceService {
 
         return instances.stream().map(e->{
             OpenJobInstanceRespDTO instance = new OpenJobInstanceRespDTO();
-            instance.setClientId(e.getServerId());
+            instance.setServerId(e.getServerId());
             LocalDateTime localDateTime = LocalDateTimeUtil.toLocalDateTime(e.getOnlineTime());
             instance.setOnlineTime(localDateTime);
             instance.setStatus(e.getStatus().name());
