@@ -66,13 +66,13 @@ public class OpenJobInstanceServiceImpl implements OpenJobInstanceService {
     }
 
     @Override
-    public Boolean offlineClient(String clientId) {
-        return instanceManager.offlineServer(clientId);
+    public Boolean offlineServer(String serverId) {
+        return instanceManager.offlineServer(serverId);
     }
 
     @Override
-    public Boolean onlineClient(String clientId) {
-        return instanceManager.offlineServer(clientId);
+    public Boolean onlineServer(String serverId) {
+        return instanceManager.offlineServer(serverId);
     }
 
     @Override

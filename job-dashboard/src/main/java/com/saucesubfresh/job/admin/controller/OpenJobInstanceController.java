@@ -50,17 +50,17 @@ public class OpenJobInstanceController {
      * 客户端下线
      * @return
      */
-    @PutMapping("/offline/{clientId}")
-    public Result<Boolean> offlineInstance(@PathVariable("clientId") String clientId){
-        return Result.succeed(instanceService.offlineClient(clientId));
+    @PutMapping("/offline/{serverId}")
+    public Result<Boolean> offlineInstance(@PathVariable("serverId") String serverId){
+        return Result.succeed(instanceService.offlineServer(serverId));
     }
 
     /**
      * 客户端上线
      * @return
      */
-    @PutMapping("/online/{clientId}")
-    public Result<Boolean> onlineInstance(@PathVariable("clientId") String clientId){
-        return Result.succeed(instanceService.onlineClient(clientId));
+    @PutMapping("/online/{serverId}")
+    public Result<Boolean> onlineInstance(@PathVariable("serverId") String serverId){
+        return Result.succeed(instanceService.onlineServer(serverId));
     }
 }

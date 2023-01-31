@@ -29,9 +29,9 @@ public interface OpenJobInstanceService {
     
     PageResult<OpenJobInstanceRespDTO> selectPage(OpenJobInstanceReqDTO instanceReqDTO);
 
-    Boolean offlineClient(String clientId);
+    Boolean offlineServer(String serverId);
 
-    Boolean onlineClient(String clientId);
+    Boolean onlineServer(String serverId);
 
     List<OpenJobInstanceRespDTO> getInstanceList(Long appId);
 }
