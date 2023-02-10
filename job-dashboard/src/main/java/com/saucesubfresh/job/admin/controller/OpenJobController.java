@@ -17,6 +17,7 @@ package com.saucesubfresh.job.admin.controller;
 
 import com.saucesubfresh.job.api.dto.req.OpenJobReqDTO;
 import com.saucesubfresh.job.api.dto.create.OpenJobCreateDTO;
+import com.saucesubfresh.job.api.dto.req.OpenJobTriggerTimeReqDTO;
 import com.saucesubfresh.job.api.dto.resp.OpenJobRespDTO;
 import com.saucesubfresh.job.api.dto.resp.OpenJobTriggerTimeDTO;
 import com.saucesubfresh.job.api.dto.update.OpenJobUpdateDTO;
@@ -65,9 +66,9 @@ public class OpenJobController {
         return Result.succeed(openJobService.updateById(OpenJobUpdateDTO));
     }
 
-    @GetMapping("/nextTriggerTime")
-    public Result<OpenJobTriggerTimeDTO> nextTriggerTime(@RequestParam("cronExpress") String cronExpress){
-        return Result.succeed(openJobService.nextTriggerTime(cronExpress));
+    @PostMapping("/nextTriggerTime")
+    public Result<OpenJobTriggerTimeDTO> nextTriggerTime(@RequestBody @Valid OpenJobTriggerTimeReqDTO reqDTO){
+        return Result.succeed(openJobService.nextTriggerTime(reqDTO));
     }
 
     @GetMapping("/validateCron")

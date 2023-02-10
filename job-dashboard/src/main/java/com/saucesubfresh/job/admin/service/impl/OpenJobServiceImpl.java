@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.saucesubfresh.job.admin.convert.OpenJobConvert;
 import com.saucesubfresh.job.api.dto.create.OpenJobCreateDTO;
 import com.saucesubfresh.job.api.dto.req.OpenJobReqDTO;
+import com.saucesubfresh.job.api.dto.req.OpenJobTriggerTimeReqDTO;
 import com.saucesubfresh.job.api.dto.resp.OpenJobRespDTO;
 import com.saucesubfresh.job.api.dto.resp.OpenJobTriggerTimeDTO;
 import com.saucesubfresh.job.api.dto.update.OpenJobUpdateDTO;
@@ -138,12 +139,12 @@ public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> im
     }
 
     @Override
-    public OpenJobTriggerTimeDTO nextTriggerTime(String cronExpress) {
+    public OpenJobTriggerTimeDTO nextTriggerTime(OpenJobTriggerTimeReqDTO reqDTO) {
         OpenJobTriggerTimeDTO dto = new OpenJobTriggerTimeDTO();
         List<String> result = new ArrayList<>();
         String errMsg = null;
         try {
-            result = genNextTimes(5, cronExpress);
+            result = genNextTimes(reqDTO.getCount(), reqDTO.getCronExpress());
         } catch (Exception e) {
             errMsg = e.getMessage();
         }
