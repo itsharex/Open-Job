@@ -21,7 +21,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.saucesubfresh.job.admin.convert.OpenJobConvert;
 import com.saucesubfresh.job.api.dto.create.OpenJobCreateDTO;
 import com.saucesubfresh.job.api.dto.req.OpenJobReqDTO;
-import com.saucesubfresh.job.api.dto.req.OpenJobTriggerTimeReqDTO;
 import com.saucesubfresh.job.api.dto.resp.OpenJobRespDTO;
 import com.saucesubfresh.job.api.dto.resp.OpenJobTriggerTimeDTO;
 import com.saucesubfresh.job.api.dto.update.OpenJobUpdateDTO;
@@ -33,7 +32,6 @@ import com.saucesubfresh.job.common.exception.ServiceException;
 import com.saucesubfresh.job.common.time.LocalDateTimeUtil;
 import com.saucesubfresh.job.common.vo.PageResult;
 import com.saucesubfresh.starter.schedule.cron.CronExpression;
-import com.saucesubfresh.starter.schedule.cron.CronHelper;
 import com.saucesubfresh.starter.schedule.domain.ScheduleTask;
 import com.saucesubfresh.starter.schedule.executor.ScheduleTaskExecutor;
 import com.saucesubfresh.starter.schedule.loader.ScheduleTaskLoader;
@@ -139,12 +137,12 @@ public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> im
     }
 
     @Override
-    public OpenJobTriggerTimeDTO nextTriggerTime(OpenJobTriggerTimeReqDTO reqDTO) {
+    public OpenJobTriggerTimeDTO nextTriggerTime(String cronExpress, Integer count) {
         OpenJobTriggerTimeDTO dto = new OpenJobTriggerTimeDTO();
         List<String> result = new ArrayList<>();
         String errMsg = null;
         try {
-            result = genNextTimes(reqDTO.getCount(), reqDTO.getCronExpress());
+            result = genNextTimes(count, cronExpress);
         } catch (Exception e) {
             errMsg = e.getMessage();
         }

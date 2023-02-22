@@ -17,13 +17,10 @@ package com.saucesubfresh.job.admin.service;
 
 import com.saucesubfresh.job.api.dto.req.OpenJobReqDTO;
 import com.saucesubfresh.job.api.dto.create.OpenJobCreateDTO;
-import com.saucesubfresh.job.api.dto.req.OpenJobTriggerTimeReqDTO;
 import com.saucesubfresh.job.api.dto.resp.OpenJobRespDTO;
 import com.saucesubfresh.job.api.dto.resp.OpenJobTriggerTimeDTO;
 import com.saucesubfresh.job.api.dto.update.OpenJobUpdateDTO;
 import com.saucesubfresh.job.common.vo.PageResult;
-
-import java.util.List;
 
 /**
  * 任务表
@@ -50,7 +47,7 @@ public interface OpenJobService {
 
     boolean run(Long id);
 
-    OpenJobTriggerTimeDTO nextTriggerTime(OpenJobTriggerTimeReqDTO reqDTO);
+    OpenJobTriggerTimeDTO nextTriggerTime(String cronExpress, Integer count);
 
     boolean validateCron(String cronExpress);
 }

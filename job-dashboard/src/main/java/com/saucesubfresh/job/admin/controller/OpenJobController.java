@@ -17,7 +17,6 @@ package com.saucesubfresh.job.admin.controller;
 
 import com.saucesubfresh.job.api.dto.req.OpenJobReqDTO;
 import com.saucesubfresh.job.api.dto.create.OpenJobCreateDTO;
-import com.saucesubfresh.job.api.dto.req.OpenJobTriggerTimeReqDTO;
 import com.saucesubfresh.job.api.dto.resp.OpenJobRespDTO;
 import com.saucesubfresh.job.api.dto.resp.OpenJobTriggerTimeDTO;
 import com.saucesubfresh.job.api.dto.update.OpenJobUpdateDTO;
@@ -29,7 +28,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 /**
  * 任务表
@@ -66,9 +64,10 @@ public class OpenJobController {
         return Result.succeed(openJobService.updateById(OpenJobUpdateDTO));
     }
 
-    @PostMapping("/nextTriggerTime")
-    public Result<OpenJobTriggerTimeDTO> nextTriggerTime(@RequestBody @Valid OpenJobTriggerTimeReqDTO reqDTO){
-        return Result.succeed(openJobService.nextTriggerTime(reqDTO));
+    @GetMapping("/nextTriggerTime")
+    public Result<OpenJobTriggerTimeDTO> nextTriggerTime(@RequestParam("cronExpress") String cronExpress,
+                                                         @RequestParam(value = "count", required = false, defaultValue = "5") Integer count){
+        return Result.succeed(openJobService.nextTriggerTime(cronExpress, count));
     }
 
     @GetMapping("/validateCron")
