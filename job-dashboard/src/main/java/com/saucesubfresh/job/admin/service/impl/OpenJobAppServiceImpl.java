@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.saucesubfresh.job.admin.convert.OpenJobAppConvert;
+import com.saucesubfresh.job.api.dto.batch.BatchDTO;
 import com.saucesubfresh.job.api.dto.create.OpenJobAppCreateDTO;
 import com.saucesubfresh.job.api.dto.req.OpenJobAppReqDTO;
 import com.saucesubfresh.job.api.dto.resp.OpenJobAppRespDTO;
@@ -81,8 +82,8 @@ public class OpenJobAppServiceImpl extends ServiceImpl<OpenJobAppMapper, OpenJob
     }
 
     @Override
-    public boolean deleteById(Long id) {
-        openJobAppMapper.deleteById(id);
+    public boolean deleteBatchIds(BatchDTO batchDTO) {
+        openJobAppMapper.deleteBatchIds(batchDTO.getIds());
         this.reSubscribe();
         return true;
     }

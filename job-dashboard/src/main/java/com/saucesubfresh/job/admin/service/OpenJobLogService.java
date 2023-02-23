@@ -16,6 +16,7 @@
 package com.saucesubfresh.job.admin.service;
 
 
+import com.saucesubfresh.job.api.dto.batch.BatchDTO;
 import com.saucesubfresh.job.api.dto.req.OpenJobLogReqDTO;
 import com.saucesubfresh.job.api.dto.create.OpenJobLogCreateDTO;
 import com.saucesubfresh.job.api.dto.resp.OpenJobLogRespDTO;
@@ -36,6 +37,6 @@ public interface OpenJobLogService {
 
     void save(OpenJobLogCreateDTO OpenJobLogCreateDTO);
 
-    boolean deleteById(Long id);
+    boolean deleteBatchIds(BatchDTO batchDTO);
 }
 

@@ -15,6 +15,7 @@
  */
 package com.saucesubfresh.job.admin.service;
 
+import com.saucesubfresh.job.api.dto.batch.BatchDTO;
 import com.saucesubfresh.job.api.dto.create.OpenJobAppCreateDTO;
 import com.saucesubfresh.job.api.dto.req.OpenJobAppReqDTO;
 import com.saucesubfresh.job.api.dto.resp.OpenJobAppRespDTO;
@@ -40,7 +41,7 @@ public interface OpenJobAppService {
 
     boolean updateById(OpenJobAppUpdateDTO openJobAppUpdateDTO);
 
-    boolean deleteById(Long id);
+    boolean deleteBatchIds(BatchDTO batchDTO);
 
     List<OpenJobAppRespDTO> queryList(String appName);
 }

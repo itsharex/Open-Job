@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.saucesubfresh.job.admin.convert.OpenJobConvert;
+import com.saucesubfresh.job.api.dto.batch.BatchDTO;
 import com.saucesubfresh.job.api.dto.create.OpenJobCreateDTO;
 import com.saucesubfresh.job.api.dto.req.OpenJobReqDTO;
 import com.saucesubfresh.job.api.dto.resp.OpenJobRespDTO;
@@ -46,7 +47,6 @@ import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-
 
 /**
  * @author lijunping on 2022/2/17
@@ -124,9 +124,10 @@ public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> im
     }
 
     @Override
-    public boolean deleteById(Long id) {
-        openJobMapper.deleteById(id);
-        scheduleTaskPoolManager.remove(id);
+    public boolean deleteBatchIds(BatchDTO batchDTO) {
+        List<Long> ids = batchDTO.getIds();
+        openJobMapper.deleteBatchIds(ids);
+        ids.forEach(scheduleTaskPoolManager::remove);
         return Boolean.TRUE;
     }
 

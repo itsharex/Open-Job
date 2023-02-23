@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.saucesubfresh.job.admin.convert.OpenJobLogConvert;
+import com.saucesubfresh.job.api.dto.batch.BatchDTO;
 import com.saucesubfresh.job.api.dto.req.OpenJobLogReqDTO;
 import com.saucesubfresh.job.admin.entity.OpenJobLogDO;
 import com.saucesubfresh.job.admin.mapper.OpenJobLogMapper;
@@ -55,8 +56,8 @@ public class OpenJobLogServiceImpl extends ServiceImpl<OpenJobLogMapper, OpenJob
     }
 
     @Override
-    public boolean deleteById(Long id) {
-        openJobLogMapper.deleteById(id);
+    public boolean deleteBatchIds(BatchDTO batchDTO) {
+        openJobLogMapper.deleteBatchIds(batchDTO.getIds());
         return true;
     }
 }

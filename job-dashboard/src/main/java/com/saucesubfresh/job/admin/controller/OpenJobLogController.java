@@ -15,6 +15,7 @@
  */
 package com.saucesubfresh.job.admin.controller;
 
+import com.saucesubfresh.job.api.dto.batch.BatchDTO;
 import com.saucesubfresh.job.api.dto.req.OpenJobLogReqDTO;
 import com.saucesubfresh.job.api.dto.resp.OpenJobLogRespDTO;
 import com.saucesubfresh.job.admin.service.OpenJobLogService;
@@ -23,6 +24,8 @@ import com.saucesubfresh.job.common.vo.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 
 /**
@@ -50,9 +53,9 @@ public class OpenJobLogController {
     return Result.succeed(openJobLogService.getById(id));
   }
 
-  @PutMapping("/delete/{id}")
-  public Result<Boolean> delete(@PathVariable("id") Long id) {
-    return Result.succeed(openJobLogService.deleteById(id));
+  @DeleteMapping("/delete")
+  public Result<Boolean> delete(@RequestBody @Valid BatchDTO batchDTO) {
+    return Result.succeed(openJobLogService.deleteBatchIds(batchDTO));
   }
 
 }

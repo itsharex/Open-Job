@@ -15,6 +15,7 @@
  */
 package com.saucesubfresh.job.admin.controller;
 
+import com.saucesubfresh.job.api.dto.batch.BatchDTO;
 import com.saucesubfresh.job.api.dto.create.OpenJobAppCreateDTO;
 import com.saucesubfresh.job.api.dto.req.OpenJobAppReqDTO;
 import com.saucesubfresh.job.api.dto.resp.OpenJobAppRespDTO;
@@ -70,9 +71,9 @@ public class OpenJobAppController {
     return Result.succeed(openJobAppService.updateById(openJobAppUpdateDTO));
   }
 
-  @PutMapping("/delete/{id}")
-  public Result<Boolean> delete(@PathVariable("id") Long id) {
-    return Result.succeed(openJobAppService.deleteById(id));
+  @DeleteMapping("/delete")
+  public Result<Boolean> delete(@RequestBody @Valid BatchDTO batchDTO) {
+    return Result.succeed(openJobAppService.deleteBatchIds(batchDTO));
   }
 
 }
