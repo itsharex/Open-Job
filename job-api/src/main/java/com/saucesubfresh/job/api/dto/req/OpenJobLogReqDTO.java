@@ -41,4 +41,6 @@ public class OpenJobLogReqDTO extends DateTimePageQuery implements Serializable 
 
     private String cause;
 
+    private String serverId;
+
 }

@@ -48,6 +48,10 @@ public class OpenJobLogDO implements Serializable {
 	 */
 	private Long jobId;
 	/**
+	 * 服务 id
+	 */
+	private String serverId;
+	/**
 	 * 任务执行状态（1 成功，0 失败）
 	 */
 	private Integer status;

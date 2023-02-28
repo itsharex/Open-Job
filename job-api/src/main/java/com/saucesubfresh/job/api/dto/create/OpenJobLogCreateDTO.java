@@ -41,6 +41,8 @@ public class OpenJobLogCreateDTO implements Serializable {
 
     private String cause;
 
+    private String serverId;
+
     private LocalDateTime createTime;
 
 }

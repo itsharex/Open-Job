@@ -41,6 +41,8 @@ public class OpenJobLogRespDTO implements Serializable {
 
     private String cause;
 
+    private String serverId;
+
     private LocalDateTime createTime;
 
 }
