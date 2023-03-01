@@ -22,6 +22,7 @@ import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.server.process.MessageProcess;
 import com.saucesubfresh.starter.job.register.core.JobHandlerRegister;
 import com.saucesubfresh.starter.job.register.core.OpenJobHandler;
+import com.saucesubfresh.starter.job.register.param.JobParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
@@ -48,8 +49,15 @@ public class JobMessageProcessor implements MessageProcess {
         if (ObjectUtils.isEmpty(openJobHandler)) {
             throw new RpcException("JobHandlerName: " + handlerName + ", there is no bound JobHandler.");
         }
+
+        JobParam jobParam = JobParam.builder()
+                .jobId(messageBody.getJobId())
+                .params(messageBody.getParams())
+                .script(messageBody.getScript())
+                .build();
+
         try {
-            openJobHandler.handler(messageBody.getParams());
+            openJobHandler.handler(jobParam);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new RpcException("JobHandlerName: " + handlerName + ", execute exception:" + e.getMessage());

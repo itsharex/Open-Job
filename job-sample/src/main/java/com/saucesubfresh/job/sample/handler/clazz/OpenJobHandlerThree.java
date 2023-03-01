@@ -17,6 +17,7 @@ package com.saucesubfresh.job.sample.handler.clazz;
 
 import com.saucesubfresh.starter.job.register.annotation.JobHandler;
 import com.saucesubfresh.starter.job.register.core.OpenJobHandler;
+import com.saucesubfresh.starter.job.register.param.JobParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +30,7 @@ import org.springframework.stereotype.Component;
 public class OpenJobHandlerThree implements OpenJobHandler {
 
     @Override
-    public void handler(String params) {
+    public void handler(JobParam jobParam) {
         log.info("JobHandlerThree 处理任务");
     }
 }

@@ -27,11 +27,19 @@ import java.io.Serializable;
 public class MessageBody implements Serializable {
     private static final long serialVersionUID = 8230301428590315404L;
     /**
-     * The name of JobHandler
+     * The id of job
      */
-    private String handlerName;
+    private Long jobId;
     /**
      * The params, json 字符串
      */
     private String params;
+    /**
+     * The script of bash
+     */
+    private String script;
+    /**
+     * The name of JobHandler
+     */
+    private String handlerName;
 }

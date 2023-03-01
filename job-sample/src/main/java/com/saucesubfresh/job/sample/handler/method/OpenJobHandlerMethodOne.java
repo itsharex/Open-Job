@@ -16,6 +16,7 @@
 package com.saucesubfresh.job.sample.handler.method;
 
 import com.saucesubfresh.starter.job.register.annotation.JobHandler;
+import com.saucesubfresh.starter.job.register.param.JobParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -27,12 +28,12 @@ import org.springframework.stereotype.Component;
 public class OpenJobHandlerMethodOne{
 
     @JobHandler(name = "job-method-one1")
-    public void handlerOne1(String params) {
-        log.info("JobHandlerOne 处理任务, 任务参数 {}", params);
+    public void handlerOne1(JobParam jobParam) {
+        log.info("JobHandlerOne 处理任务, 任务参数 {}", jobParam.getParams());
     }
 
     @JobHandler(name = "job-method-one2")
-    public void handlerOne2(String params) {
-        log.info("JobHandlerOne 处理任务, 任务参数 {}", params);
+    public void handlerOne2(JobParam jobParam) {
+        log.info("JobHandlerOne 处理任务, 任务参数 {}", jobParam.getParams());
     }
 }

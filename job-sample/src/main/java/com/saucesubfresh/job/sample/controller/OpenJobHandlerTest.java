@@ -17,6 +17,7 @@ package com.saucesubfresh.job.sample.controller;
 
 import com.saucesubfresh.starter.job.register.core.JobHandlerRegister;
 import com.saucesubfresh.starter.job.register.core.OpenJobHandler;
+import com.saucesubfresh.starter.job.register.param.JobParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,7 +38,10 @@ public class OpenJobHandlerTest {
         String handlerName = "job-one";
         OpenJobHandler openJobHandler = jobHandlerRegister.getJobHandler(handlerName);
         if (Objects.nonNull(openJobHandler)){
-            openJobHandler.handler("job-one");
+            JobParam param = JobParam.builder()
+                    .params("job-one")
+                    .build();
+            openJobHandler.handler(param);
         }
     }
 
@@ -46,7 +50,10 @@ public class OpenJobHandlerTest {
         String handlerName = "job-method-one1";
         OpenJobHandler openJobHandler = jobHandlerRegister.getJobHandler(handlerName);
         if (Objects.nonNull(openJobHandler)){
-            openJobHandler.handler("job-method-one1");
+            JobParam param = JobParam.builder()
+                    .params("job-one")
+                    .build();
+            openJobHandler.handler(param);
         }
     }
 }
