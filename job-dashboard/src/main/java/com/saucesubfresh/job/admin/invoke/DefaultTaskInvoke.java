@@ -69,7 +69,6 @@ public class DefaultTaskInvoke implements TaskInvoke{
         }
         List<OpenJobDO> jobList = openJobMapper.queryList(taskList);
         jobList.forEach(e -> {
-            //组装消息
             Message message = new Message();
             message.setMsgId(String.valueOf(e.getId()));
             MessageBody messageBody = new MessageBody();
@@ -79,39 +78,34 @@ public class DefaultTaskInvoke implements TaskInvoke{
             message.setBody(serializeData);
             OpenJobAppDO openJobAppDO = openJobAppMapper.selectById(e.getAppId());
             message.setNamespace(openJobAppDO.getAppName());
-            //发送消息
+
             String errMsg = null;
+            String serverId = null;
             MessageResponseBody response = null;
             try {
-                response = doInvoke(message);
+                response = clusterInvoker.invoke(message);
             }catch (RpcException ex){
-                log.error(ex.getMessage(), ex);
                 errMsg = ex.getMessage();
+                serverId = ex.getServerId();
+                recordLog(e, response, errMsg, serverId);
+                return;
             }
-            recordLog(e, response, errMsg);
+            if (response.getStatus() != ResponseStatus.SUCCESS){
+                errMsg = response.getMsg();
+            }
+            serverId = response.getServerId();
+            recordLog(e, response, errMsg, serverId);
         });
     }
 
-    private MessageResponseBody doInvoke(Message message){
-        MessageResponseBody response;
-        try {
-            response = clusterInvoker.invoke(message);
-        }catch (RpcException e){
-            throw new RpcException(e.getMessage());
-        }
-        if (Objects.nonNull(response) && response.getStatus() != ResponseStatus.SUCCESS){
-            throw new RpcException("Job 服务端处理失败");
-        }
-        return response;
-    }
-
-    private void recordLog(OpenJobDO jobDO, MessageResponseBody response, String cause){
+    private void recordLog(OpenJobDO jobDO, MessageResponseBody response, String cause, String serverId){
         OpenJobLogCreateDTO openJobLogCreateDTO = new OpenJobLogCreateDTO();
         String requestId = Optional.ofNullable(response).map(MessageResponseBody::getRequestId).orElse("");
         openJobLogCreateDTO.setAppId(jobDO.getAppId());
         openJobLogCreateDTO.setJobId(jobDO.getId());
         openJobLogCreateDTO.setStatus(StringUtils.isBlank(cause) ? CommonStatusEnum.YES.getValue() : CommonStatusEnum.NO.getValue());
         openJobLogCreateDTO.setCause(cause);
+        openJobLogCreateDTO.setServerId(serverId);
         openJobLogCreateDTO.setCreateTime(LocalDateTime.now());
         JobLogEvent logEvent = new JobLogEvent(this, openJobLogCreateDTO);
         eventPublisher.publishEvent(logEvent);
