@@ -60,6 +60,10 @@ public class OpenJobDO implements Serializable {
      */
     private String params;
     /**
+     * base 脚本
+     */
+    private String script;
+    /**
      * 任务执行状态（1 启动，0 停止）
      */
     private Integer status;

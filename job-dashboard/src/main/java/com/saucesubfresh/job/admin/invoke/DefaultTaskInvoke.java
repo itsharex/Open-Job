@@ -74,6 +74,8 @@ public class DefaultTaskInvoke implements TaskInvoke{
             MessageBody messageBody = new MessageBody();
             messageBody.setHandlerName(e.getHandlerName());
             messageBody.setParams(e.getParams());
+            messageBody.setScript(e.getScript());
+            messageBody.setJobId(e.getId());
             byte[] serializeData = SerializationUtils.serialize(messageBody);
             message.setBody(serializeData);
             OpenJobAppDO openJobAppDO = openJobAppMapper.selectById(e.getAppId());

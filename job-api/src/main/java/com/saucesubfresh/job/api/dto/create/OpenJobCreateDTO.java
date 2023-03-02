@@ -50,6 +50,8 @@ public class OpenJobCreateDTO implements Serializable {
 
     private String params;
 
+    private String script;
+
     private Integer status;
 
     private LocalDateTime createTime;
