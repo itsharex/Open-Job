@@ -42,4 +42,8 @@ public class MessageBody implements Serializable {
      * The name of JobHandler
      */
     private String handlerName;
+    /**
+     * The update time of script
+     */
+    private String scriptUpdateTime;
 }

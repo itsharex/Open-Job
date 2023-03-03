@@ -54,6 +54,7 @@ public class JobMessageProcessor implements MessageProcess {
                 .jobId(messageBody.getJobId())
                 .params(messageBody.getParams())
                 .script(messageBody.getScript())
+                .scriptUpdateTime(messageBody.getScriptUpdateTime())
                 .build();
 
         try {

@@ -36,6 +36,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -69,12 +70,14 @@ public class DefaultTaskInvoke implements TaskInvoke{
         }
         List<OpenJobDO> jobList = openJobMapper.queryList(taskList);
         jobList.forEach(e -> {
+            LocalDateTime time = Objects.isNull(e.getUpdateTime()) ? e.getCreateTime(): e.getUpdateTime();
             Message message = new Message();
             message.setMsgId(String.valueOf(e.getId()));
             MessageBody messageBody = new MessageBody();
             messageBody.setHandlerName(e.getHandlerName());
             messageBody.setParams(e.getParams());
             messageBody.setScript(e.getScript());
+            messageBody.setScriptUpdateTime(Objects.isNull(time) ? null : String.valueOf(time.toEpochSecond(ZoneOffset.of("+8"))));
             messageBody.setJobId(e.getId());
             byte[] serializeData = SerializationUtils.serialize(messageBody);
             message.setBody(serializeData);

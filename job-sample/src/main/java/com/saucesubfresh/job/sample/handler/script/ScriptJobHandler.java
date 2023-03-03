@@ -21,6 +21,7 @@ import com.saucesubfresh.starter.job.register.annotation.JobHandler;
 import com.saucesubfresh.starter.job.register.core.OpenJobHandler;
 import com.saucesubfresh.starter.job.register.param.JobParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -51,17 +52,28 @@ public class ScriptJobHandler implements OpenJobHandler {
 
     @Override
     public void handler(JobParam jobParam) throws Exception {
+        String script = jobParam.getScript();
+        String scriptUpdateTime = jobParam.getScriptUpdateTime();
+
+        if (StringUtils.isBlank(script)){
+            return;
+        }
+
+        String timestamp = StringUtils.isBlank(scriptUpdateTime) ?
+                String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8"))) :
+                scriptUpdateTime;
+
         // make script file
         String scriptFileName = scriptPath
                 .concat(File.separator)
                 .concat(String.valueOf(jobParam.getJobId()))
                 .concat("_")
-                .concat(String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8"))))
+                .concat(timestamp)
                 .concat(SUFFIX);
 
         File scriptFile = new File(scriptFileName);
         if (!scriptFile.exists()) {
-            FileUtils.writeToFile(scriptFileName, jobParam.getScript());
+            FileUtils.writeToFile(scriptFileName, script);
         }
 
         String scriptParams = jobParam.getParams();
