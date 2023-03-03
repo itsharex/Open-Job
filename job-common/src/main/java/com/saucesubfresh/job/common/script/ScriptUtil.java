@@ -16,10 +16,10 @@
 package com.saucesubfresh.job.common.script;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -38,14 +38,12 @@ public class ScriptUtil {
      * @return
      * @throws IOException
      */
-    public static int execToFile(String command, String scriptFile, String... params) throws IOException {
+    public static int execToFile(String command, String scriptFile, List<String> params) throws IOException {
         try {
             List<String> cmdArray = new ArrayList<>();
             cmdArray.add(command);
             cmdArray.add(scriptFile);
-            if (params != null && params.length > 0) {
-                Collections.addAll(cmdArray, params);
-            }
+            if (!CollectionUtils.isEmpty(params)) cmdArray.addAll(params);
 
             // process-exec
             final Process process = Runtime.getRuntime().exec(cmdArray.toArray(new String[0]));

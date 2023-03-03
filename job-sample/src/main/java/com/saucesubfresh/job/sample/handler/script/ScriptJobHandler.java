@@ -27,6 +27,8 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author: 李俊平
@@ -53,6 +55,7 @@ public class ScriptJobHandler implements OpenJobHandler {
     @Override
     public void handler(JobParam jobParam) throws Exception {
         String script = jobParam.getScript();
+        String scriptParams = jobParam.getParams();
         String scriptUpdateTime = jobParam.getScriptUpdateTime();
 
         if (StringUtils.isBlank(script)){
@@ -76,12 +79,14 @@ public class ScriptJobHandler implements OpenJobHandler {
             FileUtils.writeToFile(scriptFileName, script);
         }
 
-        String scriptParams = jobParam.getParams();
+
 
         log.info("script file: {}", scriptFileName);
 
+        List<String> params = StringUtils.isBlank(scriptParams) ? null : Arrays.asList(scriptParams.split(","));
+
         // invoke
-        int exitValue = ScriptUtil.execToFile(COMMAND, scriptFileName, scriptParams);
+        int exitValue = ScriptUtil.execToFile(COMMAND, scriptFileName, params);
 
         if (exitValue == 0) {
             log.info("执行成功");
