@@ -43,6 +43,10 @@ public class MessageBody implements Serializable {
      */
     private String handlerName;
     /**
+     * 任务分片数量
+     */
+    private Long shardingNumber;
+    /**
      * The update time of script
      */
     private String scriptUpdateTime;

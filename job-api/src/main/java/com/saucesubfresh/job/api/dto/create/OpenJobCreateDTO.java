@@ -54,6 +54,10 @@ public class OpenJobCreateDTO implements Serializable {
 
     private Integer status;
 
+    private Integer routeStrategy;
+
+    private String shardingParams;
+
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;

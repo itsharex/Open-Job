@@ -68,6 +68,14 @@ public class OpenJobDO implements Serializable {
      */
     private Integer status;
     /**
+     * 任务执行方式 0：采用负载均衡， 1：分片执行
+     */
+    private Integer routeStrategy;
+    /**
+     * 任务分片参数，逗号分隔，127.0.0.1：8080，127.0.0.1：8090
+     */
+    private String shardingParams;
+    /**
      * 任务创建时间
      */
     private LocalDateTime createTime;

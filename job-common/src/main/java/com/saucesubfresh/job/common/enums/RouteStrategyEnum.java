@@ -13,33 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.saucesubfresh.job.api.dto.req;
+package com.saucesubfresh.job.common.enums;
 
-import lombok.Data;
-import com.saucesubfresh.job.common.vo.DateTimePageQuery;
-
-import java.io.Serializable;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
- * 任务表
- *
- * @author lijunping
- * @email lijunping365@gmail.com
- * @date 2021-09-06 10:10:03
+ * @author: 李俊平
+ * @Date: 2023-03-21 14:00
  */
+@Getter
+@AllArgsConstructor
+public enum RouteStrategyEnum {
 
-@Data
-public class OpenJobReqDTO extends DateTimePageQuery implements Serializable {
-    private static final long serialVersionUID = 1L;
+    LB(0),
 
-    private Long appId;
+    SHARDING(1),
 
-    private String jobName;
+    ;
 
-    private String handlerName;
+    private final Integer value;
 
-    private Integer status;
-
-    private Integer routeStrategy;
-
+    public static RouteStrategyEnum of(Integer value){
+        for (RouteStrategyEnum routeStrategyEnum : RouteStrategyEnum.values()) {
+            if (routeStrategyEnum.value.equals(value)){
+                return routeStrategyEnum;
+            }
+        }
+        return RouteStrategyEnum.LB;
+    }
 }

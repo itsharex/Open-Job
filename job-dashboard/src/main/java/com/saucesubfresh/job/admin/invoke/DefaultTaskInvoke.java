@@ -23,6 +23,7 @@ import com.saucesubfresh.job.admin.mapper.OpenJobMapper;
 import com.saucesubfresh.job.api.dto.create.OpenJobLogCreateDTO;
 import com.saucesubfresh.job.common.domain.MessageBody;
 import com.saucesubfresh.job.common.enums.CommonStatusEnum;
+import com.saucesubfresh.job.common.enums.RouteStrategyEnum;
 import com.saucesubfresh.job.common.serialize.SerializationUtils;
 import com.saucesubfresh.rpc.client.cluster.ClusterInvoker;
 import com.saucesubfresh.rpc.core.Message;
@@ -77,12 +78,20 @@ public class DefaultTaskInvoke implements TaskInvoke{
             messageBody.setHandlerName(e.getHandlerName());
             messageBody.setParams(e.getParams());
             messageBody.setScript(e.getScript());
-            messageBody.setScriptUpdateTime(Objects.isNull(time) ? null : String.valueOf(time.toEpochSecond(ZoneOffset.of("+8"))));
+            messageBody.setScriptUpdateTime(Objects.isNull(time) ?
+                    null : String.valueOf(time.toEpochSecond(ZoneOffset.of("+8"))));
             messageBody.setJobId(e.getId());
+            messageBody.setShardingNumber(StringUtils.isBlank(e.getShardingParams()) ?
+                    0L : e.getShardingParams().split(",").length);
             byte[] serializeData = SerializationUtils.serialize(messageBody);
             message.setBody(serializeData);
             OpenJobAppDO openJobAppDO = openJobAppMapper.selectById(e.getAppId());
             message.setNamespace(openJobAppDO.getAppName());
+
+            if (RouteStrategyEnum.of(e.getRouteStrategy()) == RouteStrategyEnum.SHARDING){
+                executeSharding(message, e.getShardingParams());
+                return;
+            }
 
             String errMsg = null;
             String serverId = null;
@@ -101,6 +110,10 @@ public class DefaultTaskInvoke implements TaskInvoke{
             serverId = response.getServerId();
             recordLog(e, response, errMsg, serverId);
         });
+    }
+
+    private void executeSharding(Message message, String shardingParams){
+
     }
 
     private void recordLog(OpenJobDO jobDO, MessageResponseBody response, String cause, String serverId){
