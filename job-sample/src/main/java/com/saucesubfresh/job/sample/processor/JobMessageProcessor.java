@@ -55,6 +55,7 @@ public class JobMessageProcessor implements MessageProcess {
                 .params(messageBody.getParams())
                 .script(messageBody.getScript())
                 .scriptUpdateTime(messageBody.getScriptUpdateTime())
+                .shardingNodes(messageBody.getShardingNodes())
                 .build();
 
         try {

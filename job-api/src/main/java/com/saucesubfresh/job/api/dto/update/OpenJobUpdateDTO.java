@@ -47,9 +47,9 @@ public class OpenJobUpdateDTO implements Serializable {
 
     private Integer status;
 
-    private Integer routeStrategy;
+    private String shardingNodes;
 
-    private String shardingParams;
+    private Integer routeStrategy;
 
     private LocalDateTime createTime;
 

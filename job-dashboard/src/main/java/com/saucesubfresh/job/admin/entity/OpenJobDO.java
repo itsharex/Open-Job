@@ -74,7 +74,7 @@ public class OpenJobDO implements Serializable {
     /**
      * 任务分片参数，逗号分隔，127.0.0.1：8080，127.0.0.1：8090
      */
-    private String shardingParams;
+    private String shardingNodes;
     /**
      * 任务创建时间
      */

@@ -38,9 +38,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author lijunping on 2022/8/18
@@ -75,21 +73,21 @@ public class DefaultTaskInvoke implements TaskInvoke{
             Message message = new Message();
             message.setMsgId(String.valueOf(e.getId()));
             MessageBody messageBody = new MessageBody();
+            messageBody.setJobId(e.getId());
             messageBody.setHandlerName(e.getHandlerName());
             messageBody.setParams(e.getParams());
             messageBody.setScript(e.getScript());
             messageBody.setScriptUpdateTime(Objects.isNull(time) ?
                     null : String.valueOf(time.toEpochSecond(ZoneOffset.of("+8"))));
-            messageBody.setJobId(e.getId());
-            messageBody.setShardingNumber(StringUtils.isBlank(e.getShardingParams()) ?
-                    0L : e.getShardingParams().split(",").length);
+            messageBody.setShardingNodes(StringUtils.isBlank(e.getShardingNodes()) ?
+                    Collections.emptyList() : Arrays.asList(e.getShardingNodes().split(",")));
             byte[] serializeData = SerializationUtils.serialize(messageBody);
             message.setBody(serializeData);
             OpenJobAppDO openJobAppDO = openJobAppMapper.selectById(e.getAppId());
             message.setNamespace(openJobAppDO.getAppName());
 
             if (RouteStrategyEnum.of(e.getRouteStrategy()) == RouteStrategyEnum.SHARDING){
-                executeSharding(message, e.getShardingParams());
+                executeSharding(message, messageBody.getShardingNodes());
                 return;
             }
 
@@ -112,7 +110,7 @@ public class DefaultTaskInvoke implements TaskInvoke{
         });
     }
 
-    private void executeSharding(Message message, String shardingParams){
+    private void executeSharding(Message message, List<String> shardingNodes){
 
     }
 

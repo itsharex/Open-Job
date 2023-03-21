@@ -18,6 +18,7 @@ package com.saucesubfresh.job.common.domain;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author: 李俊平
@@ -43,11 +44,11 @@ public class MessageBody implements Serializable {
      */
     private String handlerName;
     /**
-     * 任务分片数量
-     */
-    private Long shardingNumber;
-    /**
      * The update time of script
      */
     private String scriptUpdateTime;
+    /**
+     * 任务分片节点列表
+     */
+    private List<String> shardingNodes;
 }
