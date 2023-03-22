@@ -21,14 +21,17 @@ import com.saucesubfresh.job.admin.event.JobLogEvent;
 import com.saucesubfresh.job.admin.mapper.OpenJobAppMapper;
 import com.saucesubfresh.job.admin.mapper.OpenJobMapper;
 import com.saucesubfresh.job.api.dto.create.OpenJobLogCreateDTO;
+import com.saucesubfresh.job.common.constants.CommonConstant;
 import com.saucesubfresh.job.common.domain.MessageBody;
 import com.saucesubfresh.job.common.enums.CommonStatusEnum;
 import com.saucesubfresh.job.common.enums.RouteStrategyEnum;
 import com.saucesubfresh.job.common.serialize.SerializationUtils;
 import com.saucesubfresh.rpc.client.cluster.ClusterInvoker;
+import com.saucesubfresh.rpc.client.remoting.RemotingInvoker;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.enums.ResponseStatus;
 import com.saucesubfresh.rpc.core.exception.RpcException;
+import com.saucesubfresh.rpc.core.information.ServerInformation;
 import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -38,7 +41,11 @@ import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author lijunping on 2022/8/18
@@ -49,15 +56,18 @@ public class DefaultTaskInvoke implements TaskInvoke{
 
     private final OpenJobMapper openJobMapper;
     private final ClusterInvoker clusterInvoker;
+    protected final RemotingInvoker remotingInvoker;
     private final OpenJobAppMapper openJobAppMapper;
     private final ApplicationEventPublisher eventPublisher;
 
     public DefaultTaskInvoke(OpenJobMapper openJobMapper,
                              ClusterInvoker clusterInvoker,
+                             RemotingInvoker remotingInvoker,
                              OpenJobAppMapper openJobAppMapper,
                              ApplicationEventPublisher eventPublisher) {
         this.openJobMapper = openJobMapper;
         this.clusterInvoker = clusterInvoker;
+        this.remotingInvoker = remotingInvoker;
         this.openJobAppMapper = openJobAppMapper;
         this.eventPublisher = eventPublisher;
     }
@@ -77,22 +87,23 @@ public class DefaultTaskInvoke implements TaskInvoke{
             messageBody.setHandlerName(e.getHandlerName());
             messageBody.setParams(e.getParams());
             messageBody.setScript(e.getScript());
-            messageBody.setScriptUpdateTime(Objects.isNull(time) ?
-                    null : String.valueOf(time.toEpochSecond(ZoneOffset.of("+8"))));
-            messageBody.setShardingNodes(StringUtils.isBlank(e.getShardingNodes()) ?
-                    Collections.emptyList() : Arrays.asList(e.getShardingNodes().split(",")));
+            messageBody.setScriptUpdateTime(String.valueOf(time.toEpochSecond(ZoneOffset.of("+8"))));
+
+            if (StringUtils.isNotBlank(e.getShardingNodes())){
+                List<String> shardingNodes = Arrays.asList(e.getShardingNodes().split(","));
+                messageBody.setShardingNodes(shardingNodes);
+            }
             byte[] serializeData = SerializationUtils.serialize(messageBody);
             message.setBody(serializeData);
             OpenJobAppDO openJobAppDO = openJobAppMapper.selectById(e.getAppId());
             message.setNamespace(openJobAppDO.getAppName());
 
             if (RouteStrategyEnum.of(e.getRouteStrategy()) == RouteStrategyEnum.SHARDING){
-                executeSharding(message, messageBody.getShardingNodes());
+                executeSharding(e, message, messageBody.getShardingNodes());
                 return;
             }
 
-            String errMsg = null;
-            String serverId = null;
+            String serverId = null, errMsg = null;
             MessageResponseBody response = null;
             try {
                 response = clusterInvoker.invoke(message);
@@ -108,10 +119,49 @@ public class DefaultTaskInvoke implements TaskInvoke{
             serverId = response.getServerId();
             recordLog(e, response, errMsg, serverId);
         });
+
     }
 
-    private void executeSharding(Message message, List<String> shardingNodes){
 
+    private void executeSharding(OpenJobDO openJobDO, Message message, List<String> shardingNodes){
+        if (CollectionUtils.isEmpty(shardingNodes)){
+            return;
+        }
+
+        List<ServerInformation> servers = shardingNodes.stream().map(e->{
+            String[] split = StringUtils.split(e, CommonConstant.Symbol.MH);
+            return new ServerInformation(split[0], Integer.parseInt(split[1]));
+        }).collect(Collectors.toList());
+
+        StringBuilder serverId = new StringBuilder();
+        StringBuilder errorInfo = new StringBuilder();
+        for (int i = 0; i < servers.size(); i++) {
+            RpcException ex = null;
+            MessageResponseBody response = null;
+            try {
+                response = remotingInvoker.invoke(message, servers.get(i));
+            }catch (RpcException e){
+                ex = e;
+            }
+
+            if (i != 0){
+                serverId.append(",");
+            }
+
+            if (response != null){
+                serverId.append(servers.get(i).getServerId());
+            }
+
+            if (ex != null){
+                if (i != 0){
+                    errorInfo.append(",");
+                }
+                serverId.append(ex.getServerId());
+                errorInfo.append(ex.getServerId()).append(":").append(ex.getMessage());
+            }
+
+        }
+        recordLog(openJobDO, null, errorInfo.toString(), serverId.toString());
     }
 
     private void recordLog(OpenJobDO jobDO, MessageResponseBody response, String cause, String serverId){

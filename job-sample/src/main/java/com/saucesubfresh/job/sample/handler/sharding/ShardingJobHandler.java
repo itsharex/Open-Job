@@ -15,6 +15,7 @@
  */
 package com.saucesubfresh.job.sample.handler.sharding;
 
+import com.saucesubfresh.rpc.core.constants.CommonConstant;
 import com.saucesubfresh.starter.job.register.annotation.JobHandler;
 import com.saucesubfresh.starter.job.register.core.OpenJobHandler;
 import com.saucesubfresh.starter.job.register.param.JobParam;
@@ -34,11 +35,15 @@ import java.util.List;
 @Component
 public class ShardingJobHandler implements OpenJobHandler {
 
-    @Value("#{'${com.saucesubfresh.rpc.server.server-address}'.join('${com.saucesubfresh.rpc.server.server-port}')}")
-    private String currentServerAddress;
+    @Value("${com.saucesubfresh.rpc.server.server-address}")
+    private String serverAddress;
+
+    @Value("${com.saucesubfresh.rpc.server.server-port}")
+    private Integer serverPort;
 
     @Override
     public void handler(JobParam jobParam) {
+        String currentServerAddress = String.format(CommonConstant.ADDRESS_PATTERN, serverAddress, serverPort);
         List<String> totalTasks = new ArrayList<>();
         for (int i = 1; i < 1000; i++) {
             totalTasks.add("task" + i);
