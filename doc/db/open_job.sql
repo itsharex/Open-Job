@@ -22,19 +22,22 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP TABLE IF EXISTS `open_job`;
 CREATE TABLE `open_job`  (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT ''主键'',
-  `app_id` bigint(20) NOT NULL COMMENT ''应用 id'',
-  `job_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT ''任务名称'',
-  `handler_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT ''绑定的 handler 的名字'',
-  `cron_expression` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT ''cron 表达式'',
-  `params` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT ''参数'',
-  `status` tinyint(4) NOT NULL DEFAULT 0 COMMENT ''任务执行状态（1 启动，0 停止）'',
-  `create_time` datetime(0) NULL DEFAULT NULL COMMENT ''任务创建时间'',
-  `update_time` datetime(0) NULL DEFAULT NULL COMMENT ''任务更新时间'',
-  `create_user` bigint(20) NULL DEFAULT NULL COMMENT ''任务创建人'',
-  `update_user` bigint(20) NULL DEFAULT NULL COMMENT ''任务更新人'',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `app_id` bigint(20) NOT NULL COMMENT '应用 id',
+  `job_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '任务名称',
+  `handler_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '绑定的 handler 的名字',
+  `cron_expression` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'cron 表达式',
+  `route_strategy` tinyint(4) NULL DEFAULT 0 COMMENT '任务执行方式 0：采用负载均衡， 1：分片执行',
+  `sharding_nodes` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '任务分片参数，逗号分隔，127.0.0.1：8080，127.0.0.1：8090',
+  `params` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '参数',
+  `script` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '脚本',
+  `status` tinyint(4) NOT NULL DEFAULT 0 COMMENT '任务执行状态（1 启动，0 停止）',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '任务创建时间',
+  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '任务更新时间',
+  `create_user` bigint(20) NULL DEFAULT NULL COMMENT '任务创建人',
+  `update_user` bigint(20) NULL DEFAULT NULL COMMENT '任务更新人',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 61 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = ''爬虫任务表'' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '爬虫任务表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for open_job_app
