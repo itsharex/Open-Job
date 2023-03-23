@@ -47,6 +47,10 @@ public class OpenJobRespDTO implements Serializable {
 
     private Integer status;
 
+    private String shardingNodes;
+
+    private Integer routeStrategy;
+
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;

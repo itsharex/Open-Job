@@ -20,6 +20,7 @@ import com.saucesubfresh.job.api.dto.resp.OpenJobAppRespDTO;
 import com.saucesubfresh.job.api.dto.resp.OpenJobInstanceRespDTO;
 import com.saucesubfresh.job.admin.service.OpenJobAppService;
 import com.saucesubfresh.job.admin.service.OpenJobInstanceService;
+import com.saucesubfresh.job.common.exception.ServiceException;
 import com.saucesubfresh.job.common.time.LocalDateTimeUtil;
 import com.saucesubfresh.job.common.vo.PageResult;
 import com.saucesubfresh.rpc.client.manager.InstanceManager;
@@ -67,12 +68,20 @@ public class OpenJobInstanceServiceImpl implements OpenJobInstanceService {
 
     @Override
     public Boolean offlineServer(String serverId) {
-        return instanceManager.offlineServer(serverId);
+        try {
+            return instanceManager.offlineServer(serverId);
+        }catch (Exception e){
+            throw new ServiceException(e.getMessage());
+        }
     }
 
     @Override
     public Boolean onlineServer(String serverId) {
-        return instanceManager.offlineServer(serverId);
+        try {
+            return instanceManager.offlineServer(serverId);
+        }catch (Exception e){
+            throw new ServiceException(e.getMessage());
+        }
     }
 
     @Override

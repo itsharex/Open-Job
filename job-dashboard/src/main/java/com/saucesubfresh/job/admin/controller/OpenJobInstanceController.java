@@ -24,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * 集群节点管理端点
  *
@@ -38,17 +40,23 @@ public class OpenJobInstanceController {
     private OpenJobInstanceService instanceService;
 
     /**
-     * 查询全部客户端示例
-     * @return
+     * 分页查询执行器列表
      */
     @GetMapping("/page")
-    public Result<PageResult<OpenJobInstanceRespDTO>> getAllInstance(OpenJobInstanceReqDTO instanceReqDTO){
+    public Result<PageResult<OpenJobInstanceRespDTO>> getPage(OpenJobInstanceReqDTO instanceReqDTO){
         return Result.succeed(instanceService.selectPage(instanceReqDTO));
     }
 
     /**
-     * 客户端下线
-     * @return
+     * 查询全部执行器列表
+     */
+    @GetMapping("/list")
+    public Result<List<OpenJobInstanceRespDTO>> getAllInstance(@RequestParam("appId") Long appId){
+        return Result.succeed(instanceService.getInstanceList(appId));
+    }
+
+    /**
+     * 执行器下线
      */
     @PutMapping("/offline/{serverId}")
     public Result<Boolean> offlineInstance(@PathVariable("serverId") String serverId){
@@ -56,8 +64,7 @@ public class OpenJobInstanceController {
     }
 
     /**
-     * 客户端上线
-     * @return
+     * 执行器上线
      */
     @PutMapping("/online/{serverId}")
     public Result<Boolean> onlineInstance(@PathVariable("serverId") String serverId){
