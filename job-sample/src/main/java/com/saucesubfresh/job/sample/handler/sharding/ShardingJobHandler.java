@@ -45,8 +45,8 @@ public class ShardingJobHandler implements OpenJobHandler {
     public void handler(JobParam jobParam) {
         String currentServerAddress = String.format(CommonConstant.ADDRESS_PATTERN, serverAddress, serverPort);
         List<String> totalTasks = new ArrayList<>();
-        for (int i = 1; i < 1000; i++) {
-            totalTasks.add("task" + i);
+        for (int i = 0; i < 1000; i++) {
+            totalTasks.add("task-" + i);
         }
         List<String> currentTasks = new ArrayList<>();
         List<String> shardingNodes = jobParam.getShardingNodes();
@@ -57,5 +57,6 @@ public class ShardingJobHandler implements OpenJobHandler {
         }
 
         log.info("sharding-job 处理任务数量" + currentTasks.size());
+        log.info("sharding-job 处理任务:" + StringUtils.join(currentTasks, ","));
     }
 }
