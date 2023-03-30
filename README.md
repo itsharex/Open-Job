@@ -24,7 +24,9 @@
 
 ## 🎨 Open-Job 介绍
 
-[项目官方文档地址](https://lijunping365.github.io/#/)
+[项目官网地址](http://www.openbytecode.com/)
+
+[项目官方文档地址](http://www.openbytecode.com/project/open-job/docs/quick-start)
 
 ## ✨ 已实现功能点
 
