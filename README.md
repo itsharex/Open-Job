@@ -58,39 +58,63 @@
 
 1. 下载本项目
 
+```
 git clone https://github.com/lijunping365/Open-Job.git
+```
 
 2. 创建数据库表
 
-sql 文件在 doc/open_job.sql
+sql 文件在 doc/db/open_job.sql
 
-3. 下载前端项目
+3. 启动 Dashboard 服务
 
-git clone https://github.com/lijunping365/Open-Job-Admin.git
+```java
+@EnableSecurity
+@EnableScheduling
+@EnableOpenRpcClient
+@SpringBootApplication
+public class JobDashboardApplication {
 
-需安装 node.js，
-
-4. 启动服务端，启动前端项目
-
-登录任务管理系统创建任务，之后便可以进行任务管理了
-
-### 2 搭建任务执行模块
-
-创建任务执行模块可按照项目中客户端示例工程搭建
-
-1. 在任务执行项目中加入以下依赖
-
-```xml
-<dependency>
-    <groupId>com.saucesubfresh</groupId>
-    <artifactId>open-rpc-server</artifactId>
-    <version>1.0.6</version>
-</dependency>
+    public static void main(String[] args) {
+        SpringApplication.run(JobDashboardApplication.class, args);
+    }
+}
 ```
 
-2. 创建任务执行类并实现 JobHandler
+4. 启动执行器
 
-示例1（类模式）
+```java
+@EnableOpenRpcServer
+@SpringBootApplication
+public class JobClientApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(JobClientApplication.class, args);
+    }
+}
+```
+
+5. 下载前端项目
+
+```
+git clone https://github.com/lijunping365/Open-Job-Admin.git
+```
+
+6. 安装依赖
+
+```
+npm install
+```
+
+7. 启动前端项目
+
+```
+npm start
+```
+
+### 2 创建 JobHandler
+
+示例1
 
 ```java
 @Slf4j
@@ -99,13 +123,13 @@ git clone https://github.com/lijunping365/Open-Job-Admin.git
 public class OpenJobHandlerOne implements OpenJobHandler {
 
     @Override
-    public void handler(String params) {
+    public void handler(JobParam jobParam) {
         log.info("JobHandlerOne 处理任务");
     }
 }
 ```
 
-示例2（方法模式）
+示例2
 
 ```java
 @Slf4j
@@ -113,13 +137,13 @@ public class OpenJobHandlerOne implements OpenJobHandler {
 public class OpenJobHandlerMethodOne{
 
     @JobHandler(name = "job-method-one1")
-    public void handlerOne1(String params) {
-        log.info("JobHandlerOne 处理任务, 任务参数 {}", params);
+    public void handlerOne1(JobParam jobParam) {
+        log.info("JobHandlerOne 处理任务, 任务参数 {}", jobParam.getParams());
     }
 
     @JobHandler(name = "job-method-one2")
-    public void handlerOne2(String params) {
-        log.info("JobHandlerOne 处理任务, 任务参数 {}", params);
+    public void handlerOne2(JobParam jobParam) {
+        log.info("JobHandlerOne 处理任务, 任务参数 {}", jobParam.getParams());
     }
 }
 ```
