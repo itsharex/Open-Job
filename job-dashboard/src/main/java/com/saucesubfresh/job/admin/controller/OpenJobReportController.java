@@ -49,7 +49,8 @@ public class OpenJobReportController {
     }
 
     @GetMapping("/chart")
-    public Result<List<OpenJobChartRespDTO>> getChart(@RequestParam("appId") Long appId) {
-        return Result.succeed(openJobReportService.getChart(appId));
+    public Result<List<OpenJobChartRespDTO>> getChart(@RequestParam(value = "appId") Long appId,
+                                                      @RequestParam(value = "count", required = false, defaultValue = "30") Integer count) {
+        return Result.succeed(openJobReportService.getChart(appId, count));
     }
 }

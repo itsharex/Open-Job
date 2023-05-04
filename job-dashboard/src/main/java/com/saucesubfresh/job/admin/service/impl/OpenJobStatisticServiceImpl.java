@@ -15,7 +15,6 @@
  */
 package com.saucesubfresh.job.admin.service.impl;
 
-import com.saucesubfresh.job.admin.mapper.OpenJobLogMapper;
 import com.saucesubfresh.job.admin.service.OpenJobInstanceService;
 import com.saucesubfresh.job.api.dto.resp.OpenJobInstanceRespDTO;
 import com.saucesubfresh.job.api.dto.resp.OpenJobStatisticRespDTO;
@@ -25,8 +24,6 @@ import com.saucesubfresh.rpc.core.enums.Status;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 /**
@@ -36,14 +33,11 @@ import java.util.List;
 public class OpenJobStatisticServiceImpl implements OpenJobStatisticService {
 
     private final OpenJobMapper openJobMapper;
-    private final OpenJobLogMapper openJobLogMapper;
     private final OpenJobInstanceService openJobInstanceService;
 
     public OpenJobStatisticServiceImpl(OpenJobMapper openJobMapper,
-                                       OpenJobLogMapper openJobLogMapper,
                                        OpenJobInstanceService openJobInstanceService) {
         this.openJobMapper = openJobMapper;
-        this.openJobLogMapper = openJobLogMapper;
         this.openJobInstanceService = openJobInstanceService;
     }
 
@@ -54,17 +48,11 @@ public class OpenJobStatisticServiceImpl implements OpenJobStatisticService {
         List<OpenJobInstanceRespDTO> instanceList = openJobInstanceService.getInstanceList(appId);
         int instanceTotalCount = instanceList.size();
         long instanceOnlineCount = instanceList.stream().filter(e-> StringUtils.equals(e.getStatus(), Status.ON_LINE.name())).count();
-        final LocalDateTime now = LocalDateTime.now();
-        final LocalDateTime of = LocalDateTime.of(now.toLocalDate(), LocalTime.MIN);//当天的零点
-        int scheduleTotalCount = openJobLogMapper.getScheduleTotalCount(appId, of, now);
-        int scheduleSucceedCount = openJobLogMapper.getScheduleSucceedCount(appId, of, now);
         return OpenJobStatisticRespDTO.builder()
-                .taskTotalNum(taskTotalCount)
-                .taskRunningNum(taskRunningCount)
-                .executorTotalNum(instanceTotalCount)
-                .executorOnlineNum((int) instanceOnlineCount)
-                .scheduleTotalNum(scheduleTotalCount)
-                .scheduleSucceedNum(scheduleSucceedCount)
-                .build();
+               .taskTotalNum(taskTotalCount)
+               .taskRunningNum(taskRunningCount)
+               .executorTotalNum(instanceTotalCount)
+               .executorOnlineNum((int) instanceOnlineCount)
+               .build();
     }
 }

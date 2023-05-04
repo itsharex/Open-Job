@@ -17,6 +17,7 @@ package com.saucesubfresh.job.common.time;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -74,5 +75,33 @@ public interface LocalDateTimeUtil {
      */
     static String format(LocalDateTime localDateTime, String format) {
         return localDateTime.format(DateTimeFormatter.ofPattern(format));
+    }
+
+    /**
+     * 获取指定日期的毫秒
+     *
+     * @param time
+     * @return
+     */
+    static Long getMillis(LocalDateTime time) {
+        return time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+    }
+
+    /**
+     * 获取当天的00:00:00
+     *
+     * @return
+     */
+    static LocalDateTime getDayStart(LocalDateTime time) {
+        return time.with(LocalTime.MIN);
+    }
+
+    /**
+     * 获取当天的23:59:59
+     *
+     * @return
+     */
+    static LocalDateTime getDayEnd(LocalDateTime time) {
+        return time.with(LocalTime.MAX);
     }
 }

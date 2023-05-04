@@ -45,9 +45,10 @@ public interface OpenJobLogMapper extends BaseMapper<OpenJobLogDO> {
         );
     }
 
-    default int getScheduleTotalCount(Long appId, LocalDateTime beginTime, LocalDateTime endTime){
+    default int getScheduleTotalCount(Long appId, CommonStatusEnum statusEnum, LocalDateTime beginTime, LocalDateTime endTime){
         return selectCount(Wrappers.<OpenJobLogDO>lambdaQuery()
                 .eq(OpenJobLogDO::getAppId, appId)
+                .eq(Objects.nonNull(statusEnum), OpenJobLogDO::getStatus, statusEnum.getValue())
                 .between(OpenJobLogDO::getCreateTime, beginTime, endTime)
         );
     }
