@@ -23,8 +23,8 @@ import com.saucesubfresh.job.admin.mapper.OpenJobUserMapper;
 import com.saucesubfresh.job.common.exception.ServiceException;
 import com.saucesubfresh.job.common.time.LocalDateTimeUtil;
 import com.saucesubfresh.starter.alarm.exception.AlarmException;
-import com.saucesubfresh.starter.alarm.provider.dingtalk.DingtalkAlarmExecutor;
-import com.saucesubfresh.starter.alarm.provider.dingtalk.DingtalkMessageRequest;
+import com.saucesubfresh.starter.alarm.provider.dingtalk.DingDingAlarmExecutor;
+import com.saucesubfresh.starter.alarm.provider.dingtalk.DingDingMessageRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,11 +50,11 @@ public class DefaultAlarmService implements AlarmService{
 
     private final OpenJobMapper openJobMapper;
     private final OpenJobUserMapper userMapper;
-    private final DingtalkAlarmExecutor alarmExecutor;
+    private final DingDingAlarmExecutor alarmExecutor;
 
     public DefaultAlarmService(OpenJobMapper openJobMapper,
                                OpenJobUserMapper userMapper,
-                               DingtalkAlarmExecutor alarmExecutor) {
+                               DingDingAlarmExecutor alarmExecutor) {
         this.openJobMapper = openJobMapper;
         this.userMapper = userMapper;
         this.alarmExecutor = alarmExecutor;
@@ -73,12 +73,12 @@ public class DefaultAlarmService implements AlarmService{
             return;
         }
 
-        DingtalkMessageRequest request = buildAlarmRequest(alarmMessage);
+        DingDingMessageRequest request = buildAlarmRequest(alarmMessage);
         send(request);
     }
 
-    private DingtalkMessageRequest buildAlarmRequest(AlarmMessage alarmMessage){
-        DingtalkMessageRequest request = new DingtalkMessageRequest();
+    private DingDingMessageRequest buildAlarmRequest(AlarmMessage alarmMessage){
+        DingDingMessageRequest request = new DingDingMessageRequest();
         // 发送类型
         request.setMsgtype("text");
 
@@ -96,7 +96,7 @@ public class DefaultAlarmService implements AlarmService{
         String time = LocalDateTimeUtil.format(createTime, LocalDateTimeUtil.DATETIME_FORMATTER);
         String content = String.format(alarmTemplate, title, time, cause);
 
-        DingtalkMessageRequest.TextVO text = new DingtalkMessageRequest.TextVO();
+        DingDingMessageRequest.TextVO text = new DingDingMessageRequest.TextVO();
         text.setContent(content);
         request.setText(text);
 
@@ -106,14 +106,14 @@ public class DefaultAlarmService implements AlarmService{
             throw new ServiceException("can't find OpenJobUser by id");
         }
 
-        DingtalkMessageRequest.AtVO at = new DingtalkMessageRequest.AtVO();
+        DingDingMessageRequest.AtVO at = new DingDingMessageRequest.AtVO();
         at.setAtMobiles(Collections.singletonList(crawlerUserDO.getPhone()));
         request.setAt(at);
 
         return request;
     }
 
-    private void send(DingtalkMessageRequest request){
+    private void send(DingDingMessageRequest request){
         try{
             alarmExecutor.doAlarm(request);
         }catch (AlarmException e){
