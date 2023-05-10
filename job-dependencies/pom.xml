@@ -34,7 +34,7 @@
         <open-starter-oauth.version>1.0.4</open-starter-oauth.version>
         <open-starter-security.version>1.0.4</open-starter-security.version>
         <open-starter-schedule.version>1.0.4</open-starter-schedule.version>
-        <open-starter-alarm.version>1.0.2</open-starter-alarm.version>
+        <open-starter-alarm.version>1.0.3</open-starter-alarm.version>
         <open-starter-job-register.version>1.0.4</open-starter-job-register.version>
         <!-- grpc -->
         <grpc.version>1.41.0</grpc.version>

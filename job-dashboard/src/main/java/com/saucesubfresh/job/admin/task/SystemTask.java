@@ -17,6 +17,7 @@ package com.saucesubfresh.job.admin.task;
 
 import com.saucesubfresh.job.admin.mapper.OpenJobLogMapper;
 import com.saucesubfresh.job.admin.service.OpenJobReportService;
+import com.saucesubfresh.job.common.time.LocalDateTimeUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -43,15 +44,17 @@ public class SystemTask {
 
 
     /**
-     * 每天 23：59：59 执行
+     * 每天 1：00：00 执行
      *
      * 1. 执行生成当日报表任务
      * 2. 执行清除n天前的任务日志
      */
-    @Scheduled(cron = "59 59 23 * * ?")
+    @Scheduled(cron = "0 0 1 * * ?")
     public void addReportTask(){
         LocalDateTime now = LocalDateTime.now();
-        openJobReportService.generateReport(now);
-        openJobLogMapper.clearLog(now, interval);
+        LocalDateTime yesterday = now.plusDays(-1);
+        LocalDateTime time = LocalDateTimeUtil.getDayEnd(yesterday);
+        openJobReportService.generateReport(yesterday);
+        openJobLogMapper.clearLog(time, interval);
     }
 }

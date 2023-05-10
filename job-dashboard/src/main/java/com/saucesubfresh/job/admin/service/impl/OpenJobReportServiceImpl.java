@@ -23,6 +23,8 @@ import com.saucesubfresh.job.admin.entity.OpenJobReportDO;
 import com.saucesubfresh.job.admin.mapper.OpenJobLogMapper;
 import com.saucesubfresh.job.admin.mapper.OpenJobReportMapper;
 import com.saucesubfresh.job.admin.service.OpenJobReportService;
+import com.saucesubfresh.job.common.enums.CommonStatusEnum;
+import com.saucesubfresh.job.common.time.LocalDateTimeUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -55,9 +57,11 @@ public class OpenJobReportServiceImpl implements OpenJobReportService {
         if (CollectionUtils.isEmpty(openJobAppDOS)){
             return;
         }
+        LocalDateTime startTime = LocalDateTimeUtil.getDayStart(now);
+        LocalDateTime endTime = LocalDateTimeUtil.getDayEnd(now);
         for (OpenJobAppDO appDO : openJobAppDOS) {
-            int scheduleTotalCount = openJobLogMapper.getScheduleTotalCount(appDO.getId(), now.plusDays(-1), now);
-            int scheduleSucceedCount = openJobLogMapper.getScheduleSucceedCount(appDO.getId(), now.plusDays(-1), now);
+            int scheduleTotalCount = openJobLogMapper.getScheduleTotalCount(appDO.getId(), null, startTime, endTime);
+            int scheduleSucceedCount = openJobLogMapper.getScheduleTotalCount(appDO.getId(), CommonStatusEnum.YES, startTime, endTime);
             OpenJobReportDO openJobReportDO = new OpenJobReportDO();
             openJobReportDO.setAppId(appDO.getId());
             openJobReportDO.setTaskExecTotalCount(scheduleTotalCount);
@@ -68,8 +72,8 @@ public class OpenJobReportServiceImpl implements OpenJobReportService {
     }
 
     @Override
-    public List<OpenJobChartRespDTO> getChart(Long appId) {
-        List<OpenJobReportDO> openJobReportDOS = openJobReportMapper.queryList(appId,30);
+    public List<OpenJobChartRespDTO> getChart(Long appId, Integer count) {
+        List<OpenJobReportDO> openJobReportDOS = openJobReportMapper.queryList(appId, count);
         if (CollectionUtils.isEmpty(openJobReportDOS)){
             return Collections.emptyList();
         }

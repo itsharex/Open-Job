@@ -48,14 +48,5 @@ public class OpenJobStatisticRespDTO implements Serializable {
      * 执行器在线数量
      */
     private Integer executorOnlineNum;
-    /**
-     * 调度总次数
-     */
-    private Integer scheduleTotalNum;
-    /**
-     * 调度成功次数
-     */
-    private Integer scheduleSucceedNum;
-
 
 }
