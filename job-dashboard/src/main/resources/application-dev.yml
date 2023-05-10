@@ -70,10 +70,14 @@ com:
         - "/login/**"
     # 报警功能
     alarm:
-      # 这里的 {xxxxxx} 替换成你的钉钉机器人的 secret
-      secret: xxxxxx
-      # 这里 {xxxxxxxx} 替换成你的钉钉机器人的 access_token
-      webhook: https://oapi.dingtalk.com/robot/send?access_token=xxxxxxxx
+      ding-ding:
+        # 这里的 {xxxxxx} 替换成你的钉钉机器人的 secret
+        secret: xxxxxx
+        # 这里 {xxxxxxxx} 替换成你的钉钉机器人的 access_token
+        webhook: https://oapi.dingtalk.com/robot/send?access_token=xxxxxxxx
+      we-chat:
+        # 这里 {xxxxxxxx} 替换成你的企业微信机器人的 key
+        webhook: https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxxxxxxx
       # 报警模板 类型（任务|采集）-标题（任务名称|爬虫名称）: 时间
       template: "%s-[%s]: %s"
       # 夜间开始时间（18：00）
