@@ -37,6 +37,22 @@ public class OpenJobInstanceRespDTO implements Serializable {
      */
     private LocalDateTime onlineTime;
     /**
+     * 运行时长
+     */
+    private String liveTime;
+    /**
+     * cpu使用信息
+     */
+    private String cpuInfo;
+    /**
+     * 内存使用信息
+     */
+    private String memoryInfo;
+    /**
+     * 磁盘使用信息
+     */
+    private String diskInfo;
+    /**
      * 在线状态
      */
     private String status;
