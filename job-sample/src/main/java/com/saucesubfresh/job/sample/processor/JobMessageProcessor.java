@@ -16,6 +16,11 @@
 package com.saucesubfresh.job.sample.processor;
 
 import com.saucesubfresh.job.common.domain.MessageBody;
+import com.saucesubfresh.job.common.domain.ResponseBody;
+import com.saucesubfresh.job.common.enums.CommandEnum;
+import com.saucesubfresh.job.common.json.JSON;
+import com.saucesubfresh.job.common.metrics.SystemMetricsInfo;
+import com.saucesubfresh.job.common.metrics.SystemMetricsUtils;
 import com.saucesubfresh.job.common.serialize.SerializationUtils;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.exception.RpcException;
@@ -26,6 +31,8 @@ import com.saucesubfresh.starter.job.register.param.JobParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
+
+import java.util.Objects;
 
 /**
  * @author lijunping on 2022/2/25
@@ -44,6 +51,24 @@ public class JobMessageProcessor implements MessageProcess {
     public byte[] process(Message message) {
         final byte[] body = message.getBody();
         final MessageBody messageBody = SerializationUtils.deserialize(body, MessageBody.class);
+        CommandEnum command = CommandEnum.of(messageBody.getCommand());
+        if (Objects.isNull(command)){
+            throw new RpcException("the parameter command must not be null");
+        }
+
+        switch (command){
+            case SCHEDULE:
+                handlerSchedule(messageBody);
+                return null;
+            case METRICS:
+                ResponseBody responseBody = handlerMetrics();
+                return SerializationUtils.serialize(responseBody);
+            default:
+                throw new UnsupportedOperationException("Unsupported Operation");
+        }
+    }
+
+    private void handlerSchedule(MessageBody messageBody){
         String handlerName = messageBody.getHandlerName();
         OpenJobHandler openJobHandler = jobHandlerRegister.getJobHandler(handlerName);
         if (ObjectUtils.isEmpty(openJobHandler)) {
@@ -64,6 +89,33 @@ public class JobMessageProcessor implements MessageProcess {
             log.error(e.getMessage(), e);
             throw new RpcException("JobHandlerName: " + handlerName + ", execute exception:" + e.getMessage());
         }
-        return null;
+    }
+
+    private ResponseBody handlerMetrics(){
+        ResponseBody responseBody = new ResponseBody();
+        SystemMetricsInfo systemMetricsInfo = new SystemMetricsInfo();
+        int cpuProcessorNum = SystemMetricsUtils.getCPUProcessorNum();
+        double cpuLoadPercent = SystemMetricsUtils.getCPULoadPercent();
+        double jvmUsedMemory = SystemMetricsUtils.getJvmUsedMemory();
+        double jvmMaxMemory = SystemMetricsUtils.getJvmMaxMemory();
+        double jvmMemoryUsage = SystemMetricsUtils.getJvmMemoryUsage(jvmUsedMemory, jvmMaxMemory);
+        long[] diskInfo = SystemMetricsUtils.getDiskInfo();
+        long freeDiskSpace = diskInfo[0];
+        long totalDiskSpace = diskInfo[1];
+        double diskUsed = SystemMetricsUtils.getDiskUsed(totalDiskSpace, freeDiskSpace);
+        double diskTotal = SystemMetricsUtils.getDiskTotal(totalDiskSpace);
+        double diskUsage = SystemMetricsUtils.getDiskUsage(diskUsed, diskTotal);
+
+        systemMetricsInfo.setCpuProcessors(cpuProcessorNum);
+        systemMetricsInfo.setCpuLoad(cpuLoadPercent);
+        systemMetricsInfo.setJvmMaxMemory(jvmMaxMemory);
+        systemMetricsInfo.setJvmUsedMemory(jvmUsedMemory);
+        systemMetricsInfo.setJvmMemoryUsage(jvmMemoryUsage);
+        systemMetricsInfo.setDiskUsed(diskUsed);
+        systemMetricsInfo.setDiskTotal(diskTotal);
+        systemMetricsInfo.setDiskUsage(diskUsage);
+
+        responseBody.setData(JSON.toJSON(systemMetricsInfo));
+        return responseBody;
     }
 }
