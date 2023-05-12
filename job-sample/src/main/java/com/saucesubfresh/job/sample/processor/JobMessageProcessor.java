@@ -18,6 +18,7 @@ package com.saucesubfresh.job.sample.processor;
 import com.saucesubfresh.job.common.domain.MessageBody;
 import com.saucesubfresh.job.common.domain.ResponseBody;
 import com.saucesubfresh.job.common.enums.CommandEnum;
+import com.saucesubfresh.job.common.json.JSON;
 import com.saucesubfresh.job.common.metrics.SystemMetricsInfo;
 import com.saucesubfresh.job.common.metrics.SystemMetricsUtils;
 import com.saucesubfresh.job.common.serialize.SerializationUtils;
@@ -95,9 +96,26 @@ public class JobMessageProcessor implements MessageProcess {
         SystemMetricsInfo systemMetricsInfo = new SystemMetricsInfo();
         int cpuProcessorNum = SystemMetricsUtils.getCPUProcessorNum();
         double cpuLoadPercent = SystemMetricsUtils.getCPULoadPercent();
+        double jvmUsedMemory = SystemMetricsUtils.getJvmUsedMemory();
+        double jvmMaxMemory = SystemMetricsUtils.getJvmMaxMemory();
+        double jvmMemoryUsage = SystemMetricsUtils.getJvmMemoryUsage(jvmUsedMemory, jvmMaxMemory);
+        long[] diskInfo = SystemMetricsUtils.getDiskInfo();
+        long freeDiskSpace = diskInfo[0];
+        long totalDiskSpace = diskInfo[1];
+        double diskUsed = SystemMetricsUtils.getDiskUsed(totalDiskSpace, freeDiskSpace);
+        double diskTotal = SystemMetricsUtils.getDiskTotal(totalDiskSpace);
+        double diskUsage = SystemMetricsUtils.getDiskUsage(diskUsed, diskTotal);
 
+        systemMetricsInfo.setCpuProcessors(cpuProcessorNum);
+        systemMetricsInfo.setCpuLoad(cpuLoadPercent);
+        systemMetricsInfo.setJvmMaxMemory(jvmMaxMemory);
+        systemMetricsInfo.setJvmUsedMemory(jvmUsedMemory);
+        systemMetricsInfo.setJvmMemoryUsage(jvmMemoryUsage);
+        systemMetricsInfo.setDiskUsed(diskUsed);
+        systemMetricsInfo.setDiskTotal(diskTotal);
+        systemMetricsInfo.setDiskUsage(diskUsage);
 
-
+        responseBody.setData(JSON.toJSON(systemMetricsInfo));
         return responseBody;
     }
 }

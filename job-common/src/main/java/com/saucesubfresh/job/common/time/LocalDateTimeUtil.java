@@ -15,10 +15,7 @@
  */
 package com.saucesubfresh.job.common.time;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
@@ -103,5 +100,28 @@ public interface LocalDateTimeUtil {
      */
     static LocalDateTime getDayEnd(LocalDateTime time) {
         return time.with(LocalTime.MAX);
+    }
+
+    /**
+     * 计算两个时间之间的差值
+     * @param start
+     * @param end
+     * @return
+     */
+    static String getTimeBetween(LocalDateTime start, LocalDateTime end){
+        //获取秒数
+        long nowSecond = end.toEpochSecond(ZoneOffset.ofHours(0));
+        long endSecond = start.toEpochSecond(ZoneOffset.ofHours(0));
+        long absSeconds = Math.abs(nowSecond - endSecond);
+        //获取秒数
+        long s = absSeconds % 60;
+        //获取分钟数
+        long m = absSeconds / 60 % 60;
+        //获取小时数
+        long h = absSeconds / 60 / 60 % 24;
+        //获取天数
+        long d = absSeconds / 60 / 60 / 24;
+
+        return d + "天" + h + "时" + m + "分" + s + "秒";
     }
 }

@@ -2,7 +2,6 @@ package com.saucesubfresh.job.common.metrics;
 
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.math.RoundingMode;
@@ -68,9 +67,23 @@ public class SystemMetricsUtils {
     }
 
     /**
+     * Total disk space, in GB.
+     */
+    public static double getDiskTotal(long total){
+        return transformation(total);
+    }
+
+    /**
+     * Used disk ratio.
+     */
+    public static double getDiskUsage(double diskUsed, double diskTotal){
+        return formatDouble(diskUsed / diskTotal);
+    }
+
+    /**
      * 获取磁盘使用情况
      */
-    public static long[] getDiskInfo() throws IOException {
+    public static long[] getDiskInfo(){
         long free = 0;
         long total = 0;
         File[] roots = File.listRoots();

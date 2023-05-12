@@ -42,7 +42,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.time.Duration;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -54,6 +54,16 @@ import java.util.stream.Collectors;
 @Service
 public class OpenJobInstanceServiceImpl implements OpenJobInstanceService {
 
+    /**
+     *  12.3%(4 cores)
+     */
+    private static final String CPU_FORMAT = "%s / %s cores";
+    /**
+     *  27.7%(2.9/8.0 GB)
+     */
+    private static final String MEMORY_FORMAT = "%s%%（%s / %s GB）";
+
+    private static final DecimalFormat df = new DecimalFormat("#.#");
     private final InstanceStore instanceStore;
     private final InstanceManager instanceManager;
     private final OpenJobAppService openJobAppService;
@@ -91,18 +101,17 @@ public class OpenJobInstanceServiceImpl implements OpenJobInstanceService {
         }
         int endIndex = Math.min(totalSize, pageNum * pageSize);
 
-        List<String> serverIds = new ArrayList<>();
+        List<OpenJobInstanceRespDTO> respDTOS = new ArrayList<>();
         for (int i = (pageNum -1) * pageSize; i < endIndex; i++) {
-            serverIds.add(jobInstance.get(i).getServerId());
+            respDTOS.add(jobInstance.get(i));
         }
 
-        List<OpenJobInstanceRespDTO> metricsRespDTOS = new ArrayList<>();
-        for (String serverId : serverIds) {
+        for (OpenJobInstanceRespDTO instance : respDTOS) {
             Message message = new Message();
             MessageBody messageBody = new MessageBody();
             messageBody.setCommand(CommandEnum.METRICS.getValue());
             message.setBody(SerializationUtils.serialize(messageBody));
-            String[] serverIdArray = serverId.split(CommonConstant.Symbol.MH);
+            String[] serverIdArray = instance.getServerId().split(CommonConstant.Symbol.MH);
             ServerInformation serverInformation = new ServerInformation(serverIdArray[0], Integer.parseInt(serverIdArray[1]));
 
             MessageResponseBody messageResponseBody;
@@ -118,8 +127,8 @@ public class OpenJobInstanceServiceImpl implements OpenJobInstanceService {
                 continue;
             }
 
-            SystemMetricsInfo statsInfo = JSON.parse(response.getData(), SystemMetricsInfo.class);
-
+            SystemMetricsInfo metricsInfo = JSON.parse(response.getData(), SystemMetricsInfo.class);
+            wrapperMetricsInfo(instance, metricsInfo);
         }
 
         return PageResult.build(jobInstance, jobInstance.size(), instanceReqDTO.getCurrent(), instanceReqDTO.getPageSize());
@@ -174,17 +183,33 @@ public class OpenJobInstanceServiceImpl implements OpenJobInstanceService {
             LocalDateTime localDateTime = LocalDateTimeUtil.toLocalDateTime(e.getOnlineTime());
             instance.setOnlineTime(localDateTime);
             LocalDateTime now = LocalDateTime.now();
-            instance.setLiveTime(getTimeBetween(localDateTime, now));
+            instance.setLiveTime(LocalDateTimeUtil.getTimeBetween(localDateTime, now));
             instance.setStatus(e.getStatus().name());
             instance.setWeight(e.getWeight());
             return instance;
         }).collect(Collectors.toList());
     }
 
-    private String getTimeBetween(LocalDateTime onlineTime, LocalDateTime now){
-        long days = Duration.between(onlineTime, now).toDays();
-        long hours = Duration.between(onlineTime, now).toHours();
-        long minutes = Duration.between(onlineTime, now).toMinutes();
-        return String.format("%s天%s小时%s分钟", days, hours, minutes);
+    private void wrapperMetricsInfo(OpenJobInstanceRespDTO instance, SystemMetricsInfo metricsInfo){
+        if (Objects.isNull(metricsInfo)){
+            return;
+        }
+        // CPU 指标
+        String cpuInfo = String.format(CPU_FORMAT, df.format(metricsInfo.getCpuLoad()), metricsInfo.getCpuProcessors());
+        // 内存指标
+        String menU = df.format(metricsInfo.getJvmMemoryUsage() * 100);
+        String menUsed = df.format(metricsInfo.getJvmUsedMemory());
+        String menMax = df.format(metricsInfo.getJvmMaxMemory());
+        String memoryInfo = String.format(MEMORY_FORMAT, menU, menUsed, menMax);
+        // 磁盘指标
+        String diskU = df.format(metricsInfo.getDiskUsage() * 100);
+        String diskUsed = df.format(metricsInfo.getDiskUsed());
+        String diskMax = df.format(metricsInfo.getDiskTotal());
+        String diskInfo = String.format(MEMORY_FORMAT, diskU, diskUsed, diskMax);
+
+        instance.setCpuInfo(cpuInfo);
+        instance.setMemoryInfo(memoryInfo);
+        instance.setDiskInfo(diskInfo);
     }
+
 }
