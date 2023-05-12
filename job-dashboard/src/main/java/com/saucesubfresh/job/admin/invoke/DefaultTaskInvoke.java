@@ -23,6 +23,7 @@ import com.saucesubfresh.job.admin.mapper.OpenJobMapper;
 import com.saucesubfresh.job.api.dto.create.OpenJobLogCreateDTO;
 import com.saucesubfresh.job.common.constants.CommonConstant;
 import com.saucesubfresh.job.common.domain.MessageBody;
+import com.saucesubfresh.job.common.enums.CommandEnum;
 import com.saucesubfresh.job.common.enums.CommonStatusEnum;
 import com.saucesubfresh.job.common.enums.RouteStrategyEnum;
 import com.saucesubfresh.job.common.serialize.SerializationUtils;
@@ -93,6 +94,7 @@ public class DefaultTaskInvoke implements TaskInvoke{
                 List<String> shardingNodes = Arrays.asList(e.getShardingNodes().split(","));
                 messageBody.setShardingNodes(shardingNodes);
             }
+            messageBody.setCommand(CommandEnum.SCHEDULE.getValue());
             byte[] serializeData = SerializationUtils.serialize(messageBody);
             message.setBody(serializeData);
             OpenJobAppDO openJobAppDO = openJobAppMapper.selectById(e.getAppId());

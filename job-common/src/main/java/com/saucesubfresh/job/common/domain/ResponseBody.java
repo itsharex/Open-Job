@@ -18,41 +18,14 @@ package com.saucesubfresh.job.common.domain;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author: 李俊平
- * @Date: 2022-03-05 11:50
+ * @Date: 2023-05-12 07:45
  */
 @Data
-public class MessageBody implements Serializable {
-    private static final long serialVersionUID = 8230301428590315404L;
-    /**
-     * The id of job
-     */
-    private Long jobId;
-    /**
-     * The params, json 字符串
-     */
-    private String params;
-    /**
-     * The script of bash
-     */
-    private String script;
-    /**
-     * The message command
-     */
-    private String command;
-    /**
-     * The name of JobHandler
-     */
-    private String handlerName;
-    /**
-     * The update time of script
-     */
-    private String scriptUpdateTime;
-    /**
-     * 任务分片节点列表
-     */
-    private List<String> shardingNodes;
+public class ResponseBody implements Serializable {
+    private static final long serialVersionUID = 6380923853857098942L;
+
+    private String data;
 }
