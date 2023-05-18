@@ -60,6 +60,7 @@ public class OpenJobReportServiceImpl implements OpenJobReportService {
         LocalDateTime startTime = LocalDateTimeUtil.getDayStart(now);
         LocalDateTime endTime = LocalDateTimeUtil.getDayEnd(now);
         for (OpenJobAppDO appDO : openJobAppDOS) {
+
             int scheduleTotalCount = openJobLogMapper.getScheduleTotalCount(appDO.getId(), null, startTime, endTime);
             int scheduleSucceedCount = openJobLogMapper.getScheduleTotalCount(appDO.getId(), CommonStatusEnum.YES, startTime, endTime);
             OpenJobReportDO openJobReportDO = new OpenJobReportDO();
