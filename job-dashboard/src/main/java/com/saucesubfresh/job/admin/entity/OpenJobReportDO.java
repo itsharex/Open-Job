@@ -38,6 +38,14 @@ public class OpenJobReportDO {
      */
     private Long appId;
     /**
+     * 任务 id
+     */
+    private Long jobId;
+    /**
+     * 服务 id
+     */
+    private String serverId;
+    /**
      * 任务执行总次数
      */
     private Integer taskExecTotalCount;
