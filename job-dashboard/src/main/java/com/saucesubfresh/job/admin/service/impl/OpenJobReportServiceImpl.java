@@ -58,9 +58,20 @@ public class OpenJobReportServiceImpl implements OpenJobReportService {
         }
 
         for (OpenJobLogDO jobLogByAppId : jobLogsByAppId) {
-            List<OpenJobLogDO> jobLogsByJobId = openJobLogMapper.groupByJobId(jobLogByAppId.getAppId(), startTime, endTime);
+            List<OpenJobLogDO> jobLogsByJobId = openJobLogMapper
+                    .groupByJobId(
+                            jobLogByAppId.getAppId(),
+                            startTime,
+                            endTime
+                    );
             for (OpenJobLogDO jobLogByJobId : jobLogsByJobId) {
-                List<OpenJobLogDO> jobLogsByServerId = openJobLogMapper.groupByServerId(jobLogByAppId.getAppId(), jobLogByJobId.getJobId(), startTime, endTime);
+                List<OpenJobLogDO> jobLogsByServerId = openJobLogMapper
+                        .groupByServerId(
+                                jobLogByAppId.getAppId(),
+                                jobLogByJobId.getJobId(),
+                                startTime,
+                                endTime
+                        );
                 for (OpenJobLogDO jobLogByServerId : jobLogsByServerId) {
                     int scheduleTotalCount = openJobLogMapper.getScheduleTotalCount(
                             jobLogByAppId.getAppId(),
@@ -82,7 +93,7 @@ public class OpenJobReportServiceImpl implements OpenJobReportService {
                     openJobReportDO.setServerId(jobLogByServerId.getServerId());
                     openJobReportDO.setTaskExecTotalCount(scheduleTotalCount);
                     openJobReportDO.setTaskExecSuccessCount(scheduleSucceedCount);
-                    openJobReportDO.setCreateTime(now);
+                    openJobReportDO.setCreateTime(endTime);
                     openJobReportMapper.insert(openJobReportDO);
                 }
             }
