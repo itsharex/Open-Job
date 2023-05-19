@@ -21,14 +21,14 @@ import com.saucesubfresh.job.admin.entity.OpenJobReportDO;
 import com.saucesubfresh.job.admin.mapper.OpenJobLogMapper;
 import com.saucesubfresh.job.admin.mapper.OpenJobReportMapper;
 import com.saucesubfresh.job.admin.service.OpenJobReportService;
+import com.saucesubfresh.job.api.dto.resp.OpenTopKRespDTO;
 import com.saucesubfresh.job.common.time.LocalDateTimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -101,18 +101,61 @@ public class OpenJobReportServiceImpl implements OpenJobReportService {
     }
 
     @Override
-    public List<OpenJobChartRespDTO> getChart(Long appId, Integer count) {
-        List<OpenJobReportDO> openJobReportDOS = openJobReportMapper.queryList(appId, count);
+    public List<OpenJobChartRespDTO> getChart(Long appId, Long jobId, String serverId, Integer count) {
+        List<OpenJobReportDO> openJobReportDOS = openJobReportMapper.queryList(appId, jobId, serverId, count);
         if (CollectionUtils.isEmpty(openJobReportDOS)){
             return Collections.emptyList();
         }
-        return openJobReportDOS.stream().map(e->{
+
+        Map<LocalDateTime, List<OpenJobReportDO>> groupByDateMap = openJobReportDOS.stream().collect(Collectors.groupingBy(
+                OpenJobReportDO::getCreateTime
+        ));
+
+        List<OpenJobChartRespDTO> chartRespDTOS = new ArrayList<>();
+        groupByDateMap.forEach((k, v) ->{
+            Integer totalCount = v.stream().map(OpenJobReportDO::getTaskExecTotalCount).reduce(Integer::sum).orElse(0);
+            Integer successCount = v.stream().map(OpenJobReportDO::getTaskExecSuccessCount).reduce(Integer::sum).orElse(0);
             OpenJobChartRespDTO openJobChartRespDTO = new OpenJobChartRespDTO();
-            openJobChartRespDTO.setDate(e.getCreateTime().toLocalDate());
-            openJobChartRespDTO.setTotalCount(e.getTaskExecTotalCount());
-            openJobChartRespDTO.setSuccessCount(e.getTaskExecSuccessCount());
-            return openJobChartRespDTO;
-        }).collect(Collectors.toList());
+            openJobChartRespDTO.setDate(k.toLocalDate());
+            openJobChartRespDTO.setTotalCount(totalCount);
+            openJobChartRespDTO.setSuccessCount(successCount);
+            chartRespDTOS.add(openJobChartRespDTO);
+        });
+
+        return chartRespDTOS;
+    }
+
+    @Override
+    public List<OpenTopKRespDTO> getTopK(Long appId, Long jobId, String serverId, String type, Integer count, Integer top) {
+        List<OpenJobReportDO> openJobReportDOS = openJobReportMapper.queryList(appId, jobId, serverId, count);
+        if (CollectionUtils.isEmpty(openJobReportDOS)){
+            return Collections.emptyList();
+        }
+
+        Map<String, List<OpenJobReportDO>> groupMap = openJobReportDOS.stream().collect(Collectors.groupingBy(
+                (t) -> type
+        ));
+
+        List<OpenTopKRespDTO> topKRespDTOS = new ArrayList<>();
+        groupMap.forEach((k, v) ->{
+            Integer totalCount = v.stream().map(OpenJobReportDO::getTaskExecTotalCount).reduce(Integer::sum).orElse(0);
+            Integer successCount = v.stream().map(OpenJobReportDO::getTaskExecSuccessCount).reduce(Integer::sum).orElse(0);
+            OpenTopKRespDTO openTopKRespDTO = new OpenTopKRespDTO();
+            openTopKRespDTO.setKey(k);
+            openTopKRespDTO.setTotalCount(totalCount);
+            openTopKRespDTO.setSuccessCount(successCount);
+            topKRespDTOS.add(openTopKRespDTO);
+        });
+
+        List<OpenTopKRespDTO> collect = topKRespDTOS
+                .stream()
+                .sorted(Comparator.comparing(OpenTopKRespDTO::getTotalCount).reversed())
+                .collect(Collectors.toList());
+
+        if (collect.size() > top){
+            return collect.subList(0, top);
+        }
+        return topKRespDTOS;
     }
 
 }

@@ -16,6 +16,7 @@
 package com.saucesubfresh.job.admin.service;
 
 import com.saucesubfresh.job.api.dto.resp.OpenJobChartRespDTO;
+import com.saucesubfresh.job.api.dto.resp.OpenTopKRespDTO;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,5 +28,15 @@ public interface OpenJobReportService {
 
     void generateReport(LocalDateTime now);
 
-    List<OpenJobChartRespDTO> getChart(Long appId, Integer count);
+    List<OpenJobChartRespDTO> getChart(Long appId, Long jobId, String serverId, Integer count);
+
+    default List<OpenTopKRespDTO> getJobTopK(Long appId, String serverId, Integer count, Integer top){
+        return getTopK(appId, null, serverId, "jobId", count, top);
+    }
+
+    default List<OpenTopKRespDTO> getInstanceTopK(Long appId, Long jobId, Integer count, Integer top){
+        return getTopK(appId, jobId, null, "serverId", count, top);
+    }
+
+    List<OpenTopKRespDTO> getTopK(Long appId, Long jobId, String instanceId, String type, Integer count, Integer top);
 }

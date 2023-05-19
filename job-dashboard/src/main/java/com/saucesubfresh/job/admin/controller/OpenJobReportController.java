@@ -19,6 +19,7 @@ import com.saucesubfresh.job.admin.service.OpenJobReportService;
 import com.saucesubfresh.job.api.dto.resp.OpenJobStatisticRespDTO;
 import com.saucesubfresh.job.api.dto.resp.OpenJobChartRespDTO;
 import com.saucesubfresh.job.admin.service.OpenJobStatisticService;
+import com.saucesubfresh.job.api.dto.resp.OpenTopKRespDTO;
 import com.saucesubfresh.job.common.vo.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -38,10 +39,10 @@ import java.util.List;
 public class OpenJobReportController {
 
     @Autowired
-    private OpenJobStatisticService crawlerStatisticService;
+    private OpenJobReportService openJobReportService;
 
     @Autowired
-    private OpenJobReportService openJobReportService;
+    private OpenJobStatisticService crawlerStatisticService;
 
     @GetMapping("/statistic")
     public Result<OpenJobStatisticRespDTO> getStatistic(@RequestParam("appId") Long appId) {
@@ -50,7 +51,25 @@ public class OpenJobReportController {
 
     @GetMapping("/chart")
     public Result<List<OpenJobChartRespDTO>> getChart(@RequestParam(value = "appId") Long appId,
+                                                      @RequestParam(value = "jobId", required = false) Long jobId,
+                                                      @RequestParam(value = "serverId", required = false) String serverId,
                                                       @RequestParam(value = "count", required = false, defaultValue = "30") Integer count) {
-        return Result.succeed(openJobReportService.getChart(appId, count));
+        return Result.succeed(openJobReportService.getChart(appId, jobId, serverId, count));
+    }
+
+    @GetMapping("/jobTok")
+    public Result<List<OpenTopKRespDTO>> getJobTopK(@RequestParam(value = "appId") Long appId,
+                                                    @RequestParam(value = "serverId", required = false) String serverId,
+                                                    @RequestParam(value = "count", required = false, defaultValue = "30") Integer count,
+                                                    @RequestParam(value = "top", required = false, defaultValue = "10") Integer top) {
+        return Result.succeed(openJobReportService.getJobTopK(appId, serverId, count, top));
+    }
+
+    @GetMapping("/instanceTok")
+    public Result<List<OpenTopKRespDTO>> getInstanceTopK(@RequestParam(value = "appId") Long appId,
+                                                         @RequestParam(value = "jobId", required = false) Long jobId,
+                                                         @RequestParam(value = "count", required = false, defaultValue = "30") Integer count,
+                                                         @RequestParam(value = "top", required = false, defaultValue = "10") Integer top) {
+        return Result.succeed(openJobReportService.getInstanceTopK(appId, jobId, count, top));
     }
 }
