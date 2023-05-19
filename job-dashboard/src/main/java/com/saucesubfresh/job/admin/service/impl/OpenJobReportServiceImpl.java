@@ -17,6 +17,7 @@ package com.saucesubfresh.job.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.saucesubfresh.job.admin.entity.OpenJobAppDO;
+import com.saucesubfresh.job.admin.entity.OpenJobLogDO;
 import com.saucesubfresh.job.admin.mapper.OpenJobAppMapper;
 import com.saucesubfresh.job.api.dto.resp.OpenJobChartRespDTO;
 import com.saucesubfresh.job.admin.entity.OpenJobReportDO;
@@ -53,22 +54,30 @@ public class OpenJobReportServiceImpl implements OpenJobReportService {
 
     @Override
     public void generateReport(LocalDateTime now) {
-        List<OpenJobAppDO> openJobAppDOS = openJobAppMapper.selectList(Wrappers.lambdaQuery());
-        if (CollectionUtils.isEmpty(openJobAppDOS)){
-            return;
-        }
         LocalDateTime startTime = LocalDateTimeUtil.getDayStart(now);
         LocalDateTime endTime = LocalDateTimeUtil.getDayEnd(now);
-        for (OpenJobAppDO appDO : openJobAppDOS) {
 
-            int scheduleTotalCount = openJobLogMapper.getScheduleTotalCount(appDO.getId(), null, startTime, endTime);
-            int scheduleSucceedCount = openJobLogMapper.getScheduleTotalCount(appDO.getId(), CommonStatusEnum.YES, startTime, endTime);
-            OpenJobReportDO openJobReportDO = new OpenJobReportDO();
-            openJobReportDO.setAppId(appDO.getId());
-            openJobReportDO.setTaskExecTotalCount(scheduleTotalCount);
-            openJobReportDO.setTaskExecSuccessCount(scheduleSucceedCount);
-            openJobReportDO.setCreateTime(now);
-            openJobReportMapper.insert(openJobReportDO);
+        List<OpenJobLogDO> openJobLogDOS = openJobLogMapper.groupByAppId(startTime, endTime);
+        if (CollectionUtils.isEmpty(openJobLogDOS)){
+            return;
+        }
+        for (OpenJobLogDO openJobLogDO : openJobLogDOS) {
+            List<OpenJobLogDO> openJobLogDOS1 = openJobLogMapper.groupByJobId(openJobLogDO.getAppId(), startTime, endTime);
+            for (OpenJobLogDO jobLogDO : openJobLogDOS1) {
+                List<OpenJobLogDO> openJobLogDOS2 = openJobLogMapper.groupByServerId(openJobLogDO.getAppId(), jobLogDO.getJobId(), startTime, endTime);
+                for (OpenJobLogDO logDO : openJobLogDOS2) {
+                    int scheduleTotalCount = openJobLogMapper.getScheduleTotalCount(openJobLogDO.getId(), jobLogDO.getJobId(),logDO.getServerId(), null, startTime, endTime);
+                    int scheduleSucceedCount = openJobLogMapper.getScheduleTotalCount(openJobLogDO.getId(), jobLogDO.getJobId(),logDO.getServerId(), CommonStatusEnum.YES, startTime, endTime);
+                    OpenJobReportDO openJobReportDO = new OpenJobReportDO();
+                    openJobReportDO.setAppId(openJobLogDO.getId());
+                    openJobReportDO.setJobId(jobLogDO.getJobId());
+                    openJobReportDO.setServerId(logDO.getServerId());
+                    openJobReportDO.setTaskExecTotalCount(scheduleTotalCount);
+                    openJobReportDO.setTaskExecSuccessCount(scheduleSucceedCount);
+                    openJobReportDO.setCreateTime(now);
+                    openJobReportMapper.insert(openJobReportDO);
+                }
+            }
         }
     }
 

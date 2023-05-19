@@ -24,6 +24,7 @@ import com.saucesubfresh.job.common.enums.CommonStatusEnum;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -45,9 +46,11 @@ public interface OpenJobLogMapper extends BaseMapper<OpenJobLogDO> {
         );
     }
 
-    default int getScheduleTotalCount(Long appId, CommonStatusEnum statusEnum, LocalDateTime beginTime, LocalDateTime endTime){
+    default int getScheduleTotalCount(Long appId, Long jobId, String serverId, CommonStatusEnum statusEnum, LocalDateTime beginTime, LocalDateTime endTime){
         return selectCount(Wrappers.<OpenJobLogDO>lambdaQuery()
                 .eq(OpenJobLogDO::getAppId, appId)
+                .eq(OpenJobLogDO::getJobId, jobId)
+                .eq(OpenJobLogDO::getServerId, serverId)
                 .eq(Objects.nonNull(statusEnum), OpenJobLogDO::getStatus, statusEnum.getValue())
                 .between(OpenJobLogDO::getCreateTime, beginTime, endTime)
         );
@@ -58,4 +61,10 @@ public interface OpenJobLogMapper extends BaseMapper<OpenJobLogDO> {
                 .lt(OpenJobLogDO::getCreateTime, now.plusDays(-interval))
         );
     }
+
+    List<OpenJobLogDO> groupByAppId(LocalDateTime startTime, LocalDateTime endTime);
+
+    List<OpenJobLogDO> groupByJobId(Long appId, LocalDateTime startTime, LocalDateTime endTime);
+
+    List<OpenJobLogDO> groupByServerId(Long appId, Long jobId, LocalDateTime startTime, LocalDateTime endTime);
 }
