@@ -21,8 +21,8 @@ import com.saucesubfresh.job.admin.entity.OpenJobReportDO;
 import com.saucesubfresh.job.admin.mapper.OpenJobLogMapper;
 import com.saucesubfresh.job.admin.mapper.OpenJobReportMapper;
 import com.saucesubfresh.job.admin.service.OpenJobReportService;
-import com.saucesubfresh.job.common.enums.CommonStatusEnum;
 import com.saucesubfresh.job.common.time.LocalDateTimeUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 /**
  * @author lijunping on 2022/4/11
  */
+@Slf4j
 @Service
 public class OpenJobReportServiceImpl implements OpenJobReportService {
     
@@ -62,23 +63,21 @@ public class OpenJobReportServiceImpl implements OpenJobReportService {
                 List<OpenJobLogDO> jobLogsByServerId = openJobLogMapper.groupByServerId(jobLogByAppId.getAppId(), jobLogByJobId.getJobId(), startTime, endTime);
                 for (OpenJobLogDO jobLogByServerId : jobLogsByServerId) {
                     int scheduleTotalCount = openJobLogMapper.getScheduleTotalCount(
-                            jobLogByAppId.getId(),
+                            jobLogByAppId.getAppId(),
                             jobLogByJobId.getJobId(),
                             jobLogByServerId.getServerId(),
-                            null,
                             startTime,
                             endTime
                     );
-                    int scheduleSucceedCount = openJobLogMapper.getScheduleTotalCount(
-                            jobLogByAppId.getId(),
+                    int scheduleSucceedCount = openJobLogMapper.getScheduleSuccessTotalCount(
+                            jobLogByAppId.getAppId(),
                             jobLogByJobId.getJobId(),
                             jobLogByServerId.getServerId(),
-                            CommonStatusEnum.YES,
                             startTime,
                             endTime);
 
                     OpenJobReportDO openJobReportDO = new OpenJobReportDO();
-                    openJobReportDO.setAppId(jobLogByAppId.getId());
+                    openJobReportDO.setAppId(jobLogByAppId.getAppId());
                     openJobReportDO.setJobId(jobLogByJobId.getJobId());
                     openJobReportDO.setServerId(jobLogByServerId.getServerId());
                     openJobReportDO.setTaskExecTotalCount(scheduleTotalCount);

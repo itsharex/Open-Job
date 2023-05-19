@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.saucesubfresh.job.api.dto.req.OpenJobLogReqDTO;
 import com.saucesubfresh.job.admin.entity.OpenJobLogDO;
 import com.saucesubfresh.job.common.enums.CommonStatusEnum;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -46,12 +47,21 @@ public interface OpenJobLogMapper extends BaseMapper<OpenJobLogDO> {
         );
     }
 
-    default int getScheduleTotalCount(Long appId, Long jobId, String serverId, CommonStatusEnum statusEnum, LocalDateTime beginTime, LocalDateTime endTime){
+    default int getScheduleTotalCount(Long appId, Long jobId, String serverId, LocalDateTime beginTime, LocalDateTime endTime){
         return selectCount(Wrappers.<OpenJobLogDO>lambdaQuery()
                 .eq(OpenJobLogDO::getAppId, appId)
                 .eq(OpenJobLogDO::getJobId, jobId)
                 .eq(OpenJobLogDO::getServerId, serverId)
-                .eq(Objects.nonNull(statusEnum), OpenJobLogDO::getStatus, statusEnum.getValue())
+                .between(OpenJobLogDO::getCreateTime, beginTime, endTime)
+        );
+    }
+
+    default int getScheduleSuccessTotalCount(Long appId, Long jobId, String serverId, LocalDateTime beginTime, LocalDateTime endTime){
+        return selectCount(Wrappers.<OpenJobLogDO>lambdaQuery()
+                .eq(OpenJobLogDO::getAppId, appId)
+                .eq(OpenJobLogDO::getJobId, jobId)
+                .eq(OpenJobLogDO::getServerId, serverId)
+                .eq(OpenJobLogDO::getStatus, CommonStatusEnum.YES.getValue())
                 .between(OpenJobLogDO::getCreateTime, beginTime, endTime)
         );
     }
@@ -62,27 +72,15 @@ public interface OpenJobLogMapper extends BaseMapper<OpenJobLogDO> {
         );
     }
 
-    default List<OpenJobLogDO> groupByAppId(LocalDateTime startTime, LocalDateTime endTime){
-        return selectList(Wrappers.<OpenJobLogDO>lambdaQuery()
-                .between(OpenJobLogDO::getCreateTime, startTime, endTime)
-                .last("group by app_id")
-        );
-    }
+    List<OpenJobLogDO> groupByAppId(@Param("startTime") LocalDateTime startTime,
+                                    @Param("endTime") LocalDateTime endTime);
 
-    default List<OpenJobLogDO> groupByJobId(Long appId, LocalDateTime startTime, LocalDateTime endTime){
-        return selectList(Wrappers.<OpenJobLogDO>lambdaQuery()
-                .eq(OpenJobLogDO::getAppId, appId)
-                .between(OpenJobLogDO::getCreateTime, startTime, endTime)
-                .last("group by job_id")
-        );
-    }
+    List<OpenJobLogDO> groupByJobId(@Param("appId") Long appId,
+                                    @Param("startTime") LocalDateTime startTime,
+                                    @Param("endTime") LocalDateTime endTime);
 
-    default List<OpenJobLogDO> groupByServerId(Long appId, Long jobId, LocalDateTime startTime, LocalDateTime endTime){
-        return selectList(Wrappers.<OpenJobLogDO>lambdaQuery()
-                .eq(OpenJobLogDO::getAppId, appId)
-                .eq(OpenJobLogDO::getJobId, jobId)
-                .between(OpenJobLogDO::getCreateTime, startTime, endTime)
-                .last("group by server_id")
-        );
-    }
+    List<OpenJobLogDO> groupByServerId(@Param("appId") Long appId,
+                                       @Param("jobId") Long jobId,
+                                       @Param("startTime") LocalDateTime startTime,
+                                       @Param("endTime") LocalDateTime endTime);
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.saucesubfresh.job.admin.mapper.OpenJobLogMapper">
+
+    <select id="groupByAppId" resultType="com.saucesubfresh.job.admin.entity.OpenJobLogDO">
+        select app_id as appId from open_job_log
+        where
+            create_time between #{startTime} and #{endTime}
+        group by app_id
+    </select>
+
+    <select id="groupByJobId" resultType="com.saucesubfresh.job.admin.entity.OpenJobLogDO">
+        select job_id as jobId from open_job_log
+        where
+            app_id = #{appId}
+            and create_time between #{startTime} and #{endTime}
+        group by job_id
+    </select>
+
+    <select id="groupByServerId" resultType="com.saucesubfresh.job.admin.entity.OpenJobLogDO">
+        select server_id as serverId from open_job_log
+        where
+            app_id = #{appId}
+            and job_id = #{jobId}
+            and create_time between #{startTime} and #{endTime}
+        group by server_id
+    </select>
+</mapper>
