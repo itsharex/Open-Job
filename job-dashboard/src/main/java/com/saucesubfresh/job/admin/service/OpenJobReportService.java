@@ -30,13 +30,7 @@ public interface OpenJobReportService {
 
     List<OpenJobChartRespDTO> getChart(Long appId, Long jobId, String serverId, Integer count);
 
-    default List<OpenTopKRespDTO> getJobTopK(Long appId, String serverId, Integer count, Integer top){
-        return getTopK(appId, null, serverId, "jobId", count, top);
-    }
+    List<OpenTopKRespDTO> getJobTopK(Long appId, String serverId, Integer count, Integer top);
 
-    default List<OpenTopKRespDTO> getInstanceTopK(Long appId, Long jobId, Integer count, Integer top){
-        return getTopK(appId, jobId, null, "serverId", count, top);
-    }
-
-    List<OpenTopKRespDTO> getTopK(Long appId, Long jobId, String instanceId, String type, Integer count, Integer top);
+    List<OpenTopKRespDTO> getInstanceTopK(Long appId, Long jobId, Integer count, Integer top);
 }

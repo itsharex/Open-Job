@@ -126,35 +126,55 @@ public class OpenJobReportServiceImpl implements OpenJobReportService {
     }
 
     @Override
-    public List<OpenTopKRespDTO> getTopK(Long appId, Long jobId, String serverId, String type, Integer count, Integer top) {
-        List<OpenJobReportDO> openJobReportDOS = openJobReportMapper.queryList(appId, jobId, serverId, count);
+    public List<OpenTopKRespDTO> getJobTopK(Long appId, String serverId, Integer count, Integer top) {
+        List<OpenJobReportDO> openJobReportDOS = openJobReportMapper.queryList(appId, null, serverId, count);
+        if (CollectionUtils.isEmpty(openJobReportDOS)){
+            return Collections.emptyList();
+        }
+
+        Map<Long, List<OpenJobReportDO>> groupMap = openJobReportDOS.stream().collect(Collectors.groupingBy(
+                OpenJobReportDO::getJobId
+        ));
+
+        Map<String, List<OpenJobReportDO>> collectMap = groupMap.entrySet().stream().collect(
+                Collectors.toMap(e-> String.valueOf(e.getKey()), Map.Entry::getValue));
+
+        return getTopK(collectMap, top);
+    }
+
+    @Override
+    public List<OpenTopKRespDTO> getInstanceTopK(Long appId, Long jobId, Integer count, Integer top) {
+        List<OpenJobReportDO> openJobReportDOS = openJobReportMapper.queryList(appId, jobId, null, count);
         if (CollectionUtils.isEmpty(openJobReportDOS)){
             return Collections.emptyList();
         }
 
         Map<String, List<OpenJobReportDO>> groupMap = openJobReportDOS.stream().collect(Collectors.groupingBy(
-                (t) -> type
+                OpenJobReportDO::getServerId
         ));
 
+        return getTopK(groupMap, top);
+    }
+
+    private List<OpenTopKRespDTO> getTopK(Map<String, List<OpenJobReportDO>> groupMap, Integer top){
         List<OpenTopKRespDTO> topKRespDTOS = new ArrayList<>();
-        groupMap.forEach((k, v) ->{
-            Integer totalCount = v.stream().map(OpenJobReportDO::getTaskExecTotalCount).reduce(Integer::sum).orElse(0);
-            Integer successCount = v.stream().map(OpenJobReportDO::getTaskExecSuccessCount).reduce(Integer::sum).orElse(0);
+        for (Map.Entry<String, List<OpenJobReportDO>> entry : groupMap.entrySet()) {
+            List<OpenJobReportDO> value = entry.getValue();
+            Integer totalCount = value.stream().map(OpenJobReportDO::getTaskExecTotalCount).reduce(Integer::sum).orElse(0);
+            Integer successCount = value.stream().map(OpenJobReportDO::getTaskExecSuccessCount).reduce(Integer::sum).orElse(0);
             OpenTopKRespDTO openTopKRespDTO = new OpenTopKRespDTO();
-            openTopKRespDTO.setKey(k);
+            openTopKRespDTO.setKey(entry.getKey());
             openTopKRespDTO.setTotalCount(totalCount);
             openTopKRespDTO.setSuccessCount(successCount);
             topKRespDTOS.add(openTopKRespDTO);
-        });
-
-        List<OpenTopKRespDTO> collect = topKRespDTOS
-                .stream()
-                .sorted(Comparator.comparing(OpenTopKRespDTO::getTotalCount).reversed())
-                .collect(Collectors.toList());
-
-        if (collect.size() > top){
-            return collect.subList(0, top);
         }
+
+        if (topKRespDTOS.size() > top){
+            topKRespDTOS = topKRespDTOS.subList(0, top);
+        }
+
+        topKRespDTOS.sort((u1, u2) -> u2.getTotalCount().compareTo(u1.getTotalCount()));
+
         return topKRespDTOS;
     }
 
