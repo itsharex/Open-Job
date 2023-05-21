@@ -77,6 +77,7 @@ public interface OpenJobLogMapper extends BaseMapper<OpenJobLogDO> {
                 .eq(OpenJobLogDO::getAppId, appId)
                 .eq(OpenJobLogDO::getJobId, jobId)
                 .orderByDesc(OpenJobLogDO::getCreateTime)
+                .last("limit 1")
         );
     }
 
