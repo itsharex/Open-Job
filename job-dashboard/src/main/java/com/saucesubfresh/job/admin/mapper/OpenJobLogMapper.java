@@ -72,6 +72,14 @@ public interface OpenJobLogMapper extends BaseMapper<OpenJobLogDO> {
         );
     }
 
+    default OpenJobLogDO getLastOne(Long appId, Long jobId){
+        return selectOne(Wrappers.<OpenJobLogDO>lambdaQuery()
+                .eq(OpenJobLogDO::getAppId, appId)
+                .eq(OpenJobLogDO::getJobId, jobId)
+                .orderByDesc(OpenJobLogDO::getCreateTime)
+        );
+    }
+
     List<OpenJobLogDO> groupByAppId(@Param("startTime") LocalDateTime startTime,
                                     @Param("endTime") LocalDateTime endTime);
 

@@ -15,16 +15,23 @@
  */
 package com.saucesubfresh.job.admin.service.impl;
 
+import com.saucesubfresh.job.admin.entity.OpenJobAppDO;
+import com.saucesubfresh.job.admin.entity.OpenJobDO;
+import com.saucesubfresh.job.admin.entity.OpenJobLogDO;
+import com.saucesubfresh.job.admin.mapper.OpenJobAppMapper;
+import com.saucesubfresh.job.admin.mapper.OpenJobLogMapper;
+import com.saucesubfresh.job.admin.mapper.OpenJobMapper;
 import com.saucesubfresh.job.admin.service.OpenJobInstanceService;
+import com.saucesubfresh.job.admin.service.OpenJobStatisticService;
 import com.saucesubfresh.job.api.dto.resp.OpenJobInstanceRespDTO;
 import com.saucesubfresh.job.api.dto.resp.OpenJobStatisticRespDTO;
-import com.saucesubfresh.job.admin.mapper.OpenJobMapper;
-import com.saucesubfresh.job.admin.service.OpenJobStatisticService;
 import com.saucesubfresh.rpc.core.enums.Status;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author lijunping on 2022/4/11
@@ -32,27 +39,88 @@ import java.util.List;
 @Service
 public class OpenJobStatisticServiceImpl implements OpenJobStatisticService {
 
+    private final OpenJobAppMapper appMapper;
     private final OpenJobMapper openJobMapper;
+    private final OpenJobLogMapper openJobLogMapper;
     private final OpenJobInstanceService openJobInstanceService;
 
-    public OpenJobStatisticServiceImpl(OpenJobMapper openJobMapper,
+    public OpenJobStatisticServiceImpl(OpenJobAppMapper appMapper,
+                                       OpenJobMapper openJobMapper,
+                                       OpenJobLogMapper openJobLogMapper,
                                        OpenJobInstanceService openJobInstanceService) {
+        this.appMapper = appMapper;
         this.openJobMapper = openJobMapper;
+        this.openJobLogMapper = openJobLogMapper;
         this.openJobInstanceService = openJobInstanceService;
     }
 
     @Override
-    public OpenJobStatisticRespDTO getStatistic(Long appId) {
+    public OpenJobStatisticRespDTO getStatistic() {
+        List<OpenJobAppDO> openJobAppDOS = appMapper.queryList(null);
+        if (CollectionUtils.isEmpty(openJobAppDOS)){
+            return null;
+        }
+
+        int taskTotalNum = 0;
+        int taskRunningNum = 0;
+        int executorTotalNum = 0;
+        int executorOnlineNum = 0;
+        for (OpenJobAppDO openJobAppDO : openJobAppDOS) {
+            OpenJobStatisticRespDTO appStatistic = this.getAppStatistic(openJobAppDO.getId());
+            taskTotalNum += appStatistic.getTaskTotalNum();
+            taskRunningNum += appStatistic.getTaskRunningNum();
+            executorTotalNum += appStatistic.getExecutorTotalNum();
+            executorOnlineNum += appStatistic.getExecutorOnlineNum();
+        }
+
+        return OpenJobStatisticRespDTO.builder()
+                .appNum(openJobAppDOS.size())
+                .taskTotalNum(taskTotalNum)
+                .taskRunningNum(taskRunningNum)
+                .executorTotalNum(executorTotalNum)
+                .executorOnlineNum(executorOnlineNum)
+                .build();
+    }
+
+    @Override
+    public OpenJobStatisticRespDTO getAppStatistic(Long appId) {
         int taskTotalCount = openJobMapper.getTotalCount(appId);
         int taskRunningCount = openJobMapper.getRunningCount(appId);
         List<OpenJobInstanceRespDTO> instanceList = openJobInstanceService.getInstanceList(appId);
         int instanceTotalCount = instanceList.size();
         long instanceOnlineCount = instanceList.stream().filter(e-> StringUtils.equals(e.getStatus(), Status.ON_LINE.name())).count();
         return OpenJobStatisticRespDTO.builder()
-               .taskTotalNum(taskTotalCount)
-               .taskRunningNum(taskRunningCount)
-               .executorTotalNum(instanceTotalCount)
-               .executorOnlineNum((int) instanceOnlineCount)
-               .build();
+                .taskTotalNum(taskTotalCount)
+                .taskRunningNum(taskRunningCount)
+                .executorTotalNum(instanceTotalCount)
+                .executorOnlineNum((int) instanceOnlineCount)
+                .build();
+    }
+
+    @Override
+    public OpenJobStatisticRespDTO getJobStatistic(Long appId, Long jobId) {
+        OpenJobDO openJobDO = openJobMapper.selectById(jobId);
+        OpenJobLogDO openJobLogDO = openJobLogMapper.getLastOne(appId, jobId);
+        return OpenJobStatisticRespDTO.builder()
+                .status(openJobDO.getStatus().toString())
+                .lastRunTime(Objects.isNull(openJobLogDO) ? null : openJobLogDO.getCreateTime())
+                .stateChangeTime(openJobDO.getUpdateTime())
+                .build();
+    }
+
+    @Override
+    public OpenJobStatisticRespDTO getInstanceStatistic(Long appId, String serverId) {
+        OpenJobInstanceRespDTO instance = openJobInstanceService.getInstanceById(appId, serverId);
+        if (Objects.isNull(instance)){
+            return null;
+        }
+
+        return OpenJobStatisticRespDTO.builder()
+                .status(instance.getStatus())
+                .liveTime(instance.getLiveTime())
+                .cpuInfo(instance.getCpuInfo())
+                .memoryInfo(instance.getMemoryInfo())
+                .diskInfo(instance.getDiskInfo())
+                .build();
     }
 }

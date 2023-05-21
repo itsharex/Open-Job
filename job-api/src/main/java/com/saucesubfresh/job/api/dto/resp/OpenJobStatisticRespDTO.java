@@ -19,9 +19,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * @author lijunping on 2022/4/11
@@ -32,6 +32,10 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class OpenJobStatisticRespDTO implements Serializable {
 
+    /**
+     * 应用数量
+     */
+    private Integer appNum;
     /**
      * 任务总数量
      */
@@ -48,5 +52,34 @@ public class OpenJobStatisticRespDTO implements Serializable {
      * 执行器在线数量
      */
     private Integer executorOnlineNum;
+    /**
+     * 在线状态
+     */
+    private String status;
+    /**
+     * 任务最近一次执行时间
+     */
+    private LocalDateTime lastRunTime;
+    /**
+     * 任务最近一次任务状态时间
+     */
+    private LocalDateTime stateChangeTime;
+    /**
+     * 运行时长
+     */
+    private String liveTime;
+    /**
+     * cpu使用信息
+     */
+    private String cpuInfo;
+    /**
+     * 内存使用信息
+     */
+    private String memoryInfo;
+    /**
+     * 磁盘使用信息
+     */
+    private String diskInfo;
+
 
 }

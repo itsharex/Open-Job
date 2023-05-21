@@ -35,9 +35,11 @@ import com.saucesubfresh.rpc.client.store.InstanceStore;
 import com.saucesubfresh.rpc.core.Message;
 import com.saucesubfresh.rpc.core.constants.CommonConstant;
 import com.saucesubfresh.rpc.core.enums.ResponseStatus;
+import com.saucesubfresh.rpc.core.enums.Status;
 import com.saucesubfresh.rpc.core.exception.RpcException;
 import com.saucesubfresh.rpc.core.information.ServerInformation;
 import com.saucesubfresh.rpc.core.transport.MessageResponseBody;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -51,6 +53,7 @@ import java.util.stream.Collectors;
  * @author: 李俊平
  * @Date: 2022-02-26 15:06
  */
+@Slf4j
 @Service
 public class OpenJobInstanceServiceImpl implements OpenJobInstanceService {
 
@@ -107,31 +110,33 @@ public class OpenJobInstanceServiceImpl implements OpenJobInstanceService {
         }
 
         for (OpenJobInstanceRespDTO instance : respDTOS) {
-            Message message = new Message();
-            MessageBody messageBody = new MessageBody();
-            messageBody.setCommand(CommandEnum.METRICS.getValue());
-            message.setBody(SerializationUtils.serialize(messageBody));
-            String[] serverIdArray = instance.getServerId().split(CommonConstant.Symbol.MH);
-            ServerInformation serverInformation = new ServerInformation(serverIdArray[0], Integer.parseInt(serverIdArray[1]));
-
-            MessageResponseBody messageResponseBody;
-            try {
-                messageResponseBody = doInvoke(message, serverInformation);
-            }catch (RpcException ex){
-                throw new ServiceException(ex.getMessage());
-            }
-
-            byte[] body = messageResponseBody.getBody();
-            ResponseBody response = SerializationUtils.deserialize(body, ResponseBody.class);
-            if (StringUtils.isBlank(response.getData())){
-                continue;
-            }
-
-            SystemMetricsInfo metricsInfo = JSON.parse(response.getData(), SystemMetricsInfo.class);
-            wrapperMetricsInfo(instance, metricsInfo);
+            doWrapper(instance);
         }
 
         return PageResult.build(jobInstance, jobInstance.size(), instanceReqDTO.getCurrent(), instanceReqDTO.getPageSize());
+    }
+
+    @Override
+    public OpenJobInstanceRespDTO getInstanceById(Long appId, String serverId) {
+        OpenJobAppRespDTO openJobApp = openJobAppService.getById(appId);
+        List<ServerInformation> instances = instanceStore.getByNamespace(openJobApp.getAppName());
+        if (CollectionUtils.isEmpty(instances)){
+            return null;
+        }
+
+        ServerInformation serverInformation = instances.stream()
+                .filter(e -> StringUtils.equals(e.getServerId(), serverId))
+                .findFirst()
+                .orElse(null);
+
+        if (Objects.isNull(serverInformation)){
+            return null;
+        }
+
+        List<OpenJobInstanceRespDTO> openJobInstanceRespDTOS = convertList(Collections.singletonList(serverInformation));
+        OpenJobInstanceRespDTO openJobInstanceRespDTO = openJobInstanceRespDTOS.get(0);
+        doWrapper(openJobInstanceRespDTO);
+        return openJobInstanceRespDTO;
     }
 
     @Override
@@ -182,12 +187,40 @@ public class OpenJobInstanceServiceImpl implements OpenJobInstanceService {
             instance.setServerId(e.getServerId());
             LocalDateTime localDateTime = LocalDateTimeUtil.toLocalDateTime(e.getOnlineTime());
             instance.setOnlineTime(localDateTime);
-            LocalDateTime now = LocalDateTime.now();
-            instance.setLiveTime(LocalDateTimeUtil.getTimeBetween(localDateTime, now));
+            if (e.getStatus() == Status.ON_LINE){
+                LocalDateTime now = LocalDateTime.now();
+                instance.setLiveTime(LocalDateTimeUtil.getTimeBetween(localDateTime, now));
+            }
             instance.setStatus(e.getStatus().name());
             instance.setWeight(e.getWeight());
             return instance;
         }).collect(Collectors.toList());
+    }
+
+    private void doWrapper(OpenJobInstanceRespDTO instance){
+        Message message = new Message();
+        MessageBody messageBody = new MessageBody();
+        messageBody.setCommand(CommandEnum.METRICS.getValue());
+        message.setBody(SerializationUtils.serialize(messageBody));
+        String[] serverIdArray = instance.getServerId().split(CommonConstant.Symbol.MH);
+        ServerInformation serverInformation = new ServerInformation(serverIdArray[0], Integer.parseInt(serverIdArray[1]));
+
+        MessageResponseBody messageResponseBody;
+        try {
+            messageResponseBody = doInvoke(message, serverInformation);
+        }catch (RpcException ex){
+            log.error(ex.getMessage(), ex);
+            return;
+        }
+
+        byte[] body = messageResponseBody.getBody();
+        ResponseBody response = SerializationUtils.deserialize(body, ResponseBody.class);
+        if (StringUtils.isBlank(response.getData())){
+            return;
+        }
+
+        SystemMetricsInfo metricsInfo = JSON.parse(response.getData(), SystemMetricsInfo.class);
+        wrapperMetricsInfo(instance, metricsInfo);
     }
 
     private void wrapperMetricsInfo(OpenJobInstanceRespDTO instance, SystemMetricsInfo metricsInfo){

@@ -23,5 +23,11 @@ import com.saucesubfresh.job.api.dto.resp.OpenJobStatisticRespDTO;
  */
 public interface OpenJobStatisticService {
 
-    OpenJobStatisticRespDTO getStatistic(Long appId);
+    OpenJobStatisticRespDTO getStatistic();
+
+    OpenJobStatisticRespDTO getAppStatistic(Long appId);
+
+    OpenJobStatisticRespDTO getJobStatistic(Long appId, Long jobId);
+
+    OpenJobStatisticRespDTO getInstanceStatistic(Long appId, String serverId);
 }

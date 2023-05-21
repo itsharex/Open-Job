@@ -45,8 +45,25 @@ public class OpenJobReportController {
     private OpenJobStatisticService crawlerStatisticService;
 
     @GetMapping("/statistic")
-    public Result<OpenJobStatisticRespDTO> getStatistic(@RequestParam("appId") Long appId) {
-        return Result.succeed(crawlerStatisticService.getStatistic(appId));
+    public Result<OpenJobStatisticRespDTO> getStatistic() {
+        return Result.succeed(crawlerStatisticService.getStatistic());
+    }
+
+    @GetMapping("/appStatistic")
+    public Result<OpenJobStatisticRespDTO> getAppStatistic(@RequestParam("appId") Long appId) {
+        return Result.succeed(crawlerStatisticService.getAppStatistic(appId));
+    }
+
+    @GetMapping("/jobStatistic")
+    public Result<OpenJobStatisticRespDTO> getJobStatistic(@RequestParam("appId") Long appId,
+                                                           @RequestParam("jobId") Long jobId) {
+        return Result.succeed(crawlerStatisticService.getJobStatistic(appId, jobId));
+    }
+
+    @GetMapping("/instanceStatistic")
+    public Result<OpenJobStatisticRespDTO> getInstanceStatistic(@RequestParam("appId") Long appId,
+                                                                @RequestParam("serverId") String serverId) {
+        return Result.succeed(crawlerStatisticService.getInstanceStatistic(appId, serverId));
     }
 
     @GetMapping("/chart")
