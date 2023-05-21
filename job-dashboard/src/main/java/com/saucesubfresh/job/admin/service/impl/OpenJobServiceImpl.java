@@ -98,6 +98,7 @@ public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> im
     public boolean updateById(OpenJobUpdateDTO openJobUpdateDTO) {
         OpenJobDO openJobDO = openJobMapper.selectById(openJobUpdateDTO.getId());
         OpenJobDO convert = OpenJobConvert.INSTANCE.convert(openJobUpdateDTO);
+        openJobDO.setUpdateTime(LocalDateTime.now());
         int update = openJobMapper.updateById(convert);
         updateScheduleTask(openJobDO, convert);
         return update != 0;
@@ -107,6 +108,7 @@ public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> im
     public boolean start(Long id) {
         OpenJobDO openJobDO = openJobMapper.selectById(id);
         openJobDO.setStatus(CommonStatusEnum.YES.getValue());
+        openJobDO.setUpdateTime(LocalDateTime.now());
         openJobMapper.updateById(openJobDO);
         ScheduleTask scheduleTask = createScheduleTask(openJobDO);
         scheduleTaskPoolManager.add(scheduleTask);
@@ -118,6 +120,7 @@ public class OpenJobServiceImpl extends ServiceImpl<OpenJobMapper, OpenJobDO> im
     public boolean stop(Long id) {
         OpenJobDO openJobDO = openJobMapper.selectById(id);
         openJobDO.setStatus(CommonStatusEnum.NO.getValue());
+        openJobDO.setUpdateTime(LocalDateTime.now());
         openJobMapper.updateById(openJobDO);
         scheduleTaskPoolManager.remove(id);
         return Boolean.TRUE;
