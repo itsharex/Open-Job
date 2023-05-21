@@ -151,7 +151,7 @@ public class OpenJobInstanceServiceImpl implements OpenJobInstanceService {
     @Override
     public Boolean onlineServer(String serverId) {
         try {
-            return instanceManager.offlineServer(serverId);
+            return instanceManager.onlineServer(serverId);
         }catch (Exception e){
             throw new ServiceException(e.getMessage());
         }
