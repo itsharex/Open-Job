@@ -137,20 +137,19 @@ public class DefaultTaskInvoke implements TaskInvoke{
 
 
         for (ServerInformation server : servers) {
-            String serverId = null, errMsg = null;
+            String errMsg = null;
+            String serverId = server.getServerId();
             MessageResponseBody response = null;
             try {
                 response = remotingInvoker.invoke(message, server);
             } catch (RpcException ex) {
                 errMsg = ex.getMessage();
-                serverId = ex.getServerId();
                 recordLog(openJobDO, null, errMsg, serverId);
                 return;
             }
             if (response.getStatus() != ResponseStatus.SUCCESS) {
                 errMsg = response.getMsg();
             }
-            serverId = response.getServerId();
             recordLog(openJobDO, response, errMsg, serverId);
         }
     }
