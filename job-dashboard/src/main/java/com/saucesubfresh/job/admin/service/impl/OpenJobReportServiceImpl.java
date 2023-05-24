@@ -102,7 +102,9 @@ public class OpenJobReportServiceImpl implements OpenJobReportService {
 
     @Override
     public List<OpenJobChartRespDTO> getChart(Long appId, Long jobId, String serverId, Integer count) {
-        List<OpenJobReportDO> openJobReportDOS = openJobReportMapper.queryList(appId, jobId, serverId, count);
+        LocalDateTime startTime = LocalDateTime.now();
+        LocalDateTime endTime = LocalDateTimeUtil.getDayStart(startTime.plusDays(count));
+        List<OpenJobReportDO> openJobReportDOS = openJobReportMapper.queryList(appId, jobId, serverId, startTime, endTime);
         if (CollectionUtils.isEmpty(openJobReportDOS)){
             return Collections.emptyList();
         }
@@ -127,7 +129,9 @@ public class OpenJobReportServiceImpl implements OpenJobReportService {
 
     @Override
     public List<OpenTopKRespDTO> getJobTopK(Long appId, String serverId, Integer count, Integer top) {
-        List<OpenJobReportDO> openJobReportDOS = openJobReportMapper.queryList(appId, null, serverId, count);
+        LocalDateTime startTime = LocalDateTime.now();
+        LocalDateTime endTime = LocalDateTimeUtil.getDayStart(startTime.plusDays(count));
+        List<OpenJobReportDO> openJobReportDOS = openJobReportMapper.queryList(appId, null, serverId, startTime, endTime);
         if (CollectionUtils.isEmpty(openJobReportDOS)){
             return Collections.emptyList();
         }
@@ -144,7 +148,9 @@ public class OpenJobReportServiceImpl implements OpenJobReportService {
 
     @Override
     public List<OpenTopKRespDTO> getInstanceTopK(Long appId, Long jobId, Integer count, Integer top) {
-        List<OpenJobReportDO> openJobReportDOS = openJobReportMapper.queryList(appId, jobId, null, count);
+        LocalDateTime startTime = LocalDateTime.now();
+        LocalDateTime endTime = LocalDateTimeUtil.getDayStart(startTime.plusDays(count));
+        List<OpenJobReportDO> openJobReportDOS = openJobReportMapper.queryList(appId, jobId, null, startTime, endTime);
         if (CollectionUtils.isEmpty(openJobReportDOS)){
             return Collections.emptyList();
         }

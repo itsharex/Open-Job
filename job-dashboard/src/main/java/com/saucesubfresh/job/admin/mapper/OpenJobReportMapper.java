@@ -21,6 +21,7 @@ import com.saucesubfresh.job.admin.entity.OpenJobReportDO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,13 +31,13 @@ import java.util.Objects;
 @Repository
 public interface OpenJobReportMapper extends BaseMapper<OpenJobReportDO> {
 
-    default List<OpenJobReportDO> queryList(Long appId, Long jobId, String serverId, Integer count){
+    default List<OpenJobReportDO> queryList(Long appId, Long jobId, String serverId, LocalDateTime beginTime, LocalDateTime endTime){
         return selectList(Wrappers.<OpenJobReportDO>lambdaQuery()
                 .eq(OpenJobReportDO::getAppId, appId)
                 .eq(Objects.nonNull(jobId), OpenJobReportDO::getJobId, jobId)
                 .eq(StringUtils.isNotBlank(serverId), OpenJobReportDO::getServerId, serverId)
+                .between(Objects.nonNull(beginTime), OpenJobReportDO::getCreateTime, beginTime, endTime)
                 .orderByDesc(OpenJobReportDO::getCreateTime)
-                .last("limit " + count)
         );
     }
 }
