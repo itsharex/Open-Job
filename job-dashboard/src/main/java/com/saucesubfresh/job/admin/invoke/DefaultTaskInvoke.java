@@ -112,7 +112,7 @@ public class DefaultTaskInvoke implements TaskInvoke{
             }catch (RpcException ex){
                 errMsg = ex.getMessage();
                 serverId = ex.getServerId();
-                recordLog(e, response, errMsg, serverId);
+                recordLog(e, null, errMsg, serverId);
                 return;
             }
             if (response.getStatus() != ResponseStatus.SUCCESS){
@@ -135,35 +135,24 @@ public class DefaultTaskInvoke implements TaskInvoke{
             return new ServerInformation(split[0], Integer.parseInt(split[1]));
         }).collect(Collectors.toList());
 
-        StringBuilder serverId = new StringBuilder();
-        StringBuilder errorInfo = new StringBuilder();
-        for (int i = 0; i < servers.size(); i++) {
-            RpcException ex = null;
+
+        for (ServerInformation server : servers) {
+            String serverId = null, errMsg = null;
             MessageResponseBody response = null;
             try {
-                response = remotingInvoker.invoke(message, servers.get(i));
-            }catch (RpcException e){
-                ex = e;
+                response = remotingInvoker.invoke(message, server);
+            } catch (RpcException ex) {
+                errMsg = ex.getMessage();
+                serverId = ex.getServerId();
+                recordLog(openJobDO, null, errMsg, serverId);
+                return;
             }
-
-            if (i != 0){
-                serverId.append(",");
+            if (response.getStatus() != ResponseStatus.SUCCESS) {
+                errMsg = response.getMsg();
             }
-
-            if (response != null){
-                serverId.append(servers.get(i).getServerId());
-            }
-
-            if (ex != null){
-                if (i != 0){
-                    errorInfo.append(",");
-                }
-                serverId.append(ex.getServerId());
-                errorInfo.append(ex.getServerId()).append(":").append(ex.getMessage());
-            }
-
+            serverId = response.getServerId();
+            recordLog(openJobDO, response, errMsg, serverId);
         }
-        recordLog(openJobDO, null, errorInfo.toString(), serverId.toString());
     }
 
     private void recordLog(OpenJobDO jobDO, MessageResponseBody response, String cause, String serverId){
