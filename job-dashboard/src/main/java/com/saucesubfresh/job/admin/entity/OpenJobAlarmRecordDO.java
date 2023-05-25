@@ -58,7 +58,7 @@ public class OpenJobAlarmRecordDO implements Serializable {
 	/**
 	 * 报警接收人
 	 */
-	private String receiver;
+	private Long receiver;
 	/**
 	 * 报警创建时间
 	 */

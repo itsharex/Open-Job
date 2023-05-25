@@ -22,7 +22,6 @@ import com.saucesubfresh.job.admin.entity.OpenJobUserDO;
 import com.saucesubfresh.job.admin.mapper.OpenJobAlarmRecordMapper;
 import com.saucesubfresh.job.admin.mapper.OpenJobMapper;
 import com.saucesubfresh.job.admin.mapper.OpenJobUserMapper;
-import com.saucesubfresh.job.common.exception.ServiceException;
 import com.saucesubfresh.job.common.time.LocalDateTimeUtil;
 import com.saucesubfresh.starter.alarm.exception.AlarmException;
 import com.saucesubfresh.starter.alarm.provider.dingtalk.DingDingRobotAlarmExecutor;
@@ -34,7 +33,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Objects;
 
 /**
  * @author lijunping on 2022/4/25
@@ -71,24 +69,21 @@ public class DefaultAlarmService implements AlarmService{
         final Long jobId = alarmMessage.getJobId();
         final LocalDateTime createTime = alarmMessage.getCreateTime();
         final String cause = alarmMessage.getCause();
+        final Long appId = alarmMessage.getAppId();
+        final String serverId = alarmMessage.getServerId();
 
         OpenJobDO openJobDO = openJobMapper.selectById(jobId);
-        if (Objects.isNull(openJobDO)){
-            log.error("can't find OpenJob by id {}", jobId);
-            return;
-        }
-
         Long userId = openJobDO.getCreateUser();
         String title = openJobDO.getJobName();
         String time = LocalDateTimeUtil.format(createTime, LocalDateTimeUtil.DATETIME_FORMATTER);
         String content = String.format(alarmTemplate, title, time, cause);
 
         OpenJobAlarmRecordDO alarmRecordDO = new OpenJobAlarmRecordDO();
-        alarmRecordDO.setAppId(null);
+        alarmRecordDO.setAppId(appId);
         alarmRecordDO.setJobId(jobId);
-        alarmRecordDO.setServerId(null);
+        alarmRecordDO.setServerId(serverId);
         alarmRecordDO.setMessage(content);
-        alarmRecordDO.setReceiver(userId.toString());
+        alarmRecordDO.setReceiver(userId);
         alarmRecordDO.setCreateTime(LocalDateTime.now());
         alarmRecordMapper.insert(alarmRecordDO);
 
@@ -100,11 +95,12 @@ public class DefaultAlarmService implements AlarmService{
             return;
         }
 
-        DingDingRobotAlarmRequest request = buildAlarmRequest(content, userId);
+        OpenJobUserDO crawlerUserDO = userMapper.selectById(userId);
+        DingDingRobotAlarmRequest request = buildAlarmRequest(content, crawlerUserDO.getPhone());
         send(request);
     }
 
-    private DingDingRobotAlarmRequest buildAlarmRequest(String content, Long userId){
+    private DingDingRobotAlarmRequest buildAlarmRequest(String content, String phone){
         // 发送内容
         DingDingRobotAlarmRequest.TextVO text = new DingDingRobotAlarmRequest.TextVO();
         text.setContent(content);
@@ -113,16 +109,15 @@ public class DefaultAlarmService implements AlarmService{
         // 发送类型
         request.setMsgtype("text");
         request.setText(text);
+
         // 发送目标
-        final OpenJobUserDO crawlerUserDO = userMapper.selectById(userId);
-        if (Objects.isNull(crawlerUserDO) || StringUtils.isBlank(crawlerUserDO.getPhone())){
-            throw new ServiceException("can't find OpenJobUser by id");
-        }
-
         DingDingRobotAlarmRequest.AtVO at = new DingDingRobotAlarmRequest.AtVO();
-        at.setAtMobiles(Collections.singletonList(crawlerUserDO.getPhone()));
+        if (StringUtils.isNotBlank(phone)){
+            at.setAtMobiles(Collections.singletonList(phone));
+        }else {
+            at.setIsAtAll(true);
+        }
         request.setAt(at);
-
         return request;
     }
 

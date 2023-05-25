@@ -29,9 +29,18 @@ public class AlarmMessage implements Serializable {
     private static final long serialVersionUID = 8540414931056416275L;
 
     /**
+     * 应用 id
+     */
+    private Long appId;
+    /**
      * 任务 id
      */
     private Long jobId;
+
+    /**
+     * 执行器 id
+     */
+    private String serverId;
 
     /**
      * 任务执行失败原因
