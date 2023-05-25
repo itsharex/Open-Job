@@ -16,8 +16,10 @@
 package com.saucesubfresh.job.admin.alarm;
 
 import com.saucesubfresh.job.admin.domain.AlarmMessage;
+import com.saucesubfresh.job.admin.entity.OpenJobAlarmRecordDO;
 import com.saucesubfresh.job.admin.entity.OpenJobDO;
 import com.saucesubfresh.job.admin.entity.OpenJobUserDO;
+import com.saucesubfresh.job.admin.mapper.OpenJobAlarmRecordMapper;
 import com.saucesubfresh.job.admin.mapper.OpenJobMapper;
 import com.saucesubfresh.job.admin.mapper.OpenJobUserMapper;
 import com.saucesubfresh.job.common.exception.ServiceException;
@@ -50,56 +52,67 @@ public class DefaultAlarmService implements AlarmService{
 
     private final OpenJobMapper openJobMapper;
     private final OpenJobUserMapper userMapper;
+    private final OpenJobAlarmRecordMapper alarmRecordMapper;
     private final DingDingRobotAlarmExecutor alarmExecutor;
 
     public DefaultAlarmService(OpenJobMapper openJobMapper,
                                OpenJobUserMapper userMapper,
+                               OpenJobAlarmRecordMapper alarmRecordMapper,
                                DingDingRobotAlarmExecutor alarmExecutor) {
         this.openJobMapper = openJobMapper;
         this.userMapper = userMapper;
+        this.alarmRecordMapper = alarmRecordMapper;
         this.alarmExecutor = alarmExecutor;
     }
 
 
     @Override
     public void sendAlarm(AlarmMessage alarmMessage) {
-        final LocalDateTime createTime = alarmMessage.getCreateTime();
-        final String hHmm = LocalDateTimeUtil.format(createTime, "HHmm");
-        final int currentTime = Integer.parseInt(hHmm);
-
-        // 控制消息发送时间段，判断是否在合法发送时间
-        if (currentTime > beginTime && currentTime < endTime){
-            log.warn("不在合法发送时间内，取消本次发送");
-            return;
-        }
-
-        DingDingRobotAlarmRequest request = buildAlarmRequest(alarmMessage);
-        send(request);
-    }
-
-    private DingDingRobotAlarmRequest buildAlarmRequest(AlarmMessage alarmMessage){
-        DingDingRobotAlarmRequest request = new DingDingRobotAlarmRequest();
-        // 发送类型
-        request.setMsgtype("text");
-
-        // 发送内容
         final Long jobId = alarmMessage.getJobId();
         final LocalDateTime createTime = alarmMessage.getCreateTime();
         final String cause = alarmMessage.getCause();
 
         OpenJobDO openJobDO = openJobMapper.selectById(jobId);
         if (Objects.isNull(openJobDO)){
-            throw new ServiceException("can't find OpenJob by id");
+            log.error("can't find OpenJob by id {}", jobId);
+            return;
         }
+
         Long userId = openJobDO.getCreateUser();
         String title = openJobDO.getJobName();
         String time = LocalDateTimeUtil.format(createTime, LocalDateTimeUtil.DATETIME_FORMATTER);
         String content = String.format(alarmTemplate, title, time, cause);
 
+        OpenJobAlarmRecordDO alarmRecordDO = new OpenJobAlarmRecordDO();
+        alarmRecordDO.setAppId(null);
+        alarmRecordDO.setJobId(jobId);
+        alarmRecordDO.setServerId(null);
+        alarmRecordDO.setMessage(content);
+        alarmRecordDO.setReceiver(userId.toString());
+        alarmRecordDO.setCreateTime(LocalDateTime.now());
+        alarmRecordMapper.insert(alarmRecordDO);
+
+        final String hHmm = LocalDateTimeUtil.format(createTime, "HHmm");
+        final int currentTime = Integer.parseInt(hHmm);
+        // 控制消息发送时间段，判断是否在合法发送时间
+        if (currentTime > beginTime && currentTime < endTime){
+            log.warn("不在合法发送时间内，取消本次发送");
+            return;
+        }
+
+        DingDingRobotAlarmRequest request = buildAlarmRequest(content, userId);
+        send(request);
+    }
+
+    private DingDingRobotAlarmRequest buildAlarmRequest(String content, Long userId){
+        // 发送内容
         DingDingRobotAlarmRequest.TextVO text = new DingDingRobotAlarmRequest.TextVO();
         text.setContent(content);
-        request.setText(text);
 
+        DingDingRobotAlarmRequest request = new DingDingRobotAlarmRequest();
+        // 发送类型
+        request.setMsgtype("text");
+        request.setText(text);
         // 发送目标
         final OpenJobUserDO crawlerUserDO = userMapper.selectById(userId);
         if (Objects.isNull(crawlerUserDO) || StringUtils.isBlank(crawlerUserDO.getPhone())){
