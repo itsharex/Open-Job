@@ -22,6 +22,7 @@ import com.saucesubfresh.job.admin.entity.OpenJobAlarmRecordDO;
 import com.saucesubfresh.job.api.dto.req.OpenJobAlarmRecordReqDTO;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -36,6 +37,14 @@ public interface OpenJobAlarmRecordMapper extends BaseMapper<OpenJobAlarmRecordD
                 .eq(Objects.nonNull(alarmRecordReqDTO.getServerId()), OpenJobAlarmRecordDO::getServerId, alarmRecordReqDTO.getServerId())
                 .between(Objects.nonNull(alarmRecordReqDTO.getBeginTime()), OpenJobAlarmRecordDO::getCreateTime, alarmRecordReqDTO.getBeginTime(), alarmRecordReqDTO.getEndTime())
                 .orderByDesc(OpenJobAlarmRecordDO::getCreateTime)
+        );
+    }
+
+    default int queryCount(Long appId, Long jobId, LocalDateTime beginTime, LocalDateTime endTime){
+        return selectCount(Wrappers.<OpenJobAlarmRecordDO>lambdaQuery()
+                .eq(Objects.nonNull(appId), OpenJobAlarmRecordDO::getAppId, appId)
+                .eq(Objects.nonNull(jobId), OpenJobAlarmRecordDO::getJobId, jobId)
+                .between(Objects.nonNull(beginTime), OpenJobAlarmRecordDO::getCreateTime, beginTime, endTime)
         );
     }
 }

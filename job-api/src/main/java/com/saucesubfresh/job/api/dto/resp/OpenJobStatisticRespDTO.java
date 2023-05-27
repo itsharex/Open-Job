@@ -37,6 +37,10 @@ public class OpenJobStatisticRespDTO implements Serializable {
      */
     private Integer appNum;
     /**
+     * 报警数量
+     */
+    private Integer alarmNum;
+    /**
      * 任务总数量
      */
     private Integer taskTotalNum;
